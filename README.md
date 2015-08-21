@@ -6,6 +6,8 @@ Repository to hold utilities specific to Pivotal CF functionality, like
 * Restore
 * Deleting old artifacts
 * Deleting unwanted products that are in-compatible with the foundation
+* Import LDAP Users using the users.csv
+* Promote a user as a superadmin
 * etc
 
 
