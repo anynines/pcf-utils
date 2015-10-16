@@ -32,7 +32,7 @@ validate_software() {
 
 verify_deployment_backedUp() {
 	echo "VERIFY CF DEPLOYMENT MANIFEST"
-	export CF_DEPLOYMENT_NAME=`bosh deployments | grep "cf-" | cut -d '|' -f 2 | tr -s ' ' | grep "cf-" | tr -d ' '`
+	export CF_DEPLOYMENT_NAME=`bosh deployments | grep "cf-" | cut -d '|' -f 2 | tr -s ' ' | grep "cf-" | tr -d ' ' | head -1`
 	export CF_DEPLOYMENT_FILE_NAME=$CF_DEPLOYMENT_NAME.yml
 
 	echo "FILES LOOKING FOR $CF_DEPLOYMENT_NAME $CF_DEPLOYMENT_FILE_NAME"

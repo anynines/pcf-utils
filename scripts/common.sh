@@ -40,7 +40,7 @@ export_installation_settings() {
 fetch_bosh_connection_parameters() {
 	echo "GATHER BOSH DIRECTOR CONNECTION PARAMETERS"
 
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml microbosh director director`
+	output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-bosh director director`
 
 	export DIRECTOR_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_PASSWORD=`echo $output | cut -d '|' -f 2`
