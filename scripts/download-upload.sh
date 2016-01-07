@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ $# -lt 8 ]; then
+  echo "Usage: ./download-upload.sh <api-token> <filename> <product-id> <release-id> <product-file-id> <opsmgr-hostname> <admin-username> <admin-password>"
+  exit 1
+fi
+
+export LOG_FILE='/tmp/download-upload.log'
+echo "Log location is: $LOG_FILE"
+
+export API_TOKEN=$1
+export FILE_NAME=$2
+export PRODUCT_ID=$3
+export RELEASE_ID=$4
+export PRODUCT_FILE_ID=$5
+export PIVNET_URL=https://network.pivotal.io
+export URL=$PIVNET_URL/api/v2/products/$PRODUCT_ID/releases/$RELEASE_ID/product_files/$PRODUCT_FILE_ID/download
+
+export OPS_MGR_URL="https://$6/api/products"
+
+export OPS_MGR_ADMIN=$7
+export OPS_MGR_ADMIN_PWD=$8
+
+## AUTHENTICATE
+echo "Authenticating...."
+AUTH_CMD=`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Token $API_TOKEN" -X GET $PIVNET_URL/api/v2/authentication` >> $LOG_FILE 2>&1
+ERRORS=`echo $AUTH_CMD | grep status`
+if [[ ! -z "$ERRORS" ]]; then
+  echo "error while uploading: $ERRORS"
+  exit 1
+fi
+
+## ACCEPT EULA
+echo "Accepting EULA...."
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Token $API_TOKEN" -X POST $PIVNET_URL/api/v2/products/$PRODUCT_ID/releases/$RELEASE_ID/eula_acceptance HTTP/1.1 >> $LOG_FILE 2>&1
+
+## DOWNLOAD TILE
+echo "Downloading file...."
+wget -O "$FILE_NAME" --post-data="" --header="Authorization: Token $API_TOKEN" "$URL" >> $LOG_FILE 2>&1
+
+echo "Uploading file to Ops Manager...."
+UPLOAD_CMD=`curl -k "$OPS_MGR_URL" -F "product[file]=@/$PWD/$FILE_NAME" -X POST -u $OPS_MGR_ADMIN:$OPS_MGR_ADMIN_PWD`
+
+ERRORS=`echo $UPLOAD_CMD | grep errors`
+if [[ ! -z "$ERRORS" ]]; then
+  echo "error while uploading: $ERRORS"
+  exit 1
+fi
+
+echo "Done!"
