@@ -2,18 +2,28 @@
 
 #!/bin/bash
 
-if [ $# -lt 6 ]; then
-  echo "Usage: ./import-users.sh <api url> <admin username> <admin password> <uaa url> <admin username> <admin-secret>"
+if [ $# -lt 5 ]; then
+  echo "Usage: ./import-users.sh <System Domain> <Apps Manager Admin Username> <Apps Manager Admin Password> <UAA Admin Username> <UAA Admin Client Credentials>"
   exit 1
 fi
 
-echo "Log location is: /tmp/import-users.log"
 
-cf api --skip-ssl-validation $1 >> /tmp/import-users.log 2>&1
-cf login -u $2 -p $3
+export LOG_FILE=/tmp/import-users.log
+echo "Log location is: $LOG_FILE"
 
-uaac target --skip-ssl-validation $4 >> /tmp/import-users.log 2>&1
-uaac token client get $5 -s $6 >> /tmp/import-users.log 2>&1
+export SYSTEM_DOMAIN=$1
+export API_ENDPOINT=api.$SYSTEM_DOMAIN
+export UAA_ENDPOINT=uaa.$SYSTEM_DOMAIN
+export APPS_MGR_ADMIN_USER=$2
+export APPS_MGR_ADMIN_PWD=$3
+export UAA_ADMIN_USER=$4
+export UAA_ADMIN_PWD=$5
+
+cf api --skip-ssl-validation API_ENDPOINT >> $LOG_FILE 2>&1
+cf login -u $APPS_MGR_ADMIN_USER -p $APPS_MGR_ADMIN_PWD
+
+uaac target --skip-ssl-validation $UAA_ENDPOINT >> $LOG_FILE 2>&1
+uaac token client get $UAA_ADMIN_USER -s $UAA_ADMIN_PWD >> $LOG_FILE 2>&1
 
 IFS="#"
 while read f1 f2 f3 f4 f5 f6 f7
@@ -32,9 +42,9 @@ do
         echo $ID
 
         IMPORT_USER_TO_CC=`cf curl /v2/users -d '{"guid":"'"$ID"'"}' -X POST`
-#	echo $IMPORT_USER_TO_CC >> /tmp/import-users.log 2>&1
-	echo $IMPORT_USER_TO_CC
-	
+#	echo $IMPORT_USER_TO_CC >> $LOG_FILE 2>&1
+	      echo $IMPORT_USER_TO_CC
+
         IFS="|" read -a orgperms <<< "$f5"
 
         for orgperm in "${orgperms[@]}"

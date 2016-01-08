@@ -6,23 +6,30 @@
 # 4. User to promote as admin
 
 if [ $# -lt 4 ]; then
-  echo "Usage: ./assign-admin-privileges.sh <uaa url> <admin username> <admin-secret> <user-to-promote>"
+  echo "Usage: ./assign-admin-privileges.sh <System Domain> <admin username> <admin-secret> <user-to-promote>"
   exit 1
 fi
 
-echo "Log location is: /tmp/assign-admin-privileges.log"
+export LOG_FILE=/tmp/assign-admin-privileges.log
+export SYSTEM_DOMAIN=$1
+export UAA_ENDPOINT=uaa.$SYSTEM_DOMAIN
+export UAA_ADMIN_USER=$2
+export UAA_ADMIN_PWD=$3
+export USER_TO_PROMOTE=$4
 
-uaac target $1 >> /tmp/assign-admin-privileges.log 2>&1
-uaac token client get $2 -s $3 >> /tmp/assign-admin-privileges.log 2>&1
-uaac contexts >> /tmp/assign-admin-privileges.log 2>&1
+echo "Log location is: $LOG_FILE"
 
-uaac member add cloud_controller.admin $4 >> /tmp/assign-admin-privileges.log 2>&1
-uaac member add uaa.admin $4 >> /tmp/assign-admin-privileges.log 2>&1
-uaac member add scim.read $4 >> /tmp/assign-admin-privileges.log 2>&1
-uaac member add scim.write $4 >> /tmp/assign-admin-privileges.log 2>&1
-uaac member add password.write $4 >> /tmp/assign-admin-privileges.log 2>&1
-uaac member add openid $4 >> /tmp/assign-admin-privileges.log 2>&1
+uaac target $UAA_ENDPOINT >> /tmp/assign-admin-privileges.log 2>&1
+uaac token client get $UAA_ADMIN_USER -s $UAA_ADMIN_PWD >> $LOG_FILE 2>&1
+uaac contexts >> $LOG_FILE 2>&1
+
+uaac member add cloud_controller.admin $USER_TO_PROMOTE >> $LOG_FILE 2>&1
+uaac member add uaa.admin $USER_TO_PROMOTE >> $LOG_FILE 2>&1
+uaac member add scim.read $USER_TO_PROMOTE >> $LOG_FILE 2>&1
+uaac member add scim.write $USER_TO_PROMOTE >> $LOG_FILE 2>&1
+uaac member add password.write $USER_TO_PROMOTE >> $LOG_FILE 2>&1
+uaac member add openid $USER_TO_PROMOTE >> $LOG_FILE 2>&1
 
 uaac token delete
 
-echo "You've sucessfully handed over the power of admin to $4. Mission Accomplished!!"
+echo "You've sucessfully handed over the power of admin to $USER_TO_PROMOTE. Mission Accomplished!!"
