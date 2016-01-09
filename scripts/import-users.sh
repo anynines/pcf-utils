@@ -19,7 +19,7 @@ export APPS_MGR_ADMIN_PWD=$3
 export UAA_ADMIN_USER=$4
 export UAA_ADMIN_PWD=$5
 
-cf api --skip-ssl-validation API_ENDPOINT >> $LOG_FILE 2>&1
+cf api --skip-ssl-validation $API_ENDPOINT >> $LOG_FILE 2>&1
 cf login -u $APPS_MGR_ADMIN_USER -p $APPS_MGR_ADMIN_PWD
 
 uaac target --skip-ssl-validation $UAA_ENDPOINT >> $LOG_FILE 2>&1
@@ -43,7 +43,7 @@ do
 
         IMPORT_USER_TO_CC=`cf curl /v2/users -d '{"guid":"'"$ID"'"}' -X POST`
 #	echo $IMPORT_USER_TO_CC >> $LOG_FILE 2>&1
-	      echo $IMPORT_USER_TO_CC
+	      #echo $IMPORT_USER_TO_CC
 
         IFS="|" read -a orgperms <<< "$f5"
 

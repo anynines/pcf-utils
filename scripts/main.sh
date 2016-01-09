@@ -34,7 +34,7 @@ elif [[ $OPTION -eq 2 ]]; then
   read -p "Enter the UAA Admin Username: " UAA_ADMIN_USER
   read -s -p "UAA Admin Client Credentials: " UAA_ADMIN_PWD
   echo
-  ./import-users.sh $SYSTEM_DOMAIN $APPS_MGR_ADMIN_USER $APPS_MGR_ADMIN_USER $UAA_ADMIN_USER $UAA_ADMIN_PWD
+  ./import-users.sh $SYSTEM_DOMAIN $APPS_MGR_ADMIN_USER $APPS_MGR_ADMIN_PWD $UAA_ADMIN_USER $UAA_ADMIN_PWD
 
 elif [[ $OPTION -eq 3 ]]; then
   echo "Create Admin User it is..."
