@@ -227,8 +227,8 @@ execute() {
 	export_uaadb
 	export_consoledb
 	export_nfs_server
-	start_cloud_controller
 	export_mysqldb
+	start_cloud_controller
 	export_installation
 	zip_all_together
 }

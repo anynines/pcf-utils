@@ -22,7 +22,7 @@ if [[ $OPTION -eq 1 ]]; then
   echo
   read -p "Enter the Backup Directory: " WORK_DIR
   read -p "Enter Y/N for complete backup: " COMPLETE_BACKUP
-  ./backup_script.sh $OPS_MANAGER_HOST $SSH_USER $OPS_MGR_SSH_PASSWORD $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD $WORK_DIR $COMPLETE_BACKUP
+  ./backup.sh $OPS_MANAGER_HOST $SSH_USER $OPS_MGR_SSH_PASSWORD $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD $WORK_DIR $COMPLETE_BACKUP
 
 elif [[ $OPTION -eq 2 ]]; then
   echo "Import users it is..."
