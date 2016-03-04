@@ -2,6 +2,8 @@
 
 copy_deployment_files() {
 
+	ssh-keygen -R $OPS_MANAGER_HOST
+
 	echo "COPY DEPLOYMENT MANIFEST"
 	/usr/bin/expect -c "
 		set timeout -1

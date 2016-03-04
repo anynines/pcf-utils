@@ -134,6 +134,8 @@ export_nfs_server() {
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export NFS_IP=`echo $output | cut -d '|' -f 3`
 
+	ssh-keygen -R $NFS_IP
+
 	/usr/bin/expect -c "
 		set timeout -1
 
