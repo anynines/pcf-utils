@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -12,6 +11,9 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 public class JsonParser {
+	private String productGuid;
+	private String jobGuid;
+	private String azReference;
 
 	public static void main(String[] args) throws Exception {
 		String fileName = args[0];
@@ -40,42 +42,61 @@ public class JsonParser {
 
 	private String getDetails(String fieldName, String jobType, String username, String details, JsonObject obj) {
 		JsonArray jsonArray = obj.getJsonArray(ApplicationConstant.PRODUCTS);
+		details = getCredentials(fieldName, jobType, username, details, jsonArray);
 
-		details = getInfo(fieldName, jobType, username, details, jsonArray);
+		details += "|" + obj.getJsonObject(ApplicationConstant.IPS).getJsonObject(ApplicationConstant.ASSIGNMENTS)
+				.getJsonObject(productGuid).getJsonObject(jobGuid).getJsonArray(azReference).getString(0);
 		return details;
 	}
 
-	private String getInfo(String fieldName, String jobType, String username, String details, JsonArray jsonArray) {
+	private String getCredentials(String fieldName, String jobType, String username, String details,
+			JsonArray jsonArray) {
 		for (JsonObject result : jsonArray.getValuesAs(JsonObject.class)) {
 			if (result.getString(ApplicationConstant.TYPE).equalsIgnoreCase(fieldName)) {
 				JsonArray jobs = result.getJsonArray(ApplicationConstant.JOBS);
 				for (JsonObject job : jobs.getValuesAs(JsonObject.class)) {
 					if (job.getString(ApplicationConstant.TYPE).equalsIgnoreCase(jobType)) {
-						JsonArray properties = job.getJsonArray(ApplicationConstant.PROPERTIES);
-						for (JsonObject property : properties.getValuesAs(JsonObject.class)) {
-							if (property.getJsonObject(ApplicationConstant.VALUE)
-									.getString(ApplicationConstant.IDENTITY).equalsIgnoreCase(username)) {
-								details += "|"
-										+ property.getJsonObject(ApplicationConstant.VALUE).getString(
-												ApplicationConstant.PASSWORD);
-								break;
+						if (fieldName.equalsIgnoreCase(ApplicationConstant.MICROBOSH)) {
+							JsonArray properties = job.getJsonArray(ApplicationConstant.PROPERTIES);
+							for (JsonObject property : properties.getValuesAs(JsonObject.class)) {
+								if (property.getJsonObject(ApplicationConstant.VALUE)
+										.getString(ApplicationConstant.IDENTITY).equalsIgnoreCase(username)) {
+									details += "|" + property.getJsonObject(ApplicationConstant.VALUE)
+											.getString(ApplicationConstant.PASSWORD);
+									productGuid = result.getString(ApplicationConstant.GUID);
+									azReference = result.getString(ApplicationConstant.AZ);
+									jobGuid = job.getString(ApplicationConstant.GUID);
+									break;
+								}
 							}
-						}
-					}
-				}
+						} else {
+							JsonObject credentials = job.getJsonObject(ApplicationConstant.VM_CREDENTIALS);
+							productGuid = result.getString(ApplicationConstant.GUID);
+							azReference = job.getJsonArray(ApplicationConstant.PARTITIONS).getJsonObject(0)
+									.getString(ApplicationConstant.AZ_REF);
+							jobGuid = job.getJsonArray(ApplicationConstant.PARTITIONS).getJsonObject(0)
+									.getString(ApplicationConstant.JOB_REFERENCE);
 
-				JsonObject ips = result.getJsonObject(ApplicationConstant.IPS);
-				Set<String> keys = ips.keySet();
-				for (String key : keys) {
-					if (key.contains(jobType)) {
-						if (ips.getJsonArray(key).toArray().length >= 1) {
-							details += "|" + ips.getJsonArray(key).get(0).toString().replaceAll("\"", "");
-							break;
+							if (credentials.getString(ApplicationConstant.IDENTITY).equalsIgnoreCase(username)) {
+								details += "|" + credentials.getString(ApplicationConstant.PASSWORD);
+								break;
+							} else {
+								JsonArray properties = job.getJsonArray(ApplicationConstant.PROPERTIES);
+								for (JsonObject property : properties.getValuesAs(JsonObject.class)) {
+									if (property.getJsonObject(ApplicationConstant.VALUE)
+											.getString(ApplicationConstant.IDENTITY).equalsIgnoreCase(username)) {
+										details += "|" + property.getJsonObject(ApplicationConstant.VALUE)
+												.getString(ApplicationConstant.PASSWORD);
+										break;
+									}
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+
 		return details;
 	}
 

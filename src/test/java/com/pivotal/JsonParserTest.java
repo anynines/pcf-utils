@@ -8,9 +8,10 @@ import java.io.InputStream;
 import org.junit.Test;
 
 public class JsonParserTest {
+	private String fileName = "/installation-1.7.json";
+	
 	@Test
 	public void validateMicroBoshDetails() {
-		String fileName = "/installation.yml";
 		try {
 			JsonParser jsonParser = new JsonParser() {
 
@@ -26,7 +27,7 @@ public class JsonParserTest {
 			String[] values = response.split("\\|");
 			assertTrue(values.length == 3);
 			assertEquals("director", values[0]);
-			assertEquals("d98533512d91df542493", values[1]);
+			assertEquals("a1dc7d4f0e324906b607", values[1]);
 			assertEquals("172.16.1.41", values[2]);
 
 		} catch (Exception e) {
@@ -35,8 +36,7 @@ public class JsonParserTest {
 	}
 
 	@Test
-	public void validateCcDBDetails() {
-		String fileName = "/installation.yml";
+	public void validateMySqlDBDetails() {
 		try {
 			JsonParser jsonParser = new JsonParser() {
 
@@ -48,65 +48,13 @@ public class JsonParserTest {
 
 			};
 
-			String response = jsonParser.getValue(fileName, ApplicationConstant.CF, ApplicationConstant.CCDB, "admin");
+			String response = jsonParser.getValue(fileName, ApplicationConstant.CF, ApplicationConstant.MYSQL_DB,
+					"root");
 			String[] values = response.split("\\|");
 			assertTrue(values.length == 3);
-			assertEquals("admin", values[0]);
-			assertEquals("b40f5da19fbab9a20be8", values[1]);
-			assertEquals("172.16.1.48", values[2]);
-
-		} catch (Exception e) {
-			fail("This is unexpected: \n" + e);
-		}
-	}
-
-	@Test
-	public void validateUaaDBDetails() {
-		String fileName = "/installation.yml";
-		try {
-			JsonParser jsonParser = new JsonParser() {
-
-				@Override
-				InputStream getFileStream(String fileName) throws FileNotFoundException {
-					InputStream is = this.getClass().getResourceAsStream(fileName);
-					return is;
-				}
-
-			};
-
-			String response = jsonParser.getValue(fileName, ApplicationConstant.CF, ApplicationConstant.UAADB, "vcap");
-			String[] values = response.split("\\|");
-			assertTrue(values.length == 3);
-			assertEquals("vcap", values[0]);
-			assertEquals("48610c1c4e90d5bc", values[1]);
-			assertEquals("172.16.1.49", values[2]);
-
-		} catch (Exception e) {
-			fail("This is unexpected: \n" + e);
-		}
-	}
-
-	@Test
-	public void validateConsoleDBDetails() {
-		String fileName = "/installation.yml";
-		try {
-			JsonParser jsonParser = new JsonParser() {
-
-				@Override
-				InputStream getFileStream(String fileName) throws FileNotFoundException {
-					InputStream is = this.getClass().getResourceAsStream(fileName);
-					return is;
-				}
-
-			};
-
-			String response = jsonParser.getValue(fileName, ApplicationConstant.CF, ApplicationConstant.CONSOLE_DB,
-					"vcap");
-			String[] values = response.split("\\|");
-			assertTrue(values.length == 3);
-			assertEquals("vcap", values[0]);
-			assertEquals("8594ada75673625d", values[1]);
-			assertEquals("172.16.1.50", values[2]);
+			assertEquals("root", values[0]);
+			assertEquals("ad0b5f49d0424f63d3fd", values[1]);
+			assertEquals("172.16.1.51", values[2]);
 
 		} catch (Exception e) {
 			fail("This is unexpected: \n" + e);
@@ -115,7 +63,7 @@ public class JsonParserTest {
 
 	@Test
 	public void validateNFSServerDetails() {
-		String fileName = "/installation.yml";
+		
 		try {
 			JsonParser jsonParser = new JsonParser() {
 
@@ -132,8 +80,8 @@ public class JsonParserTest {
 			String[] values = response.split("\\|");
 			assertTrue(values.length == 3);
 			assertEquals("vcap", values[0]);
-			assertEquals("ecdd39d20528ed48", values[1]);
-			assertEquals("172.16.1.47", values[2]);
+			assertEquals("9e07b82c2985a444", values[1]);
+			assertEquals("172.16.1.49", values[2]);
 
 		} catch (Exception e) {
 			fail("This is unexpected: \n" + e);

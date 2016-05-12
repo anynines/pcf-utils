@@ -1,0 +1,3570 @@
+{
+  "guid": "aafc93480f51cd8b7bff",
+  "installation_schema_version": "1.7",
+  "infrastructure": {
+    "type": "vsphere",
+    "vm_password_type": "generate",
+    "locked": true,
+    "director_configuration": {
+      "bosh_recreate_on_next_deploy": false,
+      "metrics_ip": "172.16.1.42",
+      "resurrector_enabled": true,
+      "max_threads": 32,
+      "ntp_servers": [
+        "172.16.1.2"
+      ],
+      "blobstore_type": "local",
+      "database_type": "internal",
+      "s3_blobstore_options": {
+        "signature_version": "2"
+      },
+      "hm_pager_duty_options": {
+        "enabled": false
+      },
+      "hm_emailer_options": {
+        "enabled": true,
+        "port": "587",
+        "domain": "homelab.io",
+        "host": "smtp.gmail.com",
+        "from": "myworkemc@gmail.com",
+        "tls": true,
+        "smtp_user": "myworkemc@gmail.com",
+        "smtp_password": "Welcome12#",
+        "recipients": {
+          "value": "myworkemc@gmail.com"
+        }
+      }
+    },
+    "networks": [
+      {
+        "guid": "01313413ae48ad2d9607",
+        "name": "PCF_NW",
+        "subnets": [
+          {
+            "guid": "48c6d25512b5db66028d",
+            "iaas_identifier": "PCF_NW",
+            "cidr": "172.16.0.0/23",
+            "dns": "172.16.1.2",
+            "gateway": "172.16.0.1",
+            "reserved_ip_ranges": "172.16.0.1-172.16.1.40",
+            "availability_zone_references": [
+              "8229164f1aca889243fe",
+              "81060fef351663459ead",
+              "2eb644ef1e9517f9c01a",
+              "01e1050ec7806d9d1fc1",
+              "cd06b8e754932192bace"
+            ]
+          }
+        ]
+      }
+    ],
+    "availability_zones": [
+      {
+        "guid": "8229164f1aca889243fe",
+        "name": "MGMT-AZ",
+        "cluster": "PCF_CLUSTER_1",
+        "resource_pool": "MGMT_RP"
+      },
+      {
+        "guid": "81060fef351663459ead",
+        "name": "ER-AZ-1",
+        "cluster": "PCF_CLUSTER_1",
+        "resource_pool": "ER_RP_1"
+      },
+      {
+        "guid": "2eb644ef1e9517f9c01a",
+        "name": "ER-AZ-2",
+        "cluster": "PCF_CLUSTER_1",
+        "resource_pool": "ER_RP_2"
+      },
+      {
+        "guid": "01e1050ec7806d9d1fc1",
+        "name": "SERVICES-AZ-1",
+        "cluster": "PCF_CLUSTER_2",
+        "resource_pool": "SERVICES_RP_1"
+      },
+      {
+        "guid": "cd06b8e754932192bace",
+        "name": "SERVICES-AZ-2",
+        "cluster": "PCF_CLUSTER_2",
+        "resource_pool": "SERVICES_RP_2"
+      }
+    ],
+    "iaas_configuration": {
+      "datacenter": "PCF",
+      "vcenter_host": "172.16.1.2",
+      "vcenter_username": "pivotal@homelab.io",
+      "vcenter_password": "Welcome12#",
+      "persistent_datastores": [
+        "PCF_STORAGE_1",
+        "PCF_STORAGE_2"
+      ],
+      "ephemeral_datastores": [
+        "PCF_STORAGE_1",
+        "PCF_STORAGE_2"
+      ],
+      "disk_type": "thick",
+      "ssl_verification_enabled": false,
+      "bosh_vm_folder": "pcf_vms",
+      "bosh_template_folder": "pcf_templates",
+      "bosh_disk_path": "pcf_disk"
+    },
+    "icmp_checks_enabled": false
+  },
+  "ip_assignments": {
+    "assignments": {
+      "p-bosh-aa1a0865f22186a0beec": {
+        "director-e9942d7434eab9c9d99e": {
+          "8229164f1aca889243fe": [
+            "172.16.1.41"
+          ]
+        }
+      },
+      "cf-24d992b042e5ad25ca7f": {
+        "consul_server-21167732b4bc4e108225": {
+          "81060fef351663459ead": [
+            "172.16.1.45"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "nats-a4cad97aae28840a2e6c": {
+          "81060fef351663459ead": [
+            "172.16.1.46"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "etcd_server-4ea0158b524af382873f": {
+          "81060fef351663459ead": [
+            "172.16.1.47"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "diego_database-36f9d50b446554b8c62a": {
+          "81060fef351663459ead": [
+            "172.16.1.48"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "nfs_server-21123ec2c127246910be": {
+          "81060fef351663459ead": [
+            "172.16.1.49"
+          ]
+        },
+        "router-7c10cf5a948f77c580ab": {
+          "81060fef351663459ead": [
+            "172.16.1.248"
+          ],
+          "2eb644ef1e9517f9c01a": [
+            "172.16.1.249"
+          ]
+        },
+        "mysql_proxy-7f0fa0e0dd9734998f69": {
+          "81060fef351663459ead": [
+            "172.16.1.50"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "mysql-0bd76cb3bc6b7746defd": {
+          "81060fef351663459ead": [
+            "172.16.1.51"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "backup-prepare-d6f9b7ae02d2208c6f28": {
+          "81060fef351663459ead": [
+
+          ]
+        },
+        "ccdb-a1f00927637b9cdf0f79": {
+          "81060fef351663459ead": [
+
+          ]
+        },
+        "uaadb-7caae2d2f82ea848266f": {
+          "81060fef351663459ead": [
+
+          ]
+        },
+        "consoledb-eeb8dcf74a23dfba2abf": {
+          "81060fef351663459ead": [
+
+          ]
+        },
+        "cloud_controller-1b60c8f6554c8ee665f5": {
+          "81060fef351663459ead": [
+            "172.16.1.52"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "ha_proxy-818b8973c2ae4a0d1e0c": {
+          "81060fef351663459ead": [
+            "172.16.1.247"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "clock_global-81083777bb8ca2d6829b": {
+          "81060fef351663459ead": [
+            "172.16.1.53"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "cloud_controller_worker-3c20b6ed7b3d7f7385b3": {
+          "81060fef351663459ead": [
+            "172.16.1.54"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "collector-ef774cbf683585127e8d": {
+          "81060fef351663459ead": [
+            "172.16.1.55"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "uaa-567bf27c440ac4ddacc3": {
+          "81060fef351663459ead": [
+            "172.16.1.56"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "diego_brain-9dfd4c184e5e0f340ef7": {
+          "81060fef351663459ead": [
+            "172.16.1.57"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "diego_cell-7c54dc83b51c3464700e": {
+          "81060fef351663459ead": [
+            "172.16.1.58"
+          ],
+          "2eb644ef1e9517f9c01a": [
+            "172.16.1.59"
+          ]
+        },
+        "doppler-eb9c00f0cba3081f1b63": {
+          "81060fef351663459ead": [
+            "172.16.1.60"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "loggregator_trafficcontroller-97e7b9c9b41f52998ff1": {
+          "81060fef351663459ead": [
+            "172.16.1.61"
+          ],
+          "2eb644ef1e9517f9c01a": [
+
+          ]
+        },
+        "push-apps-manager-5502be6231d2419cfbe7": {
+          "81060fef351663459ead": [
+            "172.16.1.62"
+          ]
+        },
+        "smoke-tests-9b2c88e22b97416b4ce2": {
+          "81060fef351663459ead": [
+            "172.16.1.63"
+          ]
+        },
+        "notifications-d1b5f90328573ecbf523": {
+          "81060fef351663459ead": [
+            "172.16.1.64"
+          ]
+        },
+        "notifications-tests-84d7d64531d9169ad3dc": {
+          "81060fef351663459ead": [
+            "172.16.1.65"
+          ]
+        },
+        "notifications-ui-f1906da4e596f958064f": {
+          "81060fef351663459ead": [
+            "172.16.1.66"
+          ]
+        },
+        "notifications-ui-tests-8849eccead0a8cc54b5a": {
+          "81060fef351663459ead": [
+            "172.16.1.67"
+          ]
+        },
+        "autoscaling-ab47774ecfaf4094872e": {
+          "81060fef351663459ead": [
+            "172.16.1.68"
+          ]
+        },
+        "autoscaling-register-broker-67bb300d1315a86ab5db": {
+          "81060fef351663459ead": [
+            "172.16.1.69"
+          ]
+        },
+        "autoscaling-destroy-broker-b13a97350f6565db9fe6": {
+          "81060fef351663459ead": [
+            "172.16.1.70"
+          ]
+        },
+        "autoscaling-tests-ddee6d896f77939e00c4": {
+          "81060fef351663459ead": [
+            "172.16.1.71"
+          ]
+        },
+        "acceptance-tests-fb4d85a44628353d647d": {
+          "81060fef351663459ead": [
+            "172.16.1.72"
+          ]
+        },
+        "acceptance-tests-internetless-170a52377d9a6b81618e": {
+          "81060fef351663459ead": [
+            "172.16.1.73"
+          ]
+        },
+        "bootstrap-a3a95431389d1b79f71a": {
+          "81060fef351663459ead": [
+            "172.16.1.74"
+          ]
+        },
+        "compilation-67d3593e10f0af82db4b": {
+          "81060fef351663459ead": [
+            "172.16.1.75"
+          ]
+        },
+        "dynamic_for_static": {
+          "81060fef351663459ead": [
+            "172.16.1.76",
+            "172.16.1.77",
+            "172.16.1.78",
+            "172.16.1.79",
+            "172.16.1.80",
+            "172.16.1.81",
+            "172.16.1.82",
+            "172.16.1.83",
+            "172.16.1.84",
+            "172.16.1.85",
+            "172.16.1.86",
+            "172.16.1.87"
+          ],
+          "2eb644ef1e9517f9c01a": [
+            "172.16.1.88"
+          ]
+        }
+      },
+      "p-metrics-2efebf77291fa915911a": {
+        "maximus-ee903bf42a35edaa539e": {
+          "8229164f1aca889243fe": [
+            "172.16.1.42"
+          ]
+        },
+        "opentsdb-firehose-nozzle-4a99ae2a2fabb747a88f": {
+          "8229164f1aca889243fe": [
+            "172.16.1.89"
+          ]
+        },
+        "compilation-86912a6345c4a19a2ea8": {
+          "8229164f1aca889243fe": [
+            "172.16.1.43"
+          ]
+        },
+        "dynamic_for_static": {
+          "8229164f1aca889243fe": [
+            "172.16.1.44",
+            "172.16.1.90"
+          ]
+        }
+      },
+      "p-mysql-1b4255adf4f5d3ec189c": {
+        "mysql-dc2876ea43b25efcbdfe": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.91"
+          ],
+          "cd06b8e754932192bace": [
+            "172.16.1.92"
+          ]
+        },
+        "backup-prepare-a977d9221f495a36af48": {
+          "01e1050ec7806d9d1fc1": [
+
+          ]
+        },
+        "proxy-88aaea4170a5e4f90298": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.93"
+          ],
+          "cd06b8e754932192bace": [
+
+          ]
+        },
+        "cf-mysql-broker-d06fffa8f300614aa6c1": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.94"
+          ],
+          "cd06b8e754932192bace": [
+
+          ]
+        },
+        "broker-registrar-7f2bf6507a48c430558a": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.95"
+          ]
+        },
+        "broker-deregistrar-3a4cbead03aef0d59c6c": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.96"
+          ]
+        },
+        "acceptance-tests-4e651d633b098a015e52": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.97"
+          ]
+        },
+        "compilation-0af5201b74e4a555a1f9": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.98"
+          ]
+        },
+        "dynamic_for_static": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.99",
+            "172.16.1.100",
+            "172.16.1.101"
+          ],
+          "cd06b8e754932192bace": [
+            "172.16.1.102"
+          ]
+        }
+      },
+      "p-rabbitmq-f7f065eb23032fad61bf": {
+        "rabbitmq-server-4e98849610a2deb34e2c": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.103"
+          ],
+          "cd06b8e754932192bace": [
+
+          ]
+        },
+        "rabbitmq-haproxy-b0c304423741c34e4796": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.104"
+          ],
+          "cd06b8e754932192bace": [
+
+          ]
+        },
+        "rabbitmq-broker-ada6c1026ddba7163278": {
+          "cd06b8e754932192bace": [
+            "172.16.1.105"
+          ]
+        },
+        "compilation-d3d3bef4ab5e215aad1c": {
+          "cd06b8e754932192bace": [
+            "172.16.1.106",
+            "172.16.1.107"
+          ]
+        },
+        "broker-registrar-234be653b893e69f476b": {
+          "cd06b8e754932192bace": [
+            "172.16.1.108"
+          ]
+        },
+        "broker-deregistrar-d4116bdf7364efe51caa": {
+          "cd06b8e754932192bace": [
+            "172.16.1.109"
+          ]
+        },
+        "dynamic_for_static": {
+          "01e1050ec7806d9d1fc1": [
+            "172.16.1.110",
+            "172.16.1.111"
+          ],
+          "cd06b8e754932192bace": [
+            "172.16.1.112"
+          ]
+        }
+      },
+      "p-spring-cloud-services-6c8463bf55d3afdbe22c": {
+        "deploy-service-broker-5fa24c66d52bdd02a982": {
+          "cd06b8e754932192bace": [
+            "172.16.1.113"
+          ]
+        },
+        "register-service-broker-c8b793fd5c9e9671f27e": {
+          "cd06b8e754932192bace": [
+            "172.16.1.114"
+          ]
+        },
+        "destroy-service-broker-5ba31d2333171df193fa": {
+          "cd06b8e754932192bace": [
+            "172.16.1.115"
+          ]
+        },
+        "compilation-7e2696b84512b61c85d1": {
+          "cd06b8e754932192bace": [
+            "172.16.1.116"
+          ]
+        }
+      }
+    }
+  },
+  "products": [
+    {
+      "guid": "p-bosh-aa1a0865f22186a0beec",
+      "installation_name": "p-bosh-aa1a0865f22186a0beec",
+      "product_version": "1.7.1.0",
+      "singleton_availability_zone_reference": "8229164f1aca889243fe",
+      "network_reference": "01313413ae48ad2d9607",
+      "prepared": true,
+      "stemcell": {
+        "infrastructure": "vsphere",
+        "hypervisor": "esxi",
+        "os": "ubuntu-trusty",
+        "version": "3232.2",
+        "file": "bosh-stemcell-3232.2-vsphere-esxi-ubuntu-trusty-go_agent.tgz",
+        "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent"
+      },
+      "jobs": [
+        {
+          "guid": "director-e9942d7434eab9c9d99e",
+          "installation_name": "director",
+          "disk_type_id": "76800",
+          "properties": [
+            {
+              "value": {
+                "identity": "vcap",
+                "password": "cd0228b8927bc7c26d60"
+              },
+              "identifier": "agent_credentials"
+            },
+            {
+              "value": {
+                "identity": "registry",
+                "password": "b5891cf92986b06243c7"
+              },
+              "identifier": "registry_credentials"
+            },
+            {
+              "value": {
+                "identity": "director",
+                "password": "a1dc7d4f0e324906b607"
+              },
+              "identifier": "director_credentials"
+            },
+            {
+              "value": {
+                "identity": "nats",
+                "password": "d5798aff2594fad5cdf6"
+              },
+              "identifier": "nats_credentials"
+            },
+            {
+              "value": {
+                "identity": "redis",
+                "password": "d8bc4bfb92df06be46ab"
+              },
+              "identifier": "redis_credentials"
+            },
+            {
+              "value": {
+                "identity": "postgres",
+                "password": "e330113e3beb2126f5ac"
+              },
+              "identifier": "postgres_credentials"
+            },
+            {
+              "value": {
+                "identity": "blobstore",
+                "password": "a9c678e46c0ee93e6733"
+              },
+              "identifier": "blobstore_credentials"
+            },
+            {
+              "value": {
+                "identity": "health_monitor",
+                "password": "e966331c934e9d1f1cd5"
+              },
+              "identifier": "health_monitor_credentials"
+            },
+            {
+              "value": {
+                "identity": "admin",
+                "password": "b5300b0c041e308a93bb"
+              },
+              "identifier": "uaa_admin_credentials"
+            },
+            {
+              "value": {
+                "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAqnjzzLOU1U28uZaka9YbTk5RYY2KKzSxyM2G8tVSdVKrCKKd\ni1rr7QHRi62FzL8odvlFUCrnJ4Bo5j2VDAtByCEn5tSIh9ZdEKtCH+rehG7KRU3z\nKK/0n7HaLTHkhg7DGYTFkEZcw+xZ1mh93kFadn9uPBaRh2spHAFmItS44nDjR4Gn\n1ietr3LlO5LsP298grm7mHOKusQhJ/EX7sTjI+x5zMb5ggW9nk1PasVxvaeZHEv7\noyEFpTw87WIGZ/kNv4qlIxVCMsMKtXS/PkN9JH7eFBIYsDnxPyELIC55iQFwKAhe\nenfyqAC5EiCPAO5G3qne47YrCTMF7KROYtJugwIDAQABAoIBAEenfXquhUG/YjN0\nIXp+TY31l3l0v/33MT9hPHb3uag87k075RK9TeuaVxTqBBKSyxRvJHZVAkJ1VCJr\nAipE1Qqk/RumfBj0vruR8MJvu8ZYt0a4RBv3EdDKNhXHIfJDZDhmuZAyMy3bO8vG\nshloyPiECbbSGaudHHN8Fw1O8sOi1aavLC63/OT1a09kjxa8oimwxdtxPGZsiIpD\nrkg5HKq9rV8NnBJXfrp2AI9sxgolzPfIo/I+FQg2HW2tCZ4E3Bv3AlhqJJfypnU4\nLFC7J5Q1xFVNBYJiYzX9X0Y7C4Y+igsnY2g9jmgiO9OKKr0pMshJpmHzVXqax/vS\neEdsMckCgYEA4DdGdhzSC3PCRHuR6sxwoZ8mku2V0jU1e1iQpfqWH5fg2SPLce64\nj0PG/R5TGvcPMPRsQHcGZFbKh2n1isbYDuG80FHJoeq15mfWBSb5shjSyMjvKr91\ns9WFJq4nmZJSiQN5jKiQ1ehaCoeB727zHwpNDJL4HlgFBfNoeUAkUaUCgYEAwqNY\nJzId4ypRaqDMbfQ1+7gHB+EGqwpZNksff8YTTa7C+0V4lk46plawaQQ8PSe1+g2+\nviWuoZUeHrbk/pkauxL4KLQSsiIDEG9/SHRa+TE5C/sn4m6F8SYihUcBcMuqE7ml\nElY6pvgqm8o2ji36Og7soxKLqseJZwU1XRF29wcCgYEAv7YDhVI3NpuP68ZMiZqs\nY0UVUmPaypW8WO7tHz4XxoOyOXelqJEZNUYaiqq3HENKte0H8kbTLFAZc5dh33sN\nmgvhya1k3hE13v/Buz4MGf+nmw5TkRWLqmxTITOfoGvALm7OKzqmPIAjHQWoT/Vp\n44yHPM0dYbSY9vGczq/NXhECgYBtjC4TcXus3aaRUwt8X1T65ire3mI4Zkyr6EBE\nVCGNOW14qzMhtcoA0Q3dLYsSCIW9xXqz3tWZECqxstLUESwgWp7dmexj4gzDdV24\nU/TYCEJJYgSixv4QKhyH0t0WtSp2i6hC19GPJGIm6Psnru0FPF0ns0p0xnWpTB8q\n0KeahQKBgGUfYdYWE/ItSUdCDpH8xNl5JzU5KTwOhcOggRNUwZ2Aqs7bEdOOcOim\nDC/Y5FhcuDSBEswFmfcLt8JaXIv+CyJn+xN0HPh5QofYS5TipdvnPY0TaesnOQd7\n3HSSPu55YzAwdhYSbRoljw/avGIQ5P0CCX0Djwpx2iXjNPfEeKxE\n-----END RSA PRIVATE KEY-----\n"
+              },
+              "identifier": "uaa_jwt_key"
+            },
+            {
+              "value": {
+                "identity": "login",
+                "password": "f1d50d9a441630cd2c23"
+              },
+              "identifier": "uaa_login_client_credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "37a1b6eda238913c",
+            "password": "2c69c24d8eb98a60"
+          },
+          "partitions": [
+            {
+              "job_reference": "director-e9942d7434eab9c9d99e",
+              "installation_name": "director-partition-8229164f1aca889243fe",
+              "instance_count": 1,
+              "availability_zone_reference": "8229164f1aca889243fe"
+            }
+          ],
+          "identifier": "director"
+        }
+      ],
+      "director_ssl": {
+        "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAzOA+WIVf7fJVJjEglOUWcsIxzdwi9rDRFmiAN/C9MxKHSYdD\ncpBF+ZkODsilX8anK4tujpJih2v8Kic0qOTUjLQoGOIbQ0X25rIbh+QmXl26ULal\n5HLAd0It/Z+eGGvADOYxuBWMA+fxh1HOp0ZyFMARi7cj3R4+MvYmKoJaAEVUcw8V\nLq75ZkJ8RHF9aMZcMSyHELumpv6Vfgp/fRhXJ8ZS1WzYJjy3rzTcWVlPExkB+RSA\nEDSU5WWiIRoOU7ynbX4UIzG77F3QrZmHsJPP8dq4XSOEkhM0EDbxfiWXM+y0tNEp\ntzcb096KjeE5bg9nplVMHCAVyJfvkazSe27i0wIDAQABAoIBAHHYwoxqQS52lT6N\n2i8jRmAq7YYZqAwxoV60X1u2mUyCJU+ErMRCy7+xf5BTiyI3v7mA18S+L6ZVKWE7\nPBYGYt51VjrNmpy9ikAUBRx0eaXCq8AiXvkdkzoyOmBPjIjBh40jdcl3n8Cj6SFr\nIkzt5oMFYDqlYHaFUcb75aWFngG7hPyCGo/BAnneeJIwRsU2KgiyVwhtV69Sm8Ku\nUSX83kv4xVY5A4IQrNewpeyKC44SZ8Td6jxCusJn7eWY9x18FywHC6L4qSi8BSw0\n6hBaJofjyLTkq6FNT/5xG5EugaAITe3ylEAERahAZSycpiRAPAgffwMwiP8Ya4o7\nzsnKilECgYEA/wMEgupr0yQAZWMzfdIRjzJzD+m++Lf1+hgMLxunPSvmIX2a0h7r\nMayfoXJ/XE3d3jsgg3EH2ZM12chia8XntI/1Oa+6HyYX4lAIkiwXDjhOd6hORpFs\nqzeyB0iD2kesOl0PnysNQimKcKboDzQsyhsAEyH583CDSur7cUI3Zz8CgYEAzat9\nM2XLxeRzMb3vIoPKVJLjs1VZ1V1PahzUditFvdl3RoJGrD2HUiE/yEVB9Lzk8fNA\nvbh8+ST7cFrOWWqB12hH+TZEMqIpUl2NNBIzStd9xI+RJp9l3kF9aEY8JGEN7AzR\nbSySolbuJkReTMpzeifBpsl63cfwIKWSoCeB020CgYABQr6O9yG5VYA7ABaNFLDJ\niHJRLdKn4CDzL5M/2F8nSkRE/h350/VNtZDEd5BxoGDsbFZoz/I9/SBTB06VQdE3\nb07DDj9ZUBLmJ4cjUdx7UYPxy383khh7cDcNGiqstZYAY91j6A6UuSfaDrku+g8O\noLuLXKujrHa5tBeyI6WqeQKBgGPxbLLYSdCNdij62kUUc/LrOnlABZp4cInpHpmZ\n55cdISgDUKKMd8DCZYNFnIp4bGziv1gyWZCclw7/IX00E4qAo1EIPNW6FYhv65kd\nKw24b+ZfubJiDReXDYDpeHpZK3HEvNRnr43x3mJ8ILMCQmFfBmytReaWLStAKmNn\nL2B1AoGBAJn9OW0NtAeNH6Qruznu0S1nasFoGREhp7SuqSWyAOL2mcBUhxeT+U6K\nYUQmvdGXlP5xz+1TUd0emjyCM/RJLcY5y1k7P2ZjhuYCq33U9R49GZpIszump4Eo\nRpfh2+F9RYQ6YL/H1Qfscq0B7aYv6Gkfz5s1teXUlEuBIG4QkpCm\n-----END RSA PRIVATE KEY-----\n",
+        "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDYDCCAkigAwIBAgIUBXJctAN0fBAYwC7CxmXGBxOwjdgwDQYJKoZIhvcNAQEF\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUy\nMzM0WhcNMTgwNTExMTUyMzM0WjA1MQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\nb3RhbDEUMBIGA1UEAwwLMTcyLjE2LjEuNDEwggEiMA0GCSqGSIb3DQEBAQUAA4IB\nDwAwggEKAoIBAQDM4D5YhV/t8lUmMSCU5RZywjHN3CL2sNEWaIA38L0zEodJh0Ny\nkEX5mQ4OyKVfxqcri26OkmKHa/wqJzSo5NSMtCgY4htDRfbmshuH5CZeXbpQtqXk\ncsB3Qi39n54Ya8AM5jG4FYwD5/GHUc6nRnIUwBGLtyPdHj4y9iYqgloARVRzDxUu\nrvlmQnxEcX1oxlwxLIcQu6am/pV+Cn99GFcnxlLVbNgmPLevNNxZWU8TGQH5FIAQ\nNJTlZaIhGg5TvKdtfhQjMbvsXdCtmYewk8/x2rhdI4SSEzQQNvF+JZcz7LS00Sm3\nNxvT3oqN4TluD2emVUwcIBXIl++RrNJ7buLTAgMBAAGjfjB8MA4GA1UdDwEB/wQE\nAwIHgDAdBgNVHQ4EFgQUfba8XtlkMCJ5BUw9Tcy+bQGh/xMwHQYDVR0lBBYwFAYI\nKwYBBQUHAwIGCCsGAQUFBwMBMCwGA1UdEQQlMCOCCzE3Mi4xNi4xLjQxgglsb2Nh\nbGhvc3SCCTEyNy4wLjAuMTANBgkqhkiG9w0BAQUFAAOCAQEAH9vVBrOGehqyH7oE\nSluNmSgcJpH9vVphX6rYCRJBdG0AyobH6y1zf54/jMZ9Wy8dPSoffO9e3YFm8CqA\nP3ew1aYn9N68+bcmi/rzA44EVMGnOuNsK5MErGVez8g1o6CxSN5eQMvjnjej4qGH\n7G5ltBQ4IaBwnnMVbfAg7wE6lR/nzMbt+Zx3r3DgaYQbB5pbU1LtySEamJAwGsdk\n6CVWdXKUROYOzeQ2TxuMjyuJVvLY2S/y2Qav5fa5MiKB35Iv0W+3MHEQKa3+loAO\nThe+sEKQfbCTrP+xs85EZDmaptFAjShUZ8ICa+kRhds7vAbT8iBnEPGenns2Bk09\nGfmuVA==\n-----END CERTIFICATE-----\n"
+      },
+      "uaa_ssl": {
+        "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAzApOb9avmr6PWqSUklJxty2fphmBfMJQp76XAVnuDQ7DnMdu\nFCC0zM4Hw4cmmaDF9+1VlBbSzcmqoJmC3cetftqxhCgMQ5X2wunvBaRqI+gKlZEV\nAO5OsooLKIn47xgSz5NnYbTfixZW248q5vysyeK6eaFUGQ3snRwZEPhCdvmQdGdF\noPTQH44QYUd68znZny+mDdf+4Vj+WzHmYR8S+PSfpYXYkB9zrIoo84U0yh3Ay6sZ\nr9vh5U8cmv75lzba45wF7am/d0NcAHbfAc+BM+NbhLwnOPnFsEx/2IVfptt0XyBE\n/JEZ70xYAy1OaljwIdslVMKokbd0quPv0JgVdwIDAQABAoIBADFaXNaYaylW5n3a\nSUWLQ443LuKSUMvIhJHOe+ALzJTD+XS2mF2t+41+WEpnKmMGjFwHwCdtzdeQ7ACk\noQ7b+Y8xfrakqTK/10wWIYaP2kyNF+JNkXMEMWzmDwTjOp86h3JGCT+M7HVMFf5N\nhucQPwsmGEzLRPg6cf0eisGcCxeTnuqMGfBfB2qbW/JB3JJFN4IFncsbg+rkK7GK\nRSXcDrFehvBdbkjV939wHYdZxMX4GjUPRgDXICs6ZRmilyrbWOycfdV/xby6ry8V\nYppgVqZFrCGAiPo7djTOwjoo37oAFK6w5AJxiA8EKQrTX6ZLd5fJpE+GVsUtPQsJ\nbRxxeMECgYEA+abg4q1lk8EAG/jwipd/6aa7Hgs7SySKmAZh7q0rNRvf4eurrgRG\nz6FpKkj3Lt3dTwFEMR841aSjWoxJHLr9HrSQhywuzpeJc8sXAzts5iUMoNhVJOl/\nEbcQ8NY/HqvPAfYbl/O87Twfl7oVrXzsfeTud1xstSBQGfS+XPlDQHkCgYEA0TqE\nT8IgdFlXhbnVHeW+CvwN9BH3FvwszLDVBwKtckkiCxEunfIJFWOyxpqs1Yslw0tA\nCS9VtVS4J8xPI8PU5uImprWiCOVnatxZkLdqZ8o7I7jsbW7d2medPuSjgJAUBq5v\naXnqCGMiizPlyLFMLny6GR5XRTs0zaBF3raJ6W8CgYAIBb7QSfYrq1YPkA5axceM\ngJkevAmpvoDdpcbb3qC20jB9mA8qRmToIy23+CRJU0PbWBUS5wfyhZniPQPUcoXT\nyMWkMl1GskPufqY8qlozgxlGyezihMZakWFv+9KHb8n1LC1y0phNn1L8kzRDIPKQ\nkRzApS2xHFq2mtDLOA9bMQKBgEgaa2h1FOwjsdbC0N/pwZFVhZV773P7WZD8y50L\n3iwJafL4a+FAfMLjRcPNoAxDVLM1po7DwjyoQoJslUVVAnTCsOE4rOt16yrXXwJR\nQxkbhz/rRYb88vWGSZlX/8SZYl1fFcP6oJ1dVJU2QFTmTMOkdhmb7CVOnwbR2eJD\nc8l/AoGAO9smaKccD2PcE+FZ7boC6wQxQacFN0Nl4GEvKha+84FXL1x8Fcf70rDU\nTceBWnhSaQvQMjenbhAEOyEpruxZDmq7Ob0JzD2hJt3yUGTxuP93SXFDYMCp23WG\n/chLn22/w+X4nYtPPTAY/X3DIcQwYxtFs/5E7oyZYl2jSSovVdM=\n-----END RSA PRIVATE KEY-----\n",
+        "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDYTCCAkmgAwIBAgIVALlYOiyYbDrsiaPUGeG9UXf+pMe4MA0GCSqGSIb3DQEB\nBQUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE2MDUxMTE1\nMjMzNFoXDTE4MDUxMTE1MjMzNFowNTELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp\ndm90YWwxFDASBgNVBAMMCzE3Mi4xNi4xLjQxMIIBIjANBgkqhkiG9w0BAQEFAAOC\nAQ8AMIIBCgKCAQEAzApOb9avmr6PWqSUklJxty2fphmBfMJQp76XAVnuDQ7DnMdu\nFCC0zM4Hw4cmmaDF9+1VlBbSzcmqoJmC3cetftqxhCgMQ5X2wunvBaRqI+gKlZEV\nAO5OsooLKIn47xgSz5NnYbTfixZW248q5vysyeK6eaFUGQ3snRwZEPhCdvmQdGdF\noPTQH44QYUd68znZny+mDdf+4Vj+WzHmYR8S+PSfpYXYkB9zrIoo84U0yh3Ay6sZ\nr9vh5U8cmv75lzba45wF7am/d0NcAHbfAc+BM+NbhLwnOPnFsEx/2IVfptt0XyBE\n/JEZ70xYAy1OaljwIdslVMKokbd0quPv0JgVdwIDAQABo34wfDAOBgNVHQ8BAf8E\nBAMCB4AwHQYDVR0OBBYEFN5Q/f5cm3azL2rP3E6uPVEM3dPrMB0GA1UdJQQWMBQG\nCCsGAQUFBwMCBggrBgEFBQcDATAsBgNVHREEJTAjggsxNzIuMTYuMS40MYIJbG9j\nYWxob3N0ggkxMjcuMC4wLjEwDQYJKoZIhvcNAQEFBQADggEBAGlWNQtU9nJhCAei\nVZLl/t/vvXFwaI7CgXVD+KkKFXB33Q1eTBevvdomAYBnZbsvGFAesmM7lfbHmAqL\nPMMhzkOUHCYmxo+ZiwG6ej1KeBXbtiDVswaAuRYG2NvvrGhPzyohHW/VuvCxyeXj\nuVaoH6y47BcNn7Z2UUVLTRJspxtAgOwJ/ynHCzvtyKFXC3W9kpq/rp7yG7974ZLH\n0VJVv1SjfW7voubasUBVTkGtvullv0SMeJccKjkkerDbAIHKT5tSGuXw3UVXPB6X\ne7jl2Ps84GsbMl/lXXZdgnSnkQ4MBNBL2EOpoJEhMmyPY4lhLyO8UB5N0abX6V8u\n6QWNSEI=\n-----END CERTIFICATE-----\n"
+      },
+      "uaa_credentials": {
+        "identity": "ops_manager",
+        "password": "f40926a990b3968ec960"
+      },
+      "uaa_admin_user_credentials": {
+        "identity": "admin",
+        "password": "c7843359cb2e329ae5ff"
+      },
+      "uaa_admin_client_credentials": {
+        "identity": "admin",
+        "password": "ce029ac1507af42e6e3e"
+      },
+      "identifier": "p-bosh"
+    },
+    {
+      "guid": "cf-24d992b042e5ad25ca7f",
+      "installation_name": "cf-24d992b042e5ad25ca7f",
+      "product_version": "1.7.0-build.315",
+      "singleton_availability_zone_reference": "81060fef351663459ead",
+      "network_reference": "01313413ae48ad2d9607",
+      "availability_zone_references": [
+        "81060fef351663459ead",
+        "2eb644ef1e9517f9c01a"
+      ],
+      "disabled_post_deploy_errand_names": [
+        "smoke-tests",
+        "push-apps-manager",
+        "notifications",
+        "notifications-ui",
+        "autoscaling",
+        "autoscaling-register-broker"
+      ],
+      "applied_data_migrations": [
+        "201603041539_custom_buildpacks.js",
+        "201603101403_networking.js",
+        "201603071158_auth_enterprise_sso.js",
+        "201604010830_garden_cleanup.js",
+        "201603241526_mysql_backups.js",
+        "201603161621_default_smoke_test_selector.js",
+        "201603151606_internal_api_user_creds.js"
+      ],
+      "prepared": true,
+      "stemcell": {
+        "infrastructure": "vsphere",
+        "hypervisor": "esxi",
+        "os": "ubuntu-trusty",
+        "version": "3215",
+        "file": "bosh-stemcell-3215-vsphere-esxi-ubuntu-trusty-go_agent.tgz",
+        "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent"
+      },
+      "jobs": [
+        {
+          "guid": "consul_server-21167732b4bc4e108225",
+          "installation_name": "consul_server",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "d25aca01fa28db6d",
+            "password": "66de62a914a7ca67"
+          },
+          "partitions": [
+            {
+              "job_reference": "consul_server-21167732b4bc4e108225",
+              "installation_name": "consul_server-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "consul_server-21167732b4bc4e108225",
+              "installation_name": "consul_server-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "consul_server"
+        },
+        {
+          "guid": "nats-a4cad97aae28840a2e6c",
+          "installation_name": "nats",
+          "properties": [
+            {
+              "value": {
+                "identity": "nats",
+                "password": "ad8dc71cf9f7d5068e18"
+              },
+              "identifier": "credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "ac4878a0a801e241",
+            "password": "5c36b962d30c1437"
+          },
+          "partitions": [
+            {
+              "job_reference": "nats-a4cad97aae28840a2e6c",
+              "installation_name": "nats-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "nats-a4cad97aae28840a2e6c",
+              "installation_name": "nats-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "nats"
+        },
+        {
+          "guid": "etcd_server-4ea0158b524af382873f",
+          "installation_name": "etcd_server",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "a34f8aabd8992b9f",
+            "password": "bb31171e79c31d11"
+          },
+          "partitions": [
+            {
+              "job_reference": "etcd_server-4ea0158b524af382873f",
+              "installation_name": "etcd_server-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "etcd_server-4ea0158b524af382873f",
+              "installation_name": "etcd_server-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "etcd_server"
+        },
+        {
+          "guid": "diego_database-36f9d50b446554b8c62a",
+          "installation_name": "diego_database",
+          "properties": [
+            {
+              "value": {
+                "secret": "f9fd48f73ad0aaf71cc8"
+              },
+              "identifier": "bbs_encryption_passphrase"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "e7c50d6709492a57",
+            "password": "1a34456638cb8fc5"
+          },
+          "partitions": [
+            {
+              "job_reference": "diego_database-36f9d50b446554b8c62a",
+              "installation_name": "diego_database-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "diego_database-36f9d50b446554b8c62a",
+              "installation_name": "diego_database-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "diego_database"
+        },
+        {
+          "guid": "nfs_server-21123ec2c127246910be",
+          "installation_name": "nfs_server",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "93a52b0ef90daad4",
+            "password": "9e07b82c2985a444"
+          },
+          "partitions": [
+            {
+              "job_reference": "nfs_server-21123ec2c127246910be",
+              "installation_name": "nfs_server-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "nfs_server"
+        },
+        {
+          "guid": "router-7c10cf5a948f77c580ab",
+          "installation_name": "router",
+          "properties": [
+            {
+              "value": {
+                "identity": "router_status",
+                "password": "c8a04634684ddebc3ae7"
+              },
+              "identifier": "status_credentials"
+            },
+            {
+              "value": "172.16.1.248,172.16.1.249",
+              "identifier": "static_ips"
+            },
+            {
+              "value": false,
+              "identifier": "disable_insecure_cookies"
+            },
+            {
+              "value": {
+                "secret": "b297fab07cc8250b72be"
+              },
+              "identifier": "route_services_secret"
+            },
+            {
+              "value": 1200,
+              "identifier": "request_timeout_in_seconds"
+            }
+          ],
+          "instance": {
+            "value": 2,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "a0a7e87464aecda6",
+            "password": "82ed2b61fb25c78a"
+          },
+          "partitions": [
+            {
+              "job_reference": "router-7c10cf5a948f77c580ab",
+              "installation_name": "router-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "router-7c10cf5a948f77c580ab",
+              "installation_name": "router-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 1,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "router"
+        },
+        {
+          "guid": "mysql_proxy-7f0fa0e0dd9734998f69",
+          "installation_name": "mysql_proxy",
+          "properties": [
+            {
+              "identifier": "static_ips"
+            },
+            {
+              "identifier": "service_hostname"
+            },
+            {
+              "value": {
+                "identity": "admin",
+                "password": "ffd1be8349e6531e8695"
+              },
+              "identifier": "dashboard_credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "339e53ba06687acb",
+            "password": "dae59dbef25130e2"
+          },
+          "partitions": [
+            {
+              "job_reference": "mysql_proxy-7f0fa0e0dd9734998f69",
+              "installation_name": "mysql_proxy-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "mysql_proxy-7f0fa0e0dd9734998f69",
+              "installation_name": "mysql_proxy-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "mysql_proxy"
+        },
+        {
+          "guid": "mysql-0bd76cb3bc6b7746defd",
+          "installation_name": "mysql",
+          "properties": [
+            {
+              "value": {
+                "identity": "root",
+                "password": "ad0b5f49d0424f63d3fd"
+              },
+              "identifier": "mysql_admin_credentials"
+            },
+            {
+              "value": {
+                "identity": "cd74c35a8c52d113f935",
+                "password": "da47578a9a96bdb98dd6"
+              },
+              "identifier": "mysql_bootstrap_credentials"
+            },
+            {
+              "value": {
+                "identity": "e10783af90f9720f3ba6",
+                "password": "f34acff73d48acbb7b65"
+              },
+              "identifier": "mysql_backup_server_credentials"
+            },
+            {
+              "value": {
+                "identity": "app_usage",
+                "password": "bba8f69c66a2f2776425"
+              },
+              "identifier": "app_usage_credentials"
+            },
+            {
+              "value": {
+                "identity": "d1cb813a5dd5a0eaeebe",
+                "password": "b52b099433574edd8060"
+              },
+              "identifier": "notifications_credentials"
+            },
+            {
+              "value": {
+                "identity": "d2ed738b0d1bd1623440",
+                "password": "d4dbf7e72d75b444b262"
+              },
+              "identifier": "autoscale_credentials"
+            },
+            {
+              "value": {
+                "identity": "bbcebff1716baf9f7018",
+                "password": "e9c0e260f5d2417eee6b"
+              },
+              "identifier": "ccdb_credentials"
+            },
+            {
+              "value": {
+                "identity": "f86e2d3635383d5f7e8c",
+                "password": "c4721f19d7a9f8e8aaea"
+              },
+              "identifier": "uaadb_credentials"
+            },
+            {
+              "value": {
+                "identity": "a2150b6906abb45fb3e7",
+                "password": "e97c79e61a7c62940a71"
+              },
+              "identifier": "consoledb_credentials"
+            },
+            {
+              "value": 1200,
+              "identifier": "database_startup_timeout"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "bcbae1396ae63f48",
+            "password": "48b9fbc3976e92b4"
+          },
+          "partitions": [
+            {
+              "job_reference": "mysql-0bd76cb3bc6b7746defd",
+              "installation_name": "mysql-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "mysql-0bd76cb3bc6b7746defd",
+              "installation_name": "mysql-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "mysql"
+        },
+        {
+          "guid": "backup-prepare-d6f9b7ae02d2208c6f28",
+          "installation_name": "backup-prepare",
+          "properties": [
+            {
+              "value": {
+                "secret": "f6a7dde159d44c092f8b"
+              },
+              "identifier": "backup_encryption_key"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "0251a3832ed12a8c",
+            "password": "e219ab7805788761"
+          },
+          "partitions": [
+            {
+              "job_reference": "backup-prepare-d6f9b7ae02d2208c6f28",
+              "installation_name": "backup-prepare-partition-81060fef351663459ead",
+              "instance_count": 0,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "backup-prepare"
+        },
+        {
+          "guid": "ccdb-a1f00927637b9cdf0f79",
+          "installation_name": "ccdb",
+          "properties": [
+            {
+              "value": {
+                "identity": "admin",
+                "password": "e0ec1ed507454f4d8bb9"
+              },
+              "identifier": "credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "9f189a8aebc322ee",
+            "password": "68bbb538a90b9c8b"
+          },
+          "partitions": [
+            {
+              "job_reference": "ccdb-a1f00927637b9cdf0f79",
+              "installation_name": "ccdb-partition-81060fef351663459ead",
+              "instance_count": 0,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "ccdb"
+        },
+        {
+          "guid": "uaadb-7caae2d2f82ea848266f",
+          "installation_name": "uaadb",
+          "properties": [
+            {
+              "value": {
+                "identity": "root",
+                "password": "ba53de34092a2332b341"
+              },
+              "identifier": "credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "319635865550def9",
+            "password": "d6d28cebf4c9a196"
+          },
+          "partitions": [
+            {
+              "job_reference": "uaadb-7caae2d2f82ea848266f",
+              "installation_name": "uaadb-partition-81060fef351663459ead",
+              "instance_count": 0,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "uaadb"
+        },
+        {
+          "guid": "consoledb-eeb8dcf74a23dfba2abf",
+          "installation_name": "consoledb",
+          "properties": [
+            {
+              "value": {
+                "identity": "root",
+                "password": "bcfd7d514a119cb99a6e"
+              },
+              "identifier": "credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "a5db2d8c02bbe01e",
+            "password": "7f2b69a73ec2a596"
+          },
+          "partitions": [
+            {
+              "job_reference": "consoledb-eeb8dcf74a23dfba2abf",
+              "installation_name": "consoledb-partition-81060fef351663459ead",
+              "instance_count": 0,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "consoledb"
+        },
+        {
+          "guid": "cloud_controller-1b60c8f6554c8ee665f5",
+          "installation_name": "cloud_controller",
+          "properties": [
+            {
+              "value": {
+                "identity": "staging_upload_user",
+                "password": "e138e25ddc8cea97b1cc"
+              },
+              "identifier": "staging_upload_credentials"
+            },
+            {
+              "value": {
+                "identity": "bulk_api",
+                "password": "beb1556f95be319f71f3"
+              },
+              "identifier": "bulk_api_credentials"
+            },
+            {
+              "value": {
+                "identity": "db_encryption",
+                "password": "e01f6a87c98df94c7594"
+              },
+              "identifier": "db_encryption_credentials"
+            },
+            {
+              "identifier": "encrypt_key"
+            },
+            {
+              "value": 1024,
+              "identifier": "max_file_size"
+            },
+            {
+              "value": 1024,
+              "identifier": "default_app_memory"
+            },
+            {
+              "value": 2048,
+              "identifier": "max_disk_quota_app"
+            },
+            {
+              "value": 1024,
+              "identifier": "default_disk_quota_app"
+            },
+            {
+              "value": true,
+              "identifier": "enable_custom_buildpacks"
+            },
+            {
+              "value": "sys.homelab.io",
+              "identifier": "system_domain"
+            },
+            {
+              "value": "apps.homelab.io",
+              "identifier": "apps_domain"
+            },
+            {
+              "value": 10240,
+              "identifier": "default_quota_memory_limit_mb"
+            },
+            {
+              "value": 100,
+              "identifier": "default_quota_max_number_services"
+            },
+            {
+              "value": true,
+              "identifier": "allow_app_ssh_access"
+            },
+            {
+              "value": {
+                "identity": "e0830d63fa17bf4fc502",
+                "password": "c2e6473e273e69ee86c1"
+              },
+              "identifier": "internal_api_user_credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "a425686e8bf35126",
+            "password": "6aaaa45d14852891"
+          },
+          "partitions": [
+            {
+              "job_reference": "cloud_controller-1b60c8f6554c8ee665f5",
+              "installation_name": "cloud_controller-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "cloud_controller-1b60c8f6554c8ee665f5",
+              "installation_name": "cloud_controller-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "cloud_controller"
+        },
+        {
+          "guid": "ha_proxy-818b8973c2ae4a0d1e0c",
+          "installation_name": "ha_proxy",
+          "properties": [
+            {
+              "value": "172.16.1.247",
+              "identifier": "static_ips"
+            },
+            {
+              "value": true,
+              "identifier": "skip_cert_verify"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "5198570a4eae8e95",
+            "password": "7c53716353181617"
+          },
+          "partitions": [
+            {
+              "job_reference": "ha_proxy-818b8973c2ae4a0d1e0c",
+              "installation_name": "ha_proxy-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "ha_proxy-818b8973c2ae4a0d1e0c",
+              "installation_name": "ha_proxy-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "ha_proxy"
+        },
+        {
+          "guid": "clock_global-81083777bb8ca2d6829b",
+          "installation_name": "clock_global",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "fa2e905fba6c901f",
+            "password": "46e5cddc1e37cde6"
+          },
+          "partitions": [
+            {
+              "job_reference": "clock_global-81083777bb8ca2d6829b",
+              "installation_name": "clock_global-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "clock_global-81083777bb8ca2d6829b",
+              "installation_name": "clock_global-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "clock_global"
+        },
+        {
+          "guid": "cloud_controller_worker-3c20b6ed7b3d7f7385b3",
+          "installation_name": "cloud_controller_worker",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "5169ffe0d71b8e7a",
+            "password": "520286a744f5fbba"
+          },
+          "partitions": [
+            {
+              "job_reference": "cloud_controller_worker-3c20b6ed7b3d7f7385b3",
+              "installation_name": "cloud_controller_worker-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "cloud_controller_worker-3c20b6ed7b3d7f7385b3",
+              "installation_name": "cloud_controller_worker-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "cloud_controller_worker"
+        },
+        {
+          "guid": "collector-ef774cbf683585127e8d",
+          "installation_name": "collector",
+          "instance": {
+            "value": 1,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "135645707c36b689",
+            "password": "9fc3755ce26a125e"
+          },
+          "partitions": [
+            {
+              "job_reference": "collector-ef774cbf683585127e8d",
+              "installation_name": "collector-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "collector-ef774cbf683585127e8d",
+              "installation_name": "collector-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "collector"
+        },
+        {
+          "guid": "uaa-567bf27c440ac4ddacc3",
+          "installation_name": "uaa",
+          "properties": [
+            {
+              "value": {
+                "identity": "admin",
+                "password": "d81757d780fa2c2b80b7"
+              },
+              "identifier": "admin_credentials"
+            },
+            {
+              "value": {
+                "identity": "push_apps_manager",
+                "password": "f5638a6a21446beca09c"
+              },
+              "identifier": "push_apps_manager_credentials"
+            },
+            {
+              "value": {
+                "identity": "smoke_tests",
+                "password": "c3fd6c236cc07016be40"
+              },
+              "identifier": "run_smoke_tests_credentials"
+            },
+            {
+              "value": {
+                "identity": "system_services",
+                "password": "cdcddfca0b11151b253a"
+              },
+              "identifier": "system_services_credentials"
+            },
+            {
+              "value": {
+                "identity": "system_verification",
+                "password": "b8aa77e3e04330c031bf"
+              },
+              "identifier": "system_verification_credentials"
+            },
+            {
+              "value": {
+                "identity": "system_passwords",
+                "password": "d668790408b327515647"
+              },
+              "identifier": "system_passwords_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "login",
+                "password": "b724d52cf0e3fe8fae86"
+              },
+              "identifier": "login_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "identity",
+                "password": "a0b7db0155d89d9c2225"
+              },
+              "identifier": "identity_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "gorouter",
+                "password": "a29e9adbb45f52af13af"
+              },
+              "identifier": "gorouter_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "doppler",
+                "password": "f80c303556d72161f51f"
+              },
+              "identifier": "doppler_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "opentsdb-firehose-nozzle",
+                "password": "a51d94707abe9db31e0f"
+              },
+              "identifier": "opentsdb_nozzle_credentials"
+            },
+            {
+              "value": {
+                "identity": "portal",
+                "password": "ad05e7b72cca0efad8bf"
+              },
+              "identifier": "apps_manager_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "autoscaling_service",
+                "password": "cc115dafaff118cb7173"
+              },
+              "identifier": "autoscale_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "cc-service-dashboards",
+                "password": "e941297f55058e907095"
+              },
+              "identifier": "cc_service_dashboards_credentials"
+            },
+            {
+              "value": {
+                "identity": "cloud_controller",
+                "password": "e521e59174767e3e4f8b"
+              },
+              "identifier": "cc_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "admin",
+                "password": "af4289ebbfbcaceca94e"
+              },
+              "identifier": "admin_client_credentials"
+            },
+            {
+              "value": {
+                "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpQIBAAKCAQEAvJY+eqFDyc7SXnyjpK67FV2yI/cpEG8lfa7F3TgwCLugJmRS\n8j+reHaRLAoMHmlWHajLPBJt1FmhAV2YG51LdqdgeqkBm/omrywxYC8J6Rr93EhN\nslM6weVD9Emo4YTb9nbXXBIO+2PFbrKZzuVvqWTqIfEphQZugCA0blkoqNkp6xTe\nJiaWMrWbZBAdAzBLUe91oAE2XqgAeaGITvG2g1c8UfSNshLmRzXUa+A0LhjtThRo\nfTEC0DBXKlwQU+fplEg26eiNQSSgGVla0Q1o0WBR3Rn1btFFgtirzPunPljNbgPL\nJdLi4hsLmUMXNtO6zP2d1xijoajuQqYGS77FAQIDAQABAoIBAHBJzV3bE6/f0+aq\ntA1kdMSeC2nayrqcU2hoXiwAPqmUfiEd7z2Kp6CMiJf+S4T4F2yFiq10E60yyOk1\nP1KB7+LwekPOycSDx/DZkXTBzVbc2XcGHi0l3YCB8FpOWZ4eK5Ku5EBQCFeq6m2l\nLmvAtSHZkocvPxeT4surYUyrDciqr3xgJdIUkUyQE0uCUuHelaz1tUbIqxW7Te2F\nagK7FbxNwwXVHOXQ2xgaQXPf0Dh0YCUYHHuBgDXu64Mrm257nQCOlC5UkGUhRis0\ncxB/B9k5j/Z4fli+oMqBGkjPgk4dj32aDxVrIJoeqwDAiTNJzh8DzzIB1DVZ9W6P\nW6EYQBkCgYEA6A3f9qBYwqQCqTodIOsm+eSrvlBJQZoTcrl5HUUUc5hSC9U4ahm1\nVd3fA6bhm/GjAFt8b+Kvn+LfJWWI1uiEA+16HIzuYRgQVRERVvdXa+HZ6KlSDiL9\nsA0Y+cGstLJHs5cQSfvbEoL730wTRRWvZsZ9hknCxsJI3rwMt8WRGaMCgYEA0Awa\nUgJ2U+yHrKpq3fDmia2+gxm6EcZ+TZWf4tf4ySk3V261ODcJd4c00oo7MvR2f7vJ\nTuAVzDZJo/VncjFPiXa0/CPYKJtTA+AFyuZijPKqLv+H5RVyjvvlh9yCAZy+hWww\nrq71h+JSTCZGBYL9gfS43UVLo+hL2Xb0JAyTWQsCgYEAnFdMvyKE6o4JZO5MVbNY\njSAtPYll8ZbW54JiQQAbqU3EaUh8O6+aZoGXESTL936zLTh1/AOkA3qckNt5eCEr\nYGIM1VN1/2BxEH7xScBW285MO95n9DJK7OPGIe8EZrF+cVajmNTgYfZxr53XlcHo\nbLvqMiFb4wFeiwHzJ5UqDzUCgYEAiCHTOyRXTvTvliDwyobuItqoVVqJMUZjsNqe\nAy30oZQxnSlYtQ72R9sVykofEGl7/Hrg75abTMOdDgbvCH6Rn84oAPBnabKw8FEv\nGSQFClti1lvoDRMqobrb5zl3bBynYeB4PmVHTgHefetxV/vta5K5QDgulXLT5tj6\nSXhdFh8CgYEAjvhEXl6JIAASOKM1hwlGUOp6G2vMy1vlQJFHkm5lUYWh1gSQMrJO\nHKA4d9cSRtpYdyMx3EsIi+IXrwCOfR2Bzrw+D3UdIiuDyxWwDwy5uSCNY9CneawS\n1EudEBrxd7OUaYN618j7G+SyPat1ARxR0Knx6guU/B1ymFskJTvu2hE=\n-----END RSA PRIVATE KEY-----\n"
+              },
+              "identifier": "jwt_signing_key_credentials"
+            },
+            {
+              "value": {
+                "identity": "notifications",
+                "password": "e07f34d8d0c742c6faad"
+              },
+              "identifier": "notifications_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "notifications_template",
+                "password": "d48c683fdf5b35bec19e"
+              },
+              "identifier": "notifications_template_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "ssh_proxy",
+                "password": "bb1ac2a78b2a1078b1d6"
+              },
+              "identifier": "ssh_proxy_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "notifications_ui_client",
+                "password": "f021605abe2681e4b4e1"
+              },
+              "identifier": "notifications_ui_client_credentials"
+            },
+            {
+              "value": {
+                "identity": "cloud_controller_username_lookup",
+                "password": "f0a83531c36930bc0d70"
+              },
+              "identifier": "cloud_controller_username_lookup_credentials"
+            },
+            {
+              "value": {
+                "identity": "cc_routing",
+                "password": "ecfcb07737e1a61ec8c2"
+              },
+              "identifier": "cc_routing_credentials"
+            },
+            {
+              "value": {
+                "identity": "apps_metrics",
+                "password": "c5416c43fd17afd35766"
+              },
+              "identifier": "apps_metrics_credentials"
+            },
+            {
+              "value": {
+                "identity": "apps_metrics_processing",
+                "password": "ef8ce2f34723fdc52d99"
+              },
+              "identifier": "apps_metrics_processing_credentials"
+            },
+            {
+              "value": {
+                "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpQIBAAKCAQEAwcD3RMHloOfEGowjnlJ8ZzU61lNelE/tubM245kV3kcGJ5qS\nH4BnuWjf6qdtkEKhNfuOb3C8l3A8iHGg3f31Eow1AtecJkWzJS0h2OWFSm+QuiPR\nWk/VfWoT0Tywcec1pPnh9H9Blvq5kF6d0pZFuUL4HSlCurA2tbSueXBgi559wAau\ns4xNj0Q5y7hYOqOeLcRDlILfPIMg6fcs7tPd3uvcjx0vMRUhOjmvqERV/j8UMeJ2\ni558y/RdxQDMda9tqx6yEBxwfrq25sB0RUY9ba9Xko9iBisQKvprprwyRM0fqs5x\n3kshTMyPYeptUWFp6uX1LwVgcOAj7WiztWcANwIDAQABAoIBAQCj2MgB+Cp0uKno\nfUv9remP6b640kWwDCuPl1M6gxGwJ8W3pgod45tTerGooS+RCBeGLBXWfbKuKfa2\nt8h/Eiy2I6UMo0JkRxrovFLcNbRTLydnkbSPt+VlKlhZ4AWiPRDrU3lWJmtT/vD/\nelPiarvJoC1rk6Hfd/a8EHBfN74dMk5veyoTsykelkQhSpgyO+8gMB8XbKFN3Zcg\nl9aJ9+2LN5Zn5FdL+sDKgldJl4dh5NJQrfsky8uXE/j28A8sWZaW9cosLKwg3yL6\nkY+oNcRRINApiQOGlnt1O+tDyDg4iREnEWQhpE6vwtL2J+HkGpnyjDp79VmuOG/x\nzM+IjZNRAoGBAPgAQunaqJTQCePePqIuIzabpGtqkBZJIok+J4YK2Hfm+rkXwdT3\ndWYk+tV7JSPcddGKxmibC50JUxVBMS0A1dspnVZ7di7iPuSjo1NktyYTsybyk8X4\n1+9yvCG4pxw21I8LG2bny2+ZwtHMp+pRJyelPHT145RNg6ZjRVrhuUJ5AoGBAMgA\nyUgbT/bD7twD9VKtUpb9phFEswqbBHG/K5nRs6VnNVVWX1VTyDzNa9D9L02U9JeN\nFp0mQhnl4F4IDuoa8XCd8tF3lOQwt4B+olcTPktpBRzlD956Uawsng0uCZM7J46w\nETj3GObe2nIrl4z+BG+UvxThsjj8lSmVs3bO7ywvAoGBAO38+jmGPt7HoaYNQVfL\nJLmjtK3sDieEuWKwxabpQ4AUpSf4N2cSrZN/C0LQMPzv9BRIs0vw9b0WFKfB7tn8\nAj2V+sniIrCtJqOssPA3J1af8vz+Lnb97OJ43TcTBzKZH3PBueMPr3cCPCWu2riO\ndh+ifpjS2jkYBa0neIfVMz4pAoGBAIlnyOFqKkDNka/EZGm9vA0SDGK2wQ7bO21u\nOmU+Jd7QDlsnsO1tVxc2xgjZuQLjADuSaePjYexq+v9/J8f8ZL3LNgRk1H0FXzy/\nQ4bxKI4kg6e7U3C0tqHEMX26kEd/j4i/O8XYNVp/5rIjcsYhyihil/ifqpLuLQhZ\n2ecY+kZvAoGAAL07LMJ+cojF42UxiEzW1qsHgT71CND2E9iOmWmp2fpTB691R/GC\nr/LG+x4Zg1HPwn8uZxkx3RIxqO8IhpzsbxvZpptHSz8vvcfvPB+Rw5Bf9cQ+N76I\nSJf/w/cPqDAZONOO2awI9zgh7InATzRUnTmme8DAHPJDC60phogg0K8=\n-----END RSA PRIVATE KEY-----\n",
+                "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDRzCCAi+gAwIBAgIUWQUsBth94kDLGAXwx7/KtSt2IZ0wDQYJKoZIhvcNAQEF\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUy\nMzM0WhcNMTgwNTExMTUyMzM0WjBKMQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\nb3RhbDEpMCcGA1UEAwwgc2VydmljZV9wcm92aWRlcl9rZXlfY3JlZGVudGlhbHMw\nggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDBwPdEweWg58QajCOeUnxn\nNTrWU16UT+25szbjmRXeRwYnmpIfgGe5aN/qp22QQqE1+45vcLyXcDyIcaDd/fUS\njDUC15wmRbMlLSHY5YVKb5C6I9FaT9V9ahPRPLBx5zWk+eH0f0GW+rmQXp3SlkW5\nQvgdKUK6sDa1tK55cGCLnn3ABq6zjE2PRDnLuFg6o54txEOUgt88gyDp9yzu093e\n69yPHS8xFSE6Oa+oRFX+PxQx4naLnnzL9F3FAMx1r22rHrIQHHB+urbmwHRFRj1t\nr1eSj2IGKxAq+mumvDJEzR+qznHeSyFMzI9h6m1RYWnq5fUvBWBw4CPtaLO1ZwA3\nAgMBAAGjUDBOMA4GA1UdDwEB/wQEAwIHgDAdBgNVHQ4EFgQUqWnS6suINx8pZrKu\nQo+IAAkNoB8wHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMA0GCSqGSIb3\nDQEBBQUAA4IBAQBg10j8fw7JEl23Sd4BYY54H37lyuAN0ml3Tt+xF6uJwdJwMFi7\n7dbhu4FoSDcjklPbg+zDJwiNyJUlehMzjm0UfvZxVLJGT844J1exyLuK/3YkXk3g\nASP/7g7Rv0Y8MNj4hnNxZA9JXPYT1ODsfz6OQwkpKanb9xsnz2Lpu9LqWkZzYHfP\n09HjcGNZLH8OpTRguOZl3kWTvJgXCjzR0NHo7uEci7L/NpjDjnrdSgkLJ5QK64Lq\n8VYbu8uzoKDJBW+eWsrp8dtQzVazHwPuJ7WkSck+hLAe2tZvwE3pauzK89TspBDr\n3qSXXBsVwXeWz6I5YjB1RFBnXjjkHyPkXBOz\n-----END CERTIFICATE-----\n"
+              },
+              "identifier": "service_provider_key_credentials"
+            },
+            {
+              "value": 1209600,
+              "identifier": "apps_manager_access_token_lifetime"
+            },
+            {
+              "value": 1209600,
+              "identifier": "apps_manager_refresh_token_lifetime"
+            },
+            {
+              "value": 7200,
+              "identifier": "cf_cli_access_token_lifetime"
+            },
+            {
+              "value": 1209600,
+              "identifier": "cf_cli_refresh_token_lifetime"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "82403ded17e45611",
+            "password": "73fa6ed471e3e025"
+          },
+          "partitions": [
+            {
+              "job_reference": "uaa-567bf27c440ac4ddacc3",
+              "installation_name": "uaa-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "uaa-567bf27c440ac4ddacc3",
+              "installation_name": "uaa-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "uaa"
+        },
+        {
+          "guid": "diego_brain-9dfd4c184e5e0f340ef7",
+          "installation_name": "diego_brain",
+          "properties": [
+            {
+              "value": {
+                "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAvzvv8u76arQUmDhDxMvhw3ehmKTPcDVUtTiHznfn7FcZ/9L3\nbay4rryE7aZeDXr+0AN+N/LHfUFa4vvQ7sJ31FgY0C5tqJNQJD9g3fLCvCXigc8A\njU85zwYifnc5D2bggfmUyT49qmKn1ZCRFNWlQvOGzpF5NMW0bAStHl0NLYQpuNqU\nMjpsFssyS6Oba9QdVAB7tRk2qTnrQ/y/AQpsp3DZeK2ddn43wpqAMZcoiPwipD/a\nOb71l7c7eETPYbIYhIX93W4V9lbTF4+kZrLhtkeDz0KKZw3MKkxegMTyHmUn4Gts\n4Hrtp0SP1lA5iBKxbDaTh1UJUo6pBqmBzpTYwwIDAQABAoIBAHa0lPC+qVEc8X+/\nxUleqYh1NSkUfPORF0Dak2p1gdByDOCBKze4NHe66+S9FbrWc1/aGzpNiMlWjT1C\nxOHAczOrb9OiTk2LC/9EHDQJohm6hoy/Wv9cg2zfyP+psBDAcnIb4+C7svmV/cqS\nz4wYRlp14mNNZ+h7JNC8Yl3rsudiA+rxFPsisanb5D2p+0upz6CIAKw7BtBYvYFx\ntnPlEFuE85aLxJpNv6v16Evv2NGBYJFHRgWZzxd5AVgqPe7mEdToHZP8IZ6u79y7\nc/6l1F5GlsPsvcoNB5Y7a03s0+2tjTCAVrhgvz8D3a3YB/RnqVS49FrlUFZPvGFW\nBnR+E5ECgYEA8XKCnd5qrs4uBo4VxLPcCl9ZL0fOO5I/3A/Fcf7B8OiT04UEgyoJ\napLcff+EaX3kG6OBXnrWV1O1EL/xT8ygDUfCsdaq56xwFsz/RTwCFosTO9DSId0f\n6V/io/uWzkNzBNhYoiv0PZQWh4n5C+FwJj2roJ+Hd5A7L+S4G0gK++kCgYEAysKl\nhBXanvrjJZn10OTHpHAw6NwZexpnJal7by5/9a3AShNBObmKdJW1SPjwfUywfyec\nHCBfpLUw+W7o8NCyApwoH95m3fLnvsduZ5LJy4oU/itI/3l0pl1tRj6slWAWVZAa\nWSCHEVbDtC1RjCeHHWANoD/pVpvIJRJyiAgi/8sCgYAc6NAY5POzIH7ETCjxF3QG\nTepYzek0mstIpx7GCnHgTYi9r9Sde+AKwbDi6UBKfUddw9MOo/icFiq86a6UFnUn\ngese7gwilzQIlt0NxiSd3GMeK1+trFNQ1ylE5y/kXJEeCGV8bXTeFqgn7G5EbObH\nvWSaY9+NgliD4IfmxFaEWQKBgQDAxTZf0fc8VwNGaI4QwLIeYJvfiAKhy4RthijY\nl7kIdtzukEfe/cvo87ybWDIsrpDPE3WUOCM2kR2yyAOnkILtgFGVmvjp41r5Qtpw\nllpMrUcwLy8D1RFWalTOCCBFFEmnp42lVwuTLI576uow+hO3le7egGTz9r/enx9M\nvY+o6QKBgBugwLCz0/qX1deGc0Px6xXV5+zm75NEBDOqWsOJS7fPtyv2V4tG1TZN\nlpaXAwwgvMCNjOaQWOP034fImmDF2F/2TTQQQP8PGck25pzc1p3bMmKPRoB3OVJc\nWSWvuoWnBOALvc78KoTPrlgJ7B0S0MWdzT/Z/nF7nZm+pDgJcKTa\n-----END RSA PRIVATE KEY-----\n"
+              },
+              "identifier": "ssh_host_key"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "e21bdd37fc141a84",
+            "password": "f3e431753d47498e"
+          },
+          "partitions": [
+            {
+              "job_reference": "diego_brain-9dfd4c184e5e0f340ef7",
+              "installation_name": "diego_brain-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "diego_brain-9dfd4c184e5e0f340ef7",
+              "installation_name": "diego_brain-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "diego_brain"
+        },
+        {
+          "guid": "diego_cell-7c54dc83b51c3464700e",
+          "installation_name": "diego_cell",
+          "properties": [
+            {
+              "identifier": "executor_disk_capacity"
+            },
+            {
+              "identifier": "executor_memory_capacity"
+            },
+            {
+              "value": "10.254.0.0/22",
+              "identifier": "garden_network_pool"
+            },
+            {
+              "identifier": "insecure_docker_registry_list"
+            },
+            {
+              "value": 1454,
+              "identifier": "garden_network_mtu"
+            }
+          ],
+          "instance": {
+            "value": 2,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "f06229bdd005762f",
+            "password": "b3bced123e9e9f2b"
+          },
+          "partitions": [
+            {
+              "job_reference": "diego_cell-7c54dc83b51c3464700e",
+              "installation_name": "diego_cell-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "diego_cell-7c54dc83b51c3464700e",
+              "installation_name": "diego_cell-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 1,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "diego_cell"
+        },
+        {
+          "guid": "doppler-eb9c00f0cba3081f1b63",
+          "installation_name": "doppler",
+          "properties": [
+            {
+              "value": {
+                "identity": "abaa4c219e7795f5bd98",
+                "password": "d0abd39197bf3337f36d"
+              },
+              "identifier": "shared_secret_credentials"
+            },
+            {
+              "value": 10000,
+              "identifier": "message_drain_buffer_size"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "26aeb5c3adc61e97",
+            "password": "7d5686cae0889493"
+          },
+          "partitions": [
+            {
+              "job_reference": "doppler-eb9c00f0cba3081f1b63",
+              "installation_name": "doppler-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "doppler-eb9c00f0cba3081f1b63",
+              "installation_name": "doppler-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "doppler"
+        },
+        {
+          "guid": "loggregator_trafficcontroller-97e7b9c9b41f52998ff1",
+          "installation_name": "loggregator_trafficcontroller",
+          "properties": [
+            {
+              "value": {
+                "identity": "e17089bcf8b00cce17c1",
+                "password": "c15612f0bbcdb515376b"
+              },
+              "identifier": "status_credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "b45df98c576de324",
+            "password": "772463e5a00c8d26"
+          },
+          "partitions": [
+            {
+              "job_reference": "loggregator_trafficcontroller-97e7b9c9b41f52998ff1",
+              "installation_name": "loggregator_trafficcontroller-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            },
+            {
+              "job_reference": "loggregator_trafficcontroller-97e7b9c9b41f52998ff1",
+              "installation_name": "loggregator_trafficcontroller-partition-2eb644ef1e9517f9c01a",
+              "instance_count": 0,
+              "availability_zone_reference": "2eb644ef1e9517f9c01a"
+            }
+          ],
+          "identifier": "loggregator_trafficcontroller"
+        },
+        {
+          "guid": "push-apps-manager-5502be6231d2419cfbe7",
+          "installation_name": "push-apps-manager",
+          "properties": [
+            {
+              "value": {
+                "secret": "a84a08ed505460238d31"
+              },
+              "identifier": "secret_token"
+            },
+            {
+              "identifier": "company_name"
+            },
+            {
+              "identifier": "accent_color"
+            },
+            {
+              "identifier": "global_wrapper_bg_color"
+            },
+            {
+              "identifier": "global_wrapper_text_color"
+            },
+            {
+              "identifier": "global_wrapper_header_content"
+            },
+            {
+              "identifier": "global_wrapper_footer_content"
+            },
+            {
+              "identifier": "logo"
+            },
+            {
+              "identifier": "square_logo"
+            },
+            {
+              "identifier": "footer_text"
+            },
+            {
+              "identifier": "footer_links"
+            },
+            {
+              "value": [
+                {
+                  "guid": "f27bad58-a699-462a-9332-f4d6e640148a",
+                  "name": "Marketplace",
+                  "href": "/marketplace"
+                },
+                {
+                  "guid": "2f6f476f-2c07-474a-9c76-135dae6dc8f7",
+                  "name": "Docs",
+                  "href": "http://docs.pivotal.io/pivotalcf/getstarted/pcf-docs.html"
+                },
+                {
+                  "guid": "b2c8aedf-3389-4b28-833b-10fec7c3f944",
+                  "name": "Tools",
+                  "href": "/tools"
+                }
+              ],
+              "identifier": "nav_links"
+            },
+            {
+              "identifier": "product_name"
+            },
+            {
+              "identifier": "marketplace_name"
+            },
+            {
+              "value": false,
+              "identifier": "enable_internal_user_store"
+            },
+            {
+              "value": false,
+              "identifier": "enable_non_admin_role_management"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "6b8abe2d752f4ef5",
+            "password": "072f26d567f9c986"
+          },
+          "partitions": [
+            {
+              "job_reference": "push-apps-manager-5502be6231d2419cfbe7",
+              "installation_name": "push-apps-manager",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "push-apps-manager"
+        },
+        {
+          "guid": "smoke-tests-9b2c88e22b97416b4ce2",
+          "installation_name": "smoke-tests",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "6722853331d24c3c",
+            "password": "a5b92e28f87bfe4f"
+          },
+          "partitions": [
+            {
+              "job_reference": "smoke-tests-9b2c88e22b97416b4ce2",
+              "installation_name": "smoke-tests",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "smoke-tests"
+        },
+        {
+          "guid": "notifications-d1b5f90328573ecbf523",
+          "installation_name": "notifications",
+          "properties": [
+            {
+              "value": {
+                "identity": "d3c75810b305c872ff89",
+                "password": "da6638804041c689909d"
+              },
+              "identifier": "encryption_credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "ad679546804494b1",
+            "password": "e2a33be32e9b1e5a"
+          },
+          "partitions": [
+            {
+              "job_reference": "notifications-d1b5f90328573ecbf523",
+              "installation_name": "notifications",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "notifications"
+        },
+        {
+          "guid": "notifications-tests-84d7d64531d9169ad3dc",
+          "installation_name": "notifications-tests",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "9ff400d98be4a9a4",
+            "password": "740d871984739594"
+          },
+          "partitions": [
+            {
+              "job_reference": "notifications-tests-84d7d64531d9169ad3dc",
+              "installation_name": "notifications-tests",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "notifications-tests"
+        },
+        {
+          "guid": "notifications-ui-f1906da4e596f958064f",
+          "installation_name": "notifications-ui",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "4beee029396f5a3a",
+            "password": "59adc586811017d4"
+          },
+          "partitions": [
+            {
+              "job_reference": "notifications-ui-f1906da4e596f958064f",
+              "installation_name": "notifications-ui",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "notifications-ui"
+        },
+        {
+          "guid": "notifications-ui-tests-8849eccead0a8cc54b5a",
+          "installation_name": "notifications-ui-tests",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "8639d88632f637e0",
+            "password": "7bcb15d89ab04e6e"
+          },
+          "partitions": [
+            {
+              "job_reference": "notifications-ui-tests-8849eccead0a8cc54b5a",
+              "installation_name": "notifications-ui-tests",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "notifications-ui-tests"
+        },
+        {
+          "guid": "autoscaling-ab47774ecfaf4094872e",
+          "installation_name": "autoscaling",
+          "properties": [
+            {
+              "value": {
+                "identity": "51371083adaa4b5d",
+                "salt": "fc68fd99e675ac73",
+                "password": "3f6ed69fb9d1da8f"
+              },
+              "identifier": "broker_credentials"
+            },
+            {
+              "value": {
+                "identity": "a3201af930255b74",
+                "salt": "5b8244720af31470",
+                "password": "20db167dec4f10bc"
+              },
+              "identifier": "encryption_key"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "bc8b8fa4c40d7ec2",
+            "password": "1805852f04b1543e"
+          },
+          "partitions": [
+            {
+              "job_reference": "autoscaling-ab47774ecfaf4094872e",
+              "installation_name": "autoscaling",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "autoscaling"
+        },
+        {
+          "guid": "autoscaling-register-broker-67bb300d1315a86ab5db",
+          "installation_name": "autoscaling-register-broker",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "6c962cbd4d64d13f",
+            "password": "b1d9eefa88ce35df"
+          },
+          "partitions": [
+            {
+              "job_reference": "autoscaling-register-broker-67bb300d1315a86ab5db",
+              "installation_name": "autoscaling-register-broker",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "autoscaling-register-broker"
+        },
+        {
+          "guid": "autoscaling-destroy-broker-b13a97350f6565db9fe6",
+          "installation_name": "autoscaling-destroy-broker",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "db93cdb995274025",
+            "password": "6ab9333b5f46e36c"
+          },
+          "partitions": [
+            {
+              "job_reference": "autoscaling-destroy-broker-b13a97350f6565db9fe6",
+              "installation_name": "autoscaling-destroy-broker",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "autoscaling-destroy-broker"
+        },
+        {
+          "guid": "autoscaling-tests-ddee6d896f77939e00c4",
+          "installation_name": "autoscaling-tests",
+          "properties": [
+            {
+              "value": {
+                "identity": "fa81b2578791040e",
+                "salt": "b590f8c41e96d5f6",
+                "password": "5fc122b5f0fae9f3"
+              },
+              "identifier": "broker_credentials"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "3aca9e7b7670b9c4",
+            "password": "f4aa7af9ccdff671"
+          },
+          "partitions": [
+            {
+              "job_reference": "autoscaling-tests-ddee6d896f77939e00c4",
+              "installation_name": "autoscaling-tests",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "autoscaling-tests"
+        },
+        {
+          "guid": "acceptance-tests-fb4d85a44628353d647d",
+          "installation_name": "acceptance-tests",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "8c724f929c7711e7",
+            "password": "2bffc88acb355a59"
+          },
+          "partitions": [
+            {
+              "job_reference": "acceptance-tests-fb4d85a44628353d647d",
+              "installation_name": "acceptance-tests",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "acceptance-tests"
+        },
+        {
+          "guid": "acceptance-tests-internetless-170a52377d9a6b81618e",
+          "installation_name": "acceptance-tests-internetless",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "02afc24d4976a714",
+            "password": "a40ebbdb050a9793"
+          },
+          "partitions": [
+            {
+              "job_reference": "acceptance-tests-internetless-170a52377d9a6b81618e",
+              "installation_name": "acceptance-tests-internetless",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "acceptance-tests-internetless"
+        },
+        {
+          "guid": "bootstrap-a3a95431389d1b79f71a",
+          "installation_name": "bootstrap",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "13be0e9511113946",
+            "password": "5b5f062ebc73587d"
+          },
+          "partitions": [
+            {
+              "job_reference": "bootstrap-a3a95431389d1b79f71a",
+              "installation_name": "bootstrap",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "bootstrap"
+        },
+        {
+          "guid": "compilation-67d3593e10f0af82db4b",
+          "installation_name": "compilation",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "c8f8c67ec17ad6b9",
+            "password": "f75cdbef27accaae"
+          },
+          "partitions": [
+            {
+              "job_reference": "compilation-67d3593e10f0af82db4b",
+              "installation_name": "compilation-partition-81060fef351663459ead",
+              "instance_count": 1,
+              "availability_zone_reference": "81060fef351663459ead"
+            }
+          ],
+          "identifier": "compilation"
+        }
+      ],
+      "properties": [
+        {
+          "value": "1.7.0-build.315",
+          "identifier": "product_version"
+        },
+        {
+          "identifier": "syslog_host"
+        },
+        {
+          "identifier": "syslog_port"
+        },
+        {
+          "identifier": "syslog_protocol"
+        },
+        {
+          "value": "myworkemc@gmail.com",
+          "identifier": "smtp_from"
+        },
+        {
+          "value": "smtp.gmail.com",
+          "identifier": "smtp_address"
+        },
+        {
+          "value": 587,
+          "identifier": "smtp_port"
+        },
+        {
+          "value": {
+            "identity": "myworkemc",
+            "password": "Welcome12#"
+          },
+          "identifier": "smtp_credentials"
+        },
+        {
+          "value": true,
+          "identifier": "smtp_enable_starttls_auto"
+        },
+        {
+          "value": "plain",
+          "identifier": "smtp_auth_mechanism"
+        },
+        {
+          "identifier": "smtp_crammd5_secret"
+        },
+        {
+          "identifier": "logger_endpoint_port"
+        },
+        {
+          "value": "app_usage_service",
+          "identifier": "app_usage_service_database"
+        },
+        {
+          "value": "autoscale",
+          "identifier": "autoscale_database"
+        },
+        {
+          "value": "ccdb",
+          "identifier": "ccdb_database"
+        },
+        {
+          "value": "console",
+          "identifier": "console_database"
+        },
+        {
+          "value": "notifications",
+          "identifier": "notifications_database"
+        },
+        {
+          "value": "uaa",
+          "identifier": "uaa_database"
+        },
+        {
+          "value": {
+            "secret": "d886ecc9a2e0dd67dd83"
+          },
+          "identifier": "consul_encrypt_key"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA362jmx7pQDG9iq4qqnmJrNCt3HenQgBrmg2isj8T9Kr6wLyl\n8b3KiaRutWssbUsp9V5JqTRcWjMTLTGWbenKEGoGKvFxTtqMEz2gVs7g2qfevUoT\nQOqZpEwUMNa/2Df9/ueV8WCV9TXwOG5FVlDab2yqwa+vjEypLBgheSVMwxlU4xs1\nQSYfok2Qk2LFhqmzAJC1/boKSgSLwV0ja2fO2yhk4NXaiMq04Z7QLsMhx4wN8Gct\nHSu+RHbyoO0dESvtC4VgOO4cpc3RZDsCI4NEl0atbh6wEceC/ZO894cvJ/aiI3Ta\nBTB5IvYzMEM7RL1yFB4bj2WAj/vxPMdl/gcgAwIDAQABAoIBAQChqRej11VxhgGd\np39CspCkjDX8L6Z891zNfKln9lrv7FtKzY2KCEfH70XsbMcxPq/WnQzT8/oDXwKv\nGTXFvsDB2D8Y7mOcQCwZA+NMmjy9C7LaUB1WP7hHnIzDN5J0LROwFaSzTcFT9mXm\nAxyt48Xb3kgTsGxKFGX4boBS1HiEUAJa1N89U+OfDkSXTvTS0vLAXJOIf0pQotS4\nXwKVwiPO40coSsheB6lvfI1CLgAT90KaIWlB/22YfiDIQE01sQ5W5qEHZr5yZ2hy\n23GC0W4CcT0YVo5hDaNgAO09R1rr/ZYL7iBrX3POO5LID6BU1ADkc4FwGj7baBzg\nTOGzFdvxAoGBAPqnX+I86flKAa1/hUg3N7D+S+rLc1TJ9SgOhnofpS8M2fHapeX/\n0ByytR9c8zn8vb4kQxebv58qN71QEiBl7RhHh/wy+gYzAIpBbz5fehONlEi9kOdV\n0Ur7mXUb7hXvR6u0pPFJjLilAOqM71ckS5ud67DBVDwSI65dnLKtd77PAoGBAORy\n+N9zpEsq5bqZOUWRNhJgykTv9LGASq7GQ7kxRfCOwz69wOrFDr8D70DnzXNHBVFg\n/2kvRFLFp1mwBBDW4bfqWOdhIeCW8Ej42xy0VeQQhYwle0C7YMPffnDmb8toZMFv\n0QVFyPZjvN/lgDq1OVlfVTPc2H29gdPQNTUMvniNAoGAeJcR8FxyDLdoOzqAuw+l\nwYd2qs2a/Q303oKufA7Bf/Nk35DcA92hGE16Ck7DzgAkoVf811zdQgwjqPbe4atn\n+Chh6hn0ZAshlWKJzK5Oox2YW66oCkQlXzfQyqDXWMI37woH2PYTt7nayP1pILmb\njpDZlb5NcmEfvYHYI7aFR80CgYB+fGHrZp3quH+lxzx8lh/4IPsdHDbBKKUxC7ln\nii6NOJ5F2M49romxnT4VE8MfNo1tN2VzGaacpa8460n1AOTM7cX3pkIZlbjIznCS\n/g4oTjWDGSWa+6RiDxZ08EGpv805hO2YG8FfGm3zEaDj4H82SqBkLLz5Mbn2SuuK\nydmT6QKBgAnlLAxQiwf6QZjj+HgFjKNpm42RyNdJNFcEiRvqAi3YM3TFr/HNontT\nR7EA0aNSXk7tb8hXoJhonppcSpg8V9UgJY5aDXJSgTsT4HNqodT7FGgzarzpLeQR\nbwFEy+nqGNuehSD0m/yACrDsorrQJOxI1isx8m6HBlUvYUUuoC3z\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDOTCCAiGgAwIBAgIVAOZ/6pHVVp1cXHyx2DLJxkI6ATvCMA0GCSqGSIb3DQEB\nBQUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE2MDUxMTE1\nMjMzNFoXDTE4MDUxMTE1MjMzNFowOzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp\ndm90YWwxGjAYBgNVBAMMEWNvbnN1bF9hZ2VudF9jZXJ0MIIBIjANBgkqhkiG9w0B\nAQEFAAOCAQ8AMIIBCgKCAQEA362jmx7pQDG9iq4qqnmJrNCt3HenQgBrmg2isj8T\n9Kr6wLyl8b3KiaRutWssbUsp9V5JqTRcWjMTLTGWbenKEGoGKvFxTtqMEz2gVs7g\n2qfevUoTQOqZpEwUMNa/2Df9/ueV8WCV9TXwOG5FVlDab2yqwa+vjEypLBgheSVM\nwxlU4xs1QSYfok2Qk2LFhqmzAJC1/boKSgSLwV0ja2fO2yhk4NXaiMq04Z7QLsMh\nx4wN8GctHSu+RHbyoO0dESvtC4VgOO4cpc3RZDsCI4NEl0atbh6wEceC/ZO894cv\nJ/aiI3TaBTB5IvYzMEM7RL1yFB4bj2WAj/vxPMdl/gcgAwIDAQABo1AwTjAOBgNV\nHQ8BAf8EBAMCB4AwHQYDVR0OBBYEFAis8O5TWzOy0b5rykhS4m8q8Z4SMB0GA1Ud\nJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATANBgkqhkiG9w0BAQUFAAOCAQEAUW81\nSsjrNWp7uub/6uJNriavfEi6ZLw9mei3+ineFCXsQFnVyKP08QnVobX2uzsz4juI\n7Xo17uZXna5Rm2w6Ab7ZN+G6UqpJD4rjVTUPTBfRxoBlWaqzjfVKfi54oURD6qcO\npZCiEC65EQ4CYD2UaCdXOQKtydnX/7ULtU8ANWODCWkyIP9vKfj4c07/OpKugfmP\nSvC+st9AKGhgyEz9o3N73JVSoByrIJKGzF2mjijMxPkCo8ejOFm54ZoEfqOyaqeb\nAWq0eYptfgF+QDIr91HlheuiJK+2KyBWqeQ/P0cbscYePOiLNf6MCHmV1a8nPnIf\nFxGf/1ROhuWE+KNk0Q==\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "consul_agent_cert"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAljhgQFQelvl/bv5rY5Xn8O3VvOb58SnFSH6xOiuojaWe3vo4\nYRGjGZip6D5yiILWR4xgQm7YOflc8CAexcFzDHzaVrXMWEYbW+05XtW84HKC1sL9\nO64jdwFMQia2Kx1kQzFVBG2UrJ2tuxNInpdWaFVGOYTKd8itMafIgveiNzVnPKNR\nQhD/5ZC4mkuiy96RchRI/bUWCT8tabDZ1MhaAP3ZXwOdrKNlDwPfGrk5GbAXiFZg\nMAbOrcOTlLXGqdwlzVezRkCSpLRoKsXyRalKaQIYkNFWQra0EtZ7SbuC9Gu9NOzc\nvRrgwIHfo5u8dko7P8cc/8EDkF03Y7TuoILgxQIDAQABAoIBAQCJVglJRp6g0IFc\n7GUpqodekVHzXgfsH5Ap8wn8cKWsulpA6OpadFF0uUm89jqn61YUG5Z1pfkxJ3V8\nYyE/Etkn9Y138MVdftrMdFkbBrWjTY2o4qO5yD7MMfeSEupBCKH9fECJx9VA6vdG\nLR8bPqjUwgFt3KVuVZ1h5E9AzT0U0uttDuy7zuAWZJuHodRDUXcypwvzDHyjqr/H\ncm4FqLZ+WSzf1Rk3Y3rzXRkdAFUpZY/D42XYkrye4Ic9RW2BjmcJcJGQz2PpaGSR\nJRM6EZY1m3ZQiX+7A/40wlSK2ABoZGVCx5mJi/VB54ZisGYMKSBIsKw0Nt+doIYl\nGZNpW1gRAoGBAMdCvz4mrScIc8CtwfnXkfy4bWwWwDQjkbu5+ED0eDU9WRoI/ODU\nrQDMdypDfZvRnimtJiTvTBz7dsP2ezKYxPPGtNLI+aY3imGquxttmId3SBBuiAl9\nTFf+Lw4Wa9KydhaaHIQBYklTXrkxRks50JmA9l66eHtkcnwRtQD7n9P3AoGBAMD+\nyS74VsGUtuUssKThv5tj2PG+ZhMib+uZ8C/EyRfUpmz0f7wOK70M760OOWaEED/R\nBehhdIyaXkkf4A4DMkOuYdE4uPuq9mLipeaNzami8vGbyL5I4KNyogU3XAOW9voP\nxzgIuZIeymoiDB7bcDInM16GfOXyDC3SAmvc2MojAoGAcmVumAbqV8NxeQgImiBZ\nzsYvA+QX2pclHqqIzPnNXXtoARtx2r4eyJuaOmhe36s7a1/dy0ya3PS9XYnPdt/g\nCrhkrbL2KKgwSRwUqY2FCRjBBbX/YbtOriHe7+6NXnxYcWduwZZtz/0OH7IbUirS\nCJ7SUtYpP2YOmA4uZW8QdkcCgYAqZ9FMwMRPRJ3rPSaTFAdF3WqNs4g6LBbrbaeY\n12RYGCF5Tz/B0ltJ7s26+KUkIWBwpTznEoLJYiHVb2uLqKgitu5HSm9a3PXGRIav\nYfkOjP9UlyZEqT6yqz1uZ/uPzlv2FgFwDnq34IwZReHj5dOBMZvX6TUIUWbbqold\nqej4gQKBgQCuqzWEAzTOlyxr+r7y+r149n0Ehi78lByrWtHMLViffJcOU9JkIyUC\nPskkRiUrHKFeo6KP1XiGwStg1WC2kMWMQ3tA1jQ3cv2TuTYbYxtuCBPdC02Xk8/W\nnJvOl2tk7JQvwUqKVwTEKvZtQBmNlttxffa03JxTFAwXjFHNo7aN8g==\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDYDCCAkigAwIBAgIUfaB76fFDUH2kpue+vksW6xoCFaUwDQYJKoZIhvcNAQEF\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUy\nMzM0WhcNMTgwNTExMTUyMzM0WjBAMQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\nb3RhbDEfMB0GA1UEAwwWc2VydmVyLmRjMS5jZi5pbnRlcm5hbDCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAJY4YEBUHpb5f27+a2OV5/Dt1bzm+fEpxUh+\nsTorqI2lnt76OGERoxmYqeg+coiC1keMYEJu2Dn5XPAgHsXBcwx82la1zFhGG1vt\nOV7VvOBygtbC/TuuI3cBTEImtisdZEMxVQRtlKydrbsTSJ6XVmhVRjmEynfIrTGn\nyIL3ojc1ZzyjUUIQ/+WQuJpLosvekXIUSP21Fgk/LWmw2dTIWgD92V8DnayjZQ8D\n3xq5ORmwF4hWYDAGzq3Dk5S1xqncJc1Xs0ZAkqS0aCrF8kWpSmkCGJDRVkK2tBLW\ne0m7gvRrvTTs3L0a4MCB36ObvHZKOz/HHP/BA5BdN2O07qCC4MUCAwEAAaNzMHEw\nDgYDVR0PAQH/BAQDAgeAMB0GA1UdDgQWBBSfHbb4lsa1mNOo7PSlnnbFYUlkwTAd\nBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwIQYDVR0RBBowGIIWc2VydmVy\nLmRjMS5jZi5pbnRlcm5hbDANBgkqhkiG9w0BAQUFAAOCAQEAcSGLZmQPzErEam3R\nL0GRATN6mCOjpxc5Y5aimDNaLBfR7p5CAyrMTH2GpqcRS08riuUVbX+ZH5ngxajE\n3mKQitJlgFlprTV0k5wrKTnVV/mK1rFExt3ToPg+BBT2f/UrtdZcpf6Z8KOIv91e\n/IfIzEmG3mRJTgDpCYnOM4s1X4jgnNZS5UP1lttF0/6WJky5T/zghcqiiI6bnGM6\nKBfs8cTAMekKE/DKB+3yxD2C6uHKvCRoGZGe1zJlYIRMI+JW2zZSWTwK0ZBZW783\nhkbuWS0qjp4PI7bMD76u+ZSgcINuhkjSLNQbGz7t4VXdaYFkbGiTd9aRMHGzU/t8\nSxcBTw==\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "consul_server_cert"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAxTqvKZAqiW2ttJCYw+J2tZh0/543SeaMp35sgffWkJ5yFBRX\nVvLl81GNZChFUkQ3oiHzHgFwuh79GIXOcZTRdWGFaiTY0d5NUpgvxgsQZsbambQI\nUTZUCQuBDB1Mo+kEtfknDQxUleeGoHBEc3yOWibDZWFscl5bGSOLQBPS76mCMdfv\nMfIQ30vH7BgPY2wW8Dh/e6wVqMgLh/vuiV4v5PS2hUWpFIt+JDR9pGxMvz3d8waW\nEvqv/pnbq1Wx/7Z3XsBotk9wdyVHO29qu9udz5gVQdbkuBeKRs0R42bQLZu3SX1T\nOyk9awksU10Vpv+QtGuQ0nqnYNdt6u1XClhL2wIDAQABAoIBAQDEkGwqnEgIl4rb\nvpDCCV4ONlfEusaXnHLqK5GxJnRtxbwkTvGM8qBDFDA6dfhAuURJDlTivsS+ekv8\nuL67bHok5oC0/OwqnceqXYqfcj9ybxVGwqrXZbHzIcgHbtwHMCFFy38j/fn/PLRs\nCffusWCecKukyqfuhCN+tnH99sPvndyqt3iX8Mrs+Mtw0LdKJcLtpy6qwNaDHi1y\nSCm53nzb/e17rxzDSrbkDdTLY2c/zRHmk1MhinYhyropGF/fKZ5LtZSbQZmzaIHH\nN+TITGIWouidck0v0z8H2Fpeqey7NJBaDiwzCazfue2icNau34fZhfNRdvJ5s5Nw\nGYzVF2bBAoGBAOm0jYHbI7sRai96gtSNh81ayAMp1k43F+A15ut8RVU/RK5MZtmp\n7/wlGfaXI3X+ld3KoFTzJ59MqYtpyuEZquoaJD29XJTLTpy4CTEgjQ0eAJcyKboz\nMUFtuLzWlM9oMh2zkgIkDFDeTZ2HdbJfNpaUpw+86glfTd8F3Cg06kBZAoGBANgL\nVFqPQXXfrSr55jhU4F0i0+Fqx7YW0WNNu6pCwsHt91wLSwv8QTIzww8I7OUZyEYw\n8F4b3hJ7OG5HhWtLMPv6bIm5iii9D0H10uL8rROHAeZA3ISUKvkFYwZ2RFOfe7WX\nXglsUETDI4LFMydEf/CijxpZ3Qu/Mn7vrVATWwdTAoGBANXg1/Q0YfHMUTpcSylM\n0TCdWRiUDD2Oa/pUOh3en/ERMsC0yReAT1GZfrZOwTQ2Jl9RFgRId0VxOmSNEA+L\nlwAhpnMePoEpwqroPflIye1sPKwiS0/Nk9FGIeAoHQ3nVJ4b/Y6aAO9tUujM1GjG\nfEW4i196y1CCeNiXG1Fsg8kZAoGAHHth445/UsrqSYAomcSWz7CHvnAVZCwd7rmQ\nxCGJC4gT1E6o1iurbLLmRFUo5gtAHADXr5B89nLIPcGwFTUUgCPDq2SKklRabpe5\n9bLaHnjuBy0F5XSjNbFAHNn6qAueg5IxE4z0CByx0cutsr+VHmRP+Wlfeuz5+0Id\n1zC2D4ECgYBhlJLlWIiG6ZaJwIfnMo7exZY7kM3N3/0+ueBZxAQCoWltbGeqUf+X\nf5j4/faKwaT4ZI5iq71yzLfuXl5W77tyaNtgi2dSz9xkGRCx9AU1+9rpjK1AvBmp\nJR56LZMjSMaQa1KuC49V3L04M4iK34VyLfWL89Aq/yvtsed40PNw4g==\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDgjCCAmqgAwIBAgIUCI1lq5dAPl3rw9rn9totIiInr1swDQYJKoZIhvcNAQEF\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUy\nMzM0WhcNMTgwNTExMTUyMzM0WjBCMQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\nb3RhbDEhMB8GA1UEAwwYZXRjZC5zZXJ2aWNlLmNmLmludGVybmFsMIIBIjANBgkq\nhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxTqvKZAqiW2ttJCYw+J2tZh0/543SeaM\np35sgffWkJ5yFBRXVvLl81GNZChFUkQ3oiHzHgFwuh79GIXOcZTRdWGFaiTY0d5N\nUpgvxgsQZsbambQIUTZUCQuBDB1Mo+kEtfknDQxUleeGoHBEc3yOWibDZWFscl5b\nGSOLQBPS76mCMdfvMfIQ30vH7BgPY2wW8Dh/e6wVqMgLh/vuiV4v5PS2hUWpFIt+\nJDR9pGxMvz3d8waWEvqv/pnbq1Wx/7Z3XsBotk9wdyVHO29qu9udz5gVQdbkuBeK\nRs0R42bQLZu3SX1TOyk9awksU10Vpv+QtGuQ0nqnYNdt6u1XClhL2wIDAQABo4GS\nMIGPMA4GA1UdDwEB/wQEAwIHgDAdBgNVHQ4EFgQUeaNiit5WwTbfYexGYfuIaLvx\nHXMwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMD8GA1UdEQQ4MDaCGGV0\nY2Quc2VydmljZS5jZi5pbnRlcm5hbIIaKi5ldGNkLnNlcnZpY2UuY2YuaW50ZXJu\nYWwwDQYJKoZIhvcNAQEFBQADggEBAFVRIw3Cqx9Ptb8xZ76nHwKW6Il8C+MZCEBa\n0BPvJOeT9ftT4fCxyT7qfuhJ2voLZlKiN1DHbjt4trJqwmfJr0OVRtbaMl4IBSaF\nJWXcNvGpUsF78VAMoZacxxu9cMhAP/O44yI5DaHKU3epHcYW4i1lq0NIe0F6pVJW\nukinPWOWGw5BjZHkq70dqxBvvAPpg+VqyboSiVIPevZGVFLF9e0zWViC46O8Uhwe\n/wzcP40GEfW+u4yzcm/V48Vdjy1KLVPRjRUAcgc7TTpIONrxIrx4jTbKx9pvxSkS\n0vk06+SLXzUBzWt5WbaaiRnEfWCNVDAwJiXjAFP/OUSELOUJVS4=\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "etcd_peer_cert"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpQIBAAKCAQEAxDkg6f33YfoURTP54AHAGRcMAQQYu6pEWownp6b0tYuEDv5g\ncKKJP0uoYOdmfbwc5VMTcstGUKWtBKHiX1T6t7f72FKsF9BvxlxPIVz5EDiZt6By\nHnoYcWONbm949wflNCyIjSdC9/EkIAhzV+NDC7kNXc7U4myF2x1cslNWxvvyxFnc\nl4o7rSXH+bFGH+Wh+hY4XIlkfZL5uoZi2gihqwGEwcZJq5SYREoZk5+1XYeXo3qv\nCgDGejFClg1dmyVsFV6FCFP2p0MwnMYq85zUB0zTnh+93uPVN0xt3PafQrizN9j/\nohJBznQFZbjDHo6vi1wnq8zwWnXXwU9aZ65SXQIDAQABAoIBAQCz7SaPKT9z6do4\ncqaHj1NULlvleporSr+Ov8GE64SsC5g2H27TGVb8YSWuZcEHPjzI01qcAmUhgima\ne86VV9jmKaCXBYej9o7ntrEgiJ4hD6V0SX0bER3kq0J+p1ymN+kl5Ef6FqxDqixT\n6yvIxS0vTKpDAGsYjCZZex0Kr3x8y+JavcXU/q41rFDVNkeq1IvdL/84afSc8OIS\n83HyHEGx21o0E4PxqAU5Gy+5TeQkdK/KzZ9t5D1zmQpHq7EuIetOvr4kPMAvJIUO\nq5mSTgPjVOVeLc2eemcu1Z5MjISN7sPgRkyhhgvB/ccvCMqwbvYg/SSelnR6BSwy\nquviY2GBAoGBAO26pQlCISXNe+rbFOvpw4hLXjSdaX7Pq9PLqqdtDZUz0aMxv1ip\n5nskyugdlBcx7IVCF9rG7ewn7zRqFmNISgbFcjgIGN/66oxpc9oRQ56f85VHCyY2\n/WZYnLVQIIgBrNvoeyoKRwMH14rO4MyXe5kT0HhcZjeJFgKl7xTYX8lxAoGBANNN\n2UEpV8sTQiF6OK6N+S0GJJmg36bxXcawVzm6VS60+DG4l4rjuVkOa8onecibXgz0\nkkAZ/d7yx+4vR3ZmpO4L7vAuFOIWnO/PbjE7mwh/Za4BzIXQVfyYNKdFWaJ8W1VV\nTeGORjM/hTSt5hcesG61a767g+pXr1TdY24m5cGtAoGBAOeq7c257gei2dGjMh48\nrloR6HoptHbp9i7t2R5Tvdrapr78adYDrCHxVvMgcAKymiW6pPiEx7NNr2RKxgp2\nlf1HSOmlqmgLY6r10Pp/vH/GrF+a3hidmg+05vIiZbFkwImFYxEy9sTTTY9tz9BR\nBxfEIXJJySrxostt3TFZMu9hAoGANhyWiVBcEj5BTi9teo4TBIuxLcJ749WlzS71\nd2wXSlm/wYPjEwdUPNErm15Wmp/nCuxK062UTNbhikaDR3frvqZBrzIt2OQvll4J\newQnpJpzYIdHZ/E9Q+16dmeVF74+6XBp/Fwh8BfRNfdemAcc6Yz+JZ8Bni6MUPBM\n+TVu2xUCgYEArYyulHJvrkd6/uluTWUGlnhvGLIUlP04DMxm2wPufvMFCAVYH8am\nN5zXwPvLblZvNq/EyYPdciuQ0ckrFn0IZrFwuss11sWP1ycIuNgPiQWHhmrSom8G\nqlsMKRVt2CpkeawmMkhDtBhmmLUobeIfLZPhc5E0rDEFJ6PC1FnWsNc=\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDODCCAiCgAwIBAgIVAPfgpyq8IXs6hyunfNNf9pX/mWojMA0GCSqGSIb3DQEB\nBQUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE2MDUxMTE1\nMjMzNFoXDTE4MDUxMTE1MjMzNFowOjELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp\ndm90YWwxGTAXBgNVBAMMEGV0Y2RfY2xpZW50X2NlcnQwggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQDEOSDp/fdh+hRFM/ngAcAZFwwBBBi7qkRajCenpvS1\ni4QO/mBwook/S6hg52Z9vBzlUxNyy0ZQpa0EoeJfVPq3t/vYUqwX0G/GXE8hXPkQ\nOJm3oHIeehhxY41ub3j3B+U0LIiNJ0L38SQgCHNX40MLuQ1dztTibIXbHVyyU1bG\n+/LEWdyXijutJcf5sUYf5aH6FjhciWR9kvm6hmLaCKGrAYTBxkmrlJhEShmTn7Vd\nh5ejeq8KAMZ6MUKWDV2bJWwVXoUIU/anQzCcxirznNQHTNOeH73e49U3TG3c9p9C\nuLM32P+iEkHOdAVluMMejq+LXCerzPBaddfBT1pnrlJdAgMBAAGjUDBOMA4GA1Ud\nDwEB/wQEAwIHgDAdBgNVHQ4EFgQUrf1mL981D1X9ZhknvkWOa95QLC8wHQYDVR0l\nBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMA0GCSqGSIb3DQEBBQUAA4IBAQDIimhC\nIyKOWaIQL9gHeHEyp6TqOB2Spb5hQ0+uBqB0uNk7fhIIzrCGvdA8dppDOW4ZgZM/\nGHQBjHCyd2wTrm6zJvexIFnNSsatPE0UoFFXUQBV9g7ydwGp5nX5LD/5CUTwEa4t\nSqbPjs3QeLqQIlkNjCWkQkc1UHTuNlfaM1VKUK6XVgey0i0KuOBpvrfaWYIO+NZw\nEA7Cz4yTG/BFqxE25+aPt4eDFAa5ca4M9jI5A2XpZV/+7WYTPIlZ268lZzyyS7p7\ndHns4H+tYillfN/pWrQTaFNT6xcFRwDTpXaFBxv15DjUVpBnG6KmFrVTn/EmiDpa\nA+a8lPWqAk5E7j02\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "etcd_client_cert"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpQIBAAKCAQEAy6ff/jpAWHP7LoXote/mPpu49bZl/qayTdhbmKRURBIfWVeu\nleeIZg5Z2OzVskcnt6sE0zChliuAjMmofCgUmbQ/ZJ8ScB+afY2yufaa8nOMfU83\nVZ+2E/4wO9Zpp0o8i7R13Ch61Hcjy7rzEZjjwWFpoVYWMz8FaUJ+hKMD99M791La\nz/Xtz6eh6FXgWczRT8V3dxYUfft1L9lR12VYVqotcEmuZhM5V7AIoQXpqvHRvR6+\nKV+lo8jve12gNAJaEmMue7rZTAa1lUSEAfEBMPKAwYPfLN3kpPiTriqFvZiXvQ+f\nIA6CR20DKuGVgFSNWUZJ92ml27UftfcV2YEqcwIDAQABAoIBAQCYrJqMsUjJxvEY\nWIUz18wpRX6snffqpzdmintofFE70sYzqTsV4ERuFfYfXLV7eEJ7O7dbR8rrlGND\nqG4p3bZL4Efh/CrLabXcyByjsw9IEX3R91AJXbkXVej9Aumj41Buf3QX/zTOER8B\nvX45w/+CWq/gpnPwKR+6YIIOl1MDNr73NDG1089pN6Y6oPiFkm9LPJzCBY8koQ2p\nYlm3sJvOImVBjBZDz2ZhQC58R7u/uAHOl73ykBklTUoRMhmNQ9FcEjRePMSgmQjC\neshyPUf0MfFosIlhoTiHTDOFjwYJpMWe+oFdwu1M02LrjThPCLrGiqlMxIsdYJ50\nMHy6htjJAoGBAOpP5ZG+QSmZPHrKpmNKI5FVXRxq0FFyYmh9S1Im3CboRiURx2++\nU67myW2Eh6FndxciNnRvkKY5Eo279x38mdDKP/UwkrNtkGZkihVuxb7of+ghWsMg\n3JiKrs/w8WztCHA+zIEw/8XZsSu54tmxjQTgblxPgEImM8B1GUCArtwFAoGBAN6B\nkO5qbcbL/269Jf8n1Uj5Ka2IcuvDzO9RbLE+kaBcMxvUtrdPv7I0YeedlBvyB3qh\nxvlcnL5PDsbsfIz2w6O/LiiSEmOrZoJRoqQSUt0GEiPv4zxPT9smk3gKmNUoRgBc\n+070EDnXx9vC4iuJU+K+WvLdPhkhdDNe/TTjQK4XAoGAYOZ/20EiM7DimSl7nC5J\n/U2fPyRRWI2Ecw/1+ViGzTRb5fKvVuAQPZHGFZusd6yRTKjiek61NHj/2ku0y9ru\nRbGOt7jJwph6Ek5b6Lcx4lzGoNpCbdYGRLN9zhMn1NNGHR1rd7Yq4MjBg4LRdRP/\nbNff7B8YvMKNvnbu5YUSS30CgYEA0rHJ9ZlePgLp64i8tDKZ6rHV33b3q30LUArA\na84dw8XKt63jHw4rLaogk1xJ5XR31I3ghjxGSIdALOm+vxTkCOh94vj+5NZnCTwY\nUFjxkk2vW8xKVs+bhJ+wwNj4A9BRCQMDDa5atws3O0f9NtChWHJ8WMFbjhx5ljN6\nfVw74R0CgYEA2M3OBKfKuWCN+LKSDZ4Apa6WJJQte3OL9H5cqVyvEqfLKP8MgpTQ\nSLM5Ut4lWsRDNU90OUDwf3+O1wpESPV4ve9QMzqmoPdkHLoTIhwXPakE38i0YJNQ\nSQwW1c5LBTlwsXJ9PA0b/FzEMOMF8zvR/Xg86Gf+r63Sy/J71Ve0alw=\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDgjCCAmqgAwIBAgIUKdQ8+TBCJdxLzOiyA4YPgjFwZ8wwDQYJKoZIhvcNAQEF\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUy\nMzM0WhcNMTgwNTExMTUyMzM0WjBCMQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\nb3RhbDEhMB8GA1UEAwwYZXRjZC5zZXJ2aWNlLmNmLmludGVybmFsMIIBIjANBgkq\nhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy6ff/jpAWHP7LoXote/mPpu49bZl/qay\nTdhbmKRURBIfWVeuleeIZg5Z2OzVskcnt6sE0zChliuAjMmofCgUmbQ/ZJ8ScB+a\nfY2yufaa8nOMfU83VZ+2E/4wO9Zpp0o8i7R13Ch61Hcjy7rzEZjjwWFpoVYWMz8F\naUJ+hKMD99M791Laz/Xtz6eh6FXgWczRT8V3dxYUfft1L9lR12VYVqotcEmuZhM5\nV7AIoQXpqvHRvR6+KV+lo8jve12gNAJaEmMue7rZTAa1lUSEAfEBMPKAwYPfLN3k\npPiTriqFvZiXvQ+fIA6CR20DKuGVgFSNWUZJ92ml27UftfcV2YEqcwIDAQABo4GS\nMIGPMA4GA1UdDwEB/wQEAwIHgDAdBgNVHQ4EFgQU05MjZVgCr/Fw4k/flFxWiKfj\nTwIwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMD8GA1UdEQQ4MDaCGGV0\nY2Quc2VydmljZS5jZi5pbnRlcm5hbIIaKi5ldGNkLnNlcnZpY2UuY2YuaW50ZXJu\nYWwwDQYJKoZIhvcNAQEFBQADggEBAL7GVOehsF/31nauqINyjKOtmKb3wd+I6HPs\nddYtGaaCHrclkgPA+3Zvctbjci8u615mBzLHRwXhehJ+afvxau8dL6X2mXU9Heel\nvst2x+mAvB79+ubZUz/Np3MXqL3yKnXgk9ac+vjXjS67ekXtA7CEHhV3maJNY+0L\nqpMMvjb1f55BRxkDD8vou3yR5kFUWuSxXblkcmSEoKX6GutRIW3sWeQeqGKtQzTd\nsJ6DJVqQrYI8gSlhOutsucKGOr3mAKF0UyhOE95vuvT23519TXNhXwQoYDYToMTh\nFX7JP8y/qQdG/CiOu17j1jfD2aRZ7DZDOWrPbNRxZ8Qqvkij5SI=\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "etcd_server_cert"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA5CWVGOYODSWkczkDqMaGNjQ2QmgZWgXBXO5f9xtLG3Rnmd2r\nefx0DWN463gOkRIPnFSB9KccnZOnBRsPD9cQGxGt1gbG4AN5ob8yB7eDYrv2HDeT\n874KqQ+IXPymgBor20tE69d4IrrRITNKhwygiEMUqRHTP0NL1EBDHTSqFsXgfqhV\nDG5RiLRyulHiG7jgDLZcn/I1duLyfHrYAQAEre0G+eM5KxP0Yifpk5Hywk+AavwP\n4m5PC/hzkwFHQ6s8iUGkaVrEq539QVQA8IzmffbMfwNSZMLYxag2iaUS2YHg1o0j\niS/dBOSn9zFRb5e0WpAINbMvr2imncv3sm2DBQIDAQABAoIBAB5zMaooEloI2yER\ny/47uPAFGfTVBgUw3XT0z9QgTW71o1oy7s8SNb8PtrTeyjrsiS7ZTJsFrtkNOu6A\nhQsdLiYevu/g6aw+an5/EUNcZ+nGontzo4iVpcCYtR+MDQDt/UqAiktb78na20yu\nFtVdhxOIuHo0SdiYt8c1aH++ZrExKVgEXqW/Lulj+bYiTDbRgNCYTX8cgwo9QOAE\nuWCGDBqB3kCJfXK9ixyBBelVEjMv+RN62g2KEcvj2m+uP72nDwnMwxRSyMuBfcht\ngx6QC9A8QAUzgpXHPvLWhi05NQ44IbsTnKMR/3mR9riiPj5yMAm4ldCNF6oCaCQP\neCAbCwECgYEA9OGPI/Kng1AqX6FT+4iDWFM5h3MsOZae4x+YE558mejcQngB5Pez\naa0LkNcr1+niwHnvSS3r7JeQkdh5N3d9wtFXowPqjhqia4vLwJHNyvTz/t4aBDIH\nfW5sCfFB2sRpu1t6yvk6+gPZtY3BEgapjzWWmnqkqvGq9x5wr/0/FcUCgYEA7oGC\nAeOqoZnTpjh0KL6mXaotbZ2RntfMjwwtvPGWkZdSXMXJn3gYwPepDRHjh0XSCSei\no0fHNg696u6i4ysCWD2rwfjF9md5NGhgFLOHV7NFWWy2YwcocY1WE0Hc0OcyqfeX\n7gKE3YO1Nv8kIJnDuQi+FqCpEnqolFpnTbDQzEECgYAYBayCDULLieiuOug/K5Qe\n7QMeu3iiKZlqlGXZvtlgS8yXpKgi6v2ppzUUP1dotePtl8iWeC/FpNSkygSSIWGv\n49NiBXdT+17lh/Az8tmqSD9LSERrFvFPJ67nhsg8CrqIi5/PG4XiktAflElVWFv3\n1XzxqIhQ0KZB2bWaPhCbNQKBgFPWaFm7qpYlmXVbcNGFurs//7oBYlfAqaI6+LTr\nAy9oTsZXrDkHIURrihwTBrTdQSiAqzXUHF2PLwkvG0jZLHjSLNcBWKz10HAwpF2C\ngfe9B4qYoUAMGxZXRUN9ql4wdumyI9DBR+0JyCBt7UgcZOVdAly32tapESsc4CU6\nGxtBAoGBALL1AA8E188K9qcXg30L4iwq7we4Or30zmXj98aoTEEnlAqSpwu+eSx2\nXKqsOYbsQarFq6XLH1RkZYHIRbG49iuzl4+e9CtIM9PKigvTacl8ZQqAY3uNRb/1\nU6/UVhliaGVSvkzDt16y6Q3+s47RKrsmtz1J9RnNUuxtXYhr0jxi\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDNjCCAh6gAwIBAgIUFdMPqyIQrTNO4JnitkpVig2ll1swDQYJKoZIhvcNAQEF\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUy\nMzM0WhcNMTgwNTExMTUyMzM0WjA5MQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\nb3RhbDEYMBYGA1UEAwwPYmJzX2NsaWVudF9jZXJ0MIIBIjANBgkqhkiG9w0BAQEF\nAAOCAQ8AMIIBCgKCAQEA5CWVGOYODSWkczkDqMaGNjQ2QmgZWgXBXO5f9xtLG3Rn\nmd2refx0DWN463gOkRIPnFSB9KccnZOnBRsPD9cQGxGt1gbG4AN5ob8yB7eDYrv2\nHDeT874KqQ+IXPymgBor20tE69d4IrrRITNKhwygiEMUqRHTP0NL1EBDHTSqFsXg\nfqhVDG5RiLRyulHiG7jgDLZcn/I1duLyfHrYAQAEre0G+eM5KxP0Yifpk5Hywk+A\navwP4m5PC/hzkwFHQ6s8iUGkaVrEq539QVQA8IzmffbMfwNSZMLYxag2iaUS2YHg\n1o0jiS/dBOSn9zFRb5e0WpAINbMvr2imncv3sm2DBQIDAQABo1AwTjAOBgNVHQ8B\nAf8EBAMCB4AwHQYDVR0OBBYEFNry+BH2V27dHP9oVQlicPhKPW/dMB0GA1UdJQQW\nMBQGCCsGAQUFBwMCBggrBgEFBQcDATANBgkqhkiG9w0BAQUFAAOCAQEAvIQLCEF9\nQUF8UJJPwLmJg2gJGDq+ablT5bMIVdK9KJEfdwTGugANQF5BFMZCvO2oq8UDUkXs\ntIp6Ncfs9YeikuZoVZ4/ZdpekytLv12bu2hu6PU8JVzgpZeKLB3FrY8VMhggGDEz\nQx3eg82nXbw081ahv8pcwCgEZ5ZFgBOyDXO0qJxRC4lX+VQoYgn5SortL0xjm209\nsInkVcomsD20ImCp5NtM1jZX0rrJEtkvNqPF3dTw459LwipjrWjVkVJkePT19FUB\ni6wBKXMu6qGckwNVZGiW/aIUXz5/M/JqULXW2JRcHwdgtSGCGqHEvXkY0boaHDtk\ngKat7vHqkHkQeg==\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "bbs_client_cert"
+        },
+        {
+          "value": {
+            "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAvzLkVeQjkM688wBGlm6SHhfEtKPM7Jeyfv29RgvUx9qEaVzZ\n7BVxH59hW6uhV2garQigiRNc27jHD4XhPy8AMMN3gx/EX61qOVmomyw+ODxohTa/\n8glwdDLJvYUpCgZkqHFlypQLw450D38RETd0pWdbutEks/MOUhDuCiLGSdb9ABWI\n6NkAXbGRT7qtK4TDK4ZURKuVUksQ+8snNtFqvjOmqgcAOLrK279ejd7b27pw5ToK\nI4soungJqdJIc4g+TD/YJQdGrV4tBAZ4K9POfNwyQ6ATTDrpSGw5DfY7xmDy8DZY\nYswTYtZJDkEg3kxMRcYHEV7TKxs6KP+hGkZ4vwIDAQABAoIBAQCWxCylRfZ9k2gP\nPeJrcNkrfZaQ0rEexyfrV25Os7mftkG/S4ZT0TyYsPb2cEoTQHX4h9r+/BO29ueQ\n6AML7aX6zceJ0BzrTTV776UyZxrRAWFx2hBVbPgNyJaoKT6JNy1cXb7klQUJuWTv\na0UsDEyguPXuREjq1Pgv4kWyHGW7hrmRYl3Wb5LWrmIbsd4eZQ9+P6k9b1pQwT+T\nG4yNfCB9dkhRQcVkmBOR8VFAAdidiUq0emYSBPchsYRjwf+7CYhqs3BuJ+ewSh3+\nVKGmELXNzhorTq5N7td3ABj48zohVD9P7i6XTNdwwtGWYzPd8oNhbx8vULfKAvc2\nRkkIv0DBAoGBAPyb7cTGjgyF1jhia7HnBQedjyt0RJQY5K2SjYlijE0pfpWgf19a\nDL1GASgdEwtLs25QcekHLKkVvF/K9nFBbcpce5a7uOFz3PTjDa2l6qAdVnOoytxt\n9RjuKlhQUXLo1s4AGLe22uAop1P49cJpEUxan8sIto9uFaAGysx63S9vAoGBAMHD\n7ncKKTiXEMtgyl7YuqxFTFEkYBxC4jNlxwP15IcEweDHsamn7wQItI6NJ+lp511E\nBS05wnMghiwq78HZjb/MFJwTsZ6tYkbW1z6Q9LlaYYNPsza06cGe8r8ty6+g0xcO\ngSptm2M2FyDKA2ZMidjQW2KciYQiLwTwtgINq6OxAoGBAOBKWw2S9uFrnE+oI9Ns\nOm0OmuaMb6/HgpQTQhSwKb8BjuGwBihVvmX4WGKTniszZfgW+W1c72yaXg34GmVp\nIODCyQGHYJrd01yklaqPXQoZwn8jaivafftKzNJpTkhnMQLr1waYFzNdJWVL8npR\n7AgNl0AhVmd36T+TiFGS7f2FAoGAYZN0g/fW+EuCxphQcOD9aIFhRD9oMvMvjCiF\nxyXN1nx70eFeQ4xxHfvwSRUmczHEtD/rx3GdzXIkfxuEL3+KFXsFKe/0825m3juU\nm0pOIwUzs/evzS3fxYRww/ug5im8A5FnVGFr7dMwZG+2tI54oHmUe51O1v6L5RX+\n4hvWQpECgYBdTj9VIdbdJwBi/VjN5brmP2r5g2T7vo1f6YLbm/S8FwdF4fK5UND0\nSaiuON3eJYgxZoP7GL8ranDg9Xd02IdPaGy37vFrxxdOpPmriDEkBeURSKJhkarj\nR94t+2W8yDXHeVKJsIbsENUTxuqSXdW+TIQefpx9PCv6EwYq0IGDyw==\n-----END RSA PRIVATE KEY-----\n",
+            "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIDgDCCAmigAwIBAgIVAM6SZG1zJEuoxBDlAa3g0Xha0bGnMA0GCSqGSIb3DQEB\nBQUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE2MDUxMTE1\nMjMzNFoXDTE4MDUxMTE1MjMzNFowQTELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp\ndm90YWwxIDAeBgNVBAMMF2Jicy5zZXJ2aWNlLmNmLmludGVybmFsMIIBIjANBgkq\nhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzLkVeQjkM688wBGlm6SHhfEtKPM7Jey\nfv29RgvUx9qEaVzZ7BVxH59hW6uhV2garQigiRNc27jHD4XhPy8AMMN3gx/EX61q\nOVmomyw+ODxohTa/8glwdDLJvYUpCgZkqHFlypQLw450D38RETd0pWdbutEks/MO\nUhDuCiLGSdb9ABWI6NkAXbGRT7qtK4TDK4ZURKuVUksQ+8snNtFqvjOmqgcAOLrK\n279ejd7b27pw5ToKI4soungJqdJIc4g+TD/YJQdGrV4tBAZ4K9POfNwyQ6ATTDrp\nSGw5DfY7xmDy8DZYYswTYtZJDkEg3kxMRcYHEV7TKxs6KP+hGkZ4vwIDAQABo4GQ\nMIGNMA4GA1UdDwEB/wQEAwIHgDAdBgNVHQ4EFgQU8xA5cNsBuaSyOhf9OYyCYIwO\nwfMwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMD0GA1UdEQQ2MDSCF2Ji\ncy5zZXJ2aWNlLmNmLmludGVybmFsghkqLmJicy5zZXJ2aWNlLmNmLmludGVybmFs\nMA0GCSqGSIb3DQEBBQUAA4IBAQCpGbEIlnz6WDMTSTmBWHt7M6+FWCokjffsd5Fo\ny8PTYdKc3k4LyZoLppATMah0n5TW5F9tiS2C3E6GdEKmiJIjFbxFcE5b/H/AP4oh\nGfU1HiLV8rpPm288OAgQrBwUx7/2Ia9JixfzipE8SIrWm5SsjK5mxd4w8fCNSxdb\n0875gmwwv52+hK4cKr3/TcZqhaL/HiSE0oe+G1f/pzLoRELeUWAmeiZQo1jKBGEa\n1owo0LnF+PCM1SOiW8c3b3ZUH7Bxsn3xPs+tV1+hSd92tfJaXzXoS/akbUJrY1gx\n4GveRU97TmfO58wWruWZ6mswF8u9OI7aScVkguD6ZudW49wc\n-----END CERTIFICATE-----\n"
+          },
+          "identifier": "bbs_server_cert"
+        },
+        {
+          "value": "ldap",
+          "options": [
+            {
+              "properties": [
+                {
+                  "value": 0,
+                  "identifier": "password_min_length"
+                },
+                {
+                  "value": 0,
+                  "identifier": "password_min_uppercase"
+                },
+                {
+                  "value": 0,
+                  "identifier": "password_min_lowercase"
+                },
+                {
+                  "value": 0,
+                  "identifier": "password_min_numeric"
+                },
+                {
+                  "value": 0,
+                  "identifier": "password_min_special"
+                },
+                {
+                  "value": 0,
+                  "identifier": "password_expires_after_months"
+                },
+                {
+                  "value": 5,
+                  "identifier": "password_max_retry"
+                }
+              ],
+              "identifier": "internal"
+            },
+            {
+              "properties": [
+                {
+                  "identifier": "sso_name"
+                },
+                {
+                  "identifier": "display_name"
+                },
+                {
+                  "identifier": "sso_url"
+                },
+                {
+                  "value": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+                  "identifier": "name_id_format"
+                },
+                {
+                  "identifier": "sso_xml"
+                },
+                {
+                  "value": false,
+                  "identifier": "sign_auth_requests"
+                },
+                {
+                  "value": false,
+                  "identifier": "require_signed_assertions"
+                }
+              ],
+              "identifier": "saml"
+            },
+            {
+              "properties": [
+                {
+                  "value": "ldap://ldap.homelab.io",
+                  "identifier": "url"
+                },
+                {
+                  "value": {
+                    "identity": "cn=admin,dc=homelab,dc=io",
+                    "password": "welcome"
+                  },
+                  "identifier": "credentials"
+                },
+                {
+                  "value": "dc=homelab,dc=io",
+                  "identifier": "search_base"
+                },
+                {
+                  "value": "mail={0}",
+                  "identifier": "search_filter"
+                },
+                {
+                  "identifier": "group_search_base"
+                },
+                {
+                  "value": "member={0}",
+                  "identifier": "group_search_filter"
+                },
+                {
+                  "identifier": "server_ssl_cert"
+                },
+                {
+                  "identifier": "server_ssl_cert_alias"
+                },
+                {
+                  "value": "mail",
+                  "identifier": "mail_attribute_name"
+                }
+              ],
+              "identifier": "ldap"
+            }
+          ],
+          "identifier": "uaa"
+        },
+        {
+          "value": "haproxy",
+          "options": [
+            {
+              "properties": [
+                {
+                  "identifier": "ssl_rsa_certificate"
+                },
+                {
+                  "identifier": "ssl_ciphers"
+                }
+              ],
+              "identifier": "external_ssl"
+            },
+            {
+              "identifier": "external_non_ssl"
+            },
+            {
+              "properties": [
+                {
+                  "value": {
+                    "private_key_pem": "-----BEGIN RSA PRIVATE KEY-----\r\nMIIEpAIBAAKCAQEAxR/5WoG/OHqDqhVGpz+yqy/dbDZjlh6qvqBJ2Pfofv6G9/0U\r\nEjopCypB6NeGDXZYP0Hd2bnAyjO9fhY6bBm0d/LZ3nKXbIYAFYKAMj9lFF6hS7ow\r\nEw5wuRmz+zW1ZAtirle/cZGM0jB3VGB9baGePqy1oZxMuWRpAiY8D3Gtv2uva4+T\r\nTD4EpTYYWRcGIz/e+hNlxmMZ0zCt8vDsbH8qVcaeFxcK1xIvvCEy3q8IA3CYZG4U\r\nd2bG3lp8kFU6RKABFuwrIaL8uYlaVbH/nVXUKeMjXC7OV/62Acrgpp7Oqs2nb3f2\r\nx3o4uVTWNM/FW/M1dx3A1/ooTwdO9bYZTvMIfQIDAQABAoIBAQCbLXN3GyJ0DIXv\r\nc3Y+HPfCqRhuolY9DAEvtTDNG0MsDaQkPlb5jk1XG7ns2RUPLfWEPo6tYfvxcU+f\r\nnVH6XTXjIwr9gUnQxZ/1TtkqNRuWMHRbD8PejISSQjib7gjQK+JQCoWLmp+3qy2U\r\n/6xdjFftULpe8ZK4cuHzLjQjmELFp1ct15YicM4GxhDP319W4y3N5mLnrPO0Vsa3\r\nFFKBpMBEVQJBqsKaCq1XOOKJWTAakC+GUhXcnyGi21ssXmZ4FaJbIRoSpv4N+x9M\r\nG08hRU++uxF5Lh46SHTVRsPtWPw7yf/wVVCaEYbsaGd+Dtvj4zvo0brNF2WOyEMX\r\nUhPvkyzlAoGBAOGYoIyRyuEZqYRVN8uU14WtBwqLAnP98Pl+CAuxkVaqPQe5bAFL\r\nFNZCI2QbeW+LiCelKn0frVo9BxDhxyf1PxpwqtK97LAXANzhjDqJKhbClbEA+tft\r\nzJld32mYLL0mPkvn66f6nmD5gC98FYI8A7x4wJaCeFUNbwWlq++apESDAoGBAN+x\r\nDHOhq1ehJM2BormHwsKKuKlYWNXmRDhcLu4RiUzLbrg4D2tbG0dvT9ZiF6boy2B+\r\nZDI/BeJXYCnFhY6uzyln46UTOfcfgL9vBg0GxV8dBpOvfILwjmbJEW8gXTrLMcTD\r\noMRTZ9a1Jo0iem4QJ8OGMEARpPawksEXDJA0C+7/AoGAeVRr7I4wrfXuTMTEWFJ5\r\nw2Q2qD3xGM8XvidBToC2qQSwBCp+Ywetcjpp7Fo2an6BwMi83ESgKCswVK0JPn1Q\r\n7fhwdx08YcxNY35Ou+CvaURH28WqI126rzVkhdcZILWjxZE7FcHdUkx924wByWRb\r\nog7TjV8oNp4d+syKdzgVZt8CgYEA0K8HgsiMZM/82YvbF2LEG2H3LGUzWzna4wl8\r\n7rSFdpNC07HZELqKFHaP8NzKW/hJ49eF+io5fxMsr0uKcbY7pdE52sK5DQbiwbT9\r\n3CE4+KbHf/fzHOT2tIVYMmfrEfKGl5452W5GLVQKhxhnR07jCdGiKeNMFqhcAK9U\r\nFSO5DlkCgYBS0Ib2eguA50y5quPvq3e0Memx1tKUjNzRRVhdEKhZQcYwQ3glAGPZ\r\ntWMVtR6oa4ob1oje3YYLEZ+CG6KNVT3xDDbswE7zKpsGrEH7NoJpS55qldGDjURq\r\nhX0FgfZs9HkCjyRp/5wQ9Fvrjst0dGWVcGqEB3cMJy5iO9AWQrYRtA==\r\n-----END RSA PRIVATE KEY-----",
+                    "cert_pem": "-----BEGIN CERTIFICATE-----\r\nMIIDlzCCAn+gAwIBAgIUMOKeispp4nO3xpiQm0Ntx4N1P0IwDQYJKoZIhvcNAQEF\r\nBQAwHzELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bpdm90YWwwHhcNMTYwNTExMTUx\r\nOTA2WhcNMTgwNTExMTUxOTA2WjA6MQswCQYDVQQGEwJVUzEQMA4GA1UECgwHUGl2\r\nb3RhbDEZMBcGA1UEAwwQKi5zeXMuaG9tZWxhYi5pbzCCASIwDQYJKoZIhvcNAQEB\r\nBQADggEPADCCAQoCggEBAMUf+VqBvzh6g6oVRqc/sqsv3Ww2Y5Yeqr6gSdj36H7+\r\nhvf9FBI6KQsqQejXhg12WD9B3dm5wMozvX4WOmwZtHfy2d5yl2yGABWCgDI/ZRRe\r\noUu6MBMOcLkZs/s1tWQLYq5Xv3GRjNIwd1RgfW2hnj6staGcTLlkaQImPA9xrb9r\r\nr2uPk0w+BKU2GFkXBiM/3voTZcZjGdMwrfLw7Gx/KlXGnhcXCtcSL7whMt6vCANw\r\nmGRuFHdmxt5afJBVOkSgARbsKyGi/LmJWlWx/51V1CnjI1wuzlf+tgHK4KaezqrN\r\np2939sd6OLlU1jTPxVvzNXcdwNf6KE8HTvW2GU7zCH0CAwEAAaOBrzCBrDAOBgNV\r\nHQ8BAf8EBAMCB4AwHQYDVR0OBBYEFJfqqHqUaLNJc9GokzplxtW8i8r8MB0GA1Ud\r\nJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATBcBgNVHREEVTBTghAqLnN5cy5ob21l\r\nbGFiLmlvghEqLmFwcHMuaG9tZWxhYi5pb4IWKi5sb2dpbi5zeXMuaG9tZWxhYi5p\r\nb4IUKi51YWEuc3lzLmhvbWVsYWIuaW8wDQYJKoZIhvcNAQEFBQADggEBAFPS8C8f\r\nFv+vjZqo275zSUAM1Q0U3wQ1rBpBKAXk6Zlzouv3s6yUQq9ZsN8cu/yC0pwemNeq\r\n0VV/iNJ6eGPpEN2B6NXH7kyqQFSTQ9VOiP8t7+bn5io+8xVDHxZJM1Bw3OmjnMop\r\nx7m/bC9fqUD2htfYlDnVg91r5dN38mmmPRIDXKaIqgw0mpv8RB13fSviEFoS/TKg\r\n7IbNoS3W8nqJqD0XXDlVG13qPjzsvyWHpmNRZEE9ZVgfZ+0OMrlNbrC/7W4F0dYm\r\ntqNfpW7fT4DSx1OsMRbuLWn4FdcHg4ULZZxGJbsGs04MKgPvSKCrJ7grN5tCxI3P\r\nFtPnI8jP6ucD9Y0=\r\n-----END CERTIFICATE-----"
+                  },
+                  "identifier": "ssl_rsa_certificate"
+                },
+                {
+                  "value": false,
+                  "identifier": "disable_http"
+                },
+                {
+                  "identifier": "ssl_ciphers"
+                }
+              ],
+              "identifier": "haproxy"
+            }
+          ],
+          "identifier": "networking_point_of_entry"
+        },
+        {
+          "value": "enable",
+          "options": [
+            {
+              "properties": [
+                {
+                  "value": true,
+                  "identifier": "ignore_ssl_cert_verification"
+                }
+              ],
+              "identifier": "enable"
+            },
+            {
+              "identifier": "disable"
+            }
+          ],
+          "identifier": "route_services"
+        },
+        {
+          "value": "internal_mysql",
+          "options": [
+            {
+              "identifier": "internal"
+            },
+            {
+              "identifier": "internal_mysql"
+            },
+            {
+              "properties": [
+                {
+                  "identifier": "port"
+                },
+                {
+                  "identifier": "host"
+                },
+                {
+                  "identifier": "username"
+                },
+                {
+                  "identifier": "password"
+                }
+              ],
+              "identifier": "external"
+            }
+          ],
+          "identifier": "system_database"
+        },
+        {
+          "value": "internal",
+          "options": [
+            {
+              "identifier": "internal"
+            },
+            {
+              "properties": [
+                {
+                  "value": "https://s3.amazonaws.com",
+                  "identifier": "endpoint"
+                },
+                {
+                  "identifier": "buildpacks_bucket"
+                },
+                {
+                  "identifier": "droplets_bucket"
+                },
+                {
+                  "identifier": "packages_bucket"
+                },
+                {
+                  "identifier": "resources_bucket"
+                },
+                {
+                  "identifier": "access_key"
+                },
+                {
+                  "identifier": "secret_key"
+                },
+                {
+                  "value": 2,
+                  "identifier": "signature_version"
+                },
+                {
+                  "value": "''",
+                  "identifier": "region"
+                }
+              ],
+              "identifier": "external"
+            }
+          ],
+          "identifier": "system_blobstore"
+        },
+        {
+          "value": "disable",
+          "options": [
+            {
+              "identifier": "disable"
+            },
+            {
+              "properties": [
+                {
+                  "identifier": "bucket_name"
+                },
+                {
+                  "identifier": "bucket_path"
+                },
+                {
+                  "identifier": "access_key_id"
+                },
+                {
+                  "identifier": "secret_access_key"
+                },
+                {
+                  "identifier": "cron_schedule"
+                }
+              ],
+              "identifier": "enable"
+            }
+          ],
+          "identifier": "mysql_backups"
+        },
+        {
+          "value": "on_demand",
+          "options": [
+            {
+              "identifier": "on_demand"
+            },
+            {
+              "properties": [
+                {
+                  "identifier": "org_name"
+                },
+                {
+                  "identifier": "space_name"
+                },
+                {
+                  "identifier": "apps_domain"
+                }
+              ],
+              "identifier": "specified"
+            }
+          ],
+          "identifier": "smoke_tests"
+        },
+        {
+          "value": "routine",
+          "options": [
+            {
+              "identifier": "never"
+            },
+            {
+              "identifier": "routine"
+            },
+            {
+              "properties": [
+                {
+                  "identifier": "cleanup_threshold_in_mb"
+                }
+              ],
+              "identifier": "threshold"
+            }
+          ],
+          "identifier": "garden_disk_cleanup"
+        }
+      ],
+      "identifier": "cf"
+    },
+    {
+      "guid": "p-metrics-2efebf77291fa915911a",
+      "installation_name": "p-metrics-2efebf77291fa915911a",
+      "product_version": "1.7.1",
+      "singleton_availability_zone_reference": "8229164f1aca889243fe",
+      "network_reference": "01313413ae48ad2d9607",
+      "availability_zone_references": [
+        "8229164f1aca889243fe"
+      ],
+      "prepared": true,
+      "stemcell": {
+        "infrastructure": "vsphere",
+        "hypervisor": "esxi",
+        "os": "ubuntu-trusty",
+        "version": "3232.2",
+        "file": "bosh-stemcell-3232.2-vsphere-esxi-ubuntu-trusty-go_agent.tgz",
+        "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent"
+      },
+      "jobs": [
+        {
+          "guid": "maximus-ee903bf42a35edaa539e",
+          "installation_name": "maximus",
+          "properties": [
+            {
+              "value": {
+                "identity": "vcap",
+                "salt": "f867fb498ac70c39",
+                "password": "c664fb6f5bc868b3"
+              },
+              "identifier": "vm_credentials"
+            },
+            {
+              "value": {
+                "identity": "jmxadmin",
+                "password": "jmxadmin"
+              },
+              "identifier": "credentials"
+            },
+            {
+              "value": false,
+              "identifier": "use_ssl"
+            },
+            {
+              "identifier": "ssl_rsa_certificate"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "2043f27049b67a13",
+            "password": "ccf96a475615d229"
+          },
+          "partitions": [
+            {
+              "job_reference": "maximus-ee903bf42a35edaa539e",
+              "installation_name": "maximus-partition-8229164f1aca889243fe",
+              "instance_count": 1,
+              "availability_zone_reference": "8229164f1aca889243fe"
+            }
+          ],
+          "identifier": "maximus"
+        },
+        {
+          "guid": "opentsdb-firehose-nozzle-4a99ae2a2fabb747a88f",
+          "installation_name": "opentsdb-firehose-nozzle",
+          "properties": [
+            {
+              "value": {
+                "identity": "vcap",
+                "salt": "0618c082d0d1f4ef",
+                "password": "47b6937ef10ae029"
+              },
+              "identifier": "vm_credentials"
+            },
+            {
+              "value": 15,
+              "identifier": "flush_duration_seconds"
+            }
+          ],
+          "instance": {
+            "value": 1,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "1a18340b0ae75419",
+            "password": "f7f544b7842cd9c7"
+          },
+          "partitions": [
+            {
+              "job_reference": "opentsdb-firehose-nozzle-4a99ae2a2fabb747a88f",
+              "installation_name": "opentsdb-firehose-nozzle-partition-8229164f1aca889243fe",
+              "instance_count": 1,
+              "availability_zone_reference": "8229164f1aca889243fe"
+            }
+          ],
+          "identifier": "opentsdb-firehose-nozzle"
+        },
+        {
+          "guid": "compilation-86912a6345c4a19a2ea8",
+          "installation_name": "compilation",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "3984a125f255c06a",
+            "password": "5977c6f5db723c4b"
+          },
+          "partitions": [
+            {
+              "job_reference": "compilation-86912a6345c4a19a2ea8",
+              "installation_name": "compilation-partition-8229164f1aca889243fe",
+              "instance_count": 1,
+              "availability_zone_reference": "8229164f1aca889243fe"
+            }
+          ],
+          "identifier": "compilation"
+        }
+      ],
+      "identifier": "p-metrics"
+    },
+    {
+      "guid": "p-mysql-1b4255adf4f5d3ec189c",
+      "installation_name": "p-mysql-1b4255adf4f5d3ec189c",
+      "product_version": "1.7.7",
+      "singleton_availability_zone_reference": "01e1050ec7806d9d1fc1",
+      "network_reference": "01313413ae48ad2d9607",
+      "availability_zone_references": [
+        "01e1050ec7806d9d1fc1",
+        "cd06b8e754932192bace"
+      ],
+      "disabled_post_deploy_errand_names": [
+        "broker-registrar",
+        "acceptance-tests"
+      ],
+      "disabled_pre_delete_errand_names": [
+        "broker-deregistrar"
+      ],
+      "applied_data_migrations": [
+        "201604200101_backups.js"
+      ],
+      "prepared": true,
+      "stemcell": {
+        "infrastructure": "vsphere",
+        "hypervisor": "esxi",
+        "os": "ubuntu-trusty",
+        "version": "3146.11",
+        "file": "bosh-stemcell-3146.11-vsphere-esxi-ubuntu-trusty-go_agent.tgz",
+        "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent"
+      },
+      "jobs": [
+        {
+          "guid": "mysql-dc2876ea43b25efcbdfe",
+          "installation_name": "mysql",
+          "properties": [
+            {
+              "value": {
+                "identity": "root",
+                "password": "a96fa77f39a7eb846c36"
+              },
+              "identifier": "mysql_admin_password"
+            },
+            {
+              "value": {
+                "identity": "c5122cc06a11fcbd961f",
+                "password": "d0393763dd64f7db704a"
+              },
+              "identifier": "mysql_backup_server_credentials"
+            },
+            {
+              "value": 40,
+              "identifier": "max_user_connections"
+            }
+          ],
+          "instance": {
+            "value": 2,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "ec0acf62f0ed54b3",
+            "password": "fbbcb4fa62ae9559"
+          },
+          "partitions": [
+            {
+              "job_reference": "mysql-dc2876ea43b25efcbdfe",
+              "installation_name": "mysql-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            },
+            {
+              "job_reference": "mysql-dc2876ea43b25efcbdfe",
+              "installation_name": "mysql-partition-cd06b8e754932192bace",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "mysql"
+        },
+        {
+          "guid": "backup-prepare-a977d9221f495a36af48",
+          "installation_name": "backup-prepare",
+          "properties": [
+            {
+              "value": {
+                "secret": "b21643f2647f06630aa2"
+              },
+              "identifier": "backup_encryption_key"
+            }
+          ],
+          "instance": {
+            "value": 0,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "41db0ea71c52f441",
+            "password": "29d7bb2953883f08"
+          },
+          "partitions": [
+            {
+              "job_reference": "backup-prepare-a977d9221f495a36af48",
+              "installation_name": "backup-prepare-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 0,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            }
+          ],
+          "identifier": "backup-prepare"
+        },
+        {
+          "guid": "proxy-88aaea4170a5e4f90298",
+          "installation_name": "proxy",
+          "properties": [
+            {
+              "value": {
+                "identity": "admin",
+                "password": "cbcf4e039f2e8dd1b016"
+              },
+              "identifier": "dashboard_credentials"
+            },
+            {
+              "identifier": "static_ips"
+            }
+          ],
+          "instance": {
+            "value": 1,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "ea90e6312607986d",
+            "password": "12f5f6ab3afefd5e"
+          },
+          "partitions": [
+            {
+              "job_reference": "proxy-88aaea4170a5e4f90298",
+              "installation_name": "proxy-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            },
+            {
+              "job_reference": "proxy-88aaea4170a5e4f90298",
+              "installation_name": "proxy-partition-cd06b8e754932192bace",
+              "instance_count": 0,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "proxy"
+        },
+        {
+          "guid": "cf-mysql-broker-d06fffa8f300614aa6c1",
+          "installation_name": "cf-mysql-broker",
+          "properties": [
+            {
+              "value": {
+                "identity": "c190c59ce323337e30f4",
+                "password": "ccdccab43929f6c0c347"
+              },
+              "identifier": "broker_auth_credentials"
+            },
+            {
+              "value": "17d793e6-6da6-4f0e-b58d-364a407166a0",
+              "identifier": "plan_1_id"
+            },
+            {
+              "value": 100,
+              "identifier": "plan_1_max_storage_mb"
+            },
+            {
+              "value": "p-mysql",
+              "identifier": "broker_name"
+            },
+            {
+              "value": {
+                "secret": "b502cb6c1927c5b01b4c"
+              },
+              "identifier": "cookie_secret"
+            },
+            {
+              "value": {
+                "identity": "p-mysql",
+                "password": "ece967108e0fd1220176"
+              },
+              "identifier": "dashboard_client_credentials"
+            },
+            {
+              "identifier": "bind_hostname"
+            }
+          ],
+          "instance": {
+            "value": 1,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "f492ec3f2f27361c",
+            "password": "0525793944bb5877"
+          },
+          "partitions": [
+            {
+              "job_reference": "cf-mysql-broker-d06fffa8f300614aa6c1",
+              "installation_name": "cf-mysql-broker-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            },
+            {
+              "job_reference": "cf-mysql-broker-d06fffa8f300614aa6c1",
+              "installation_name": "cf-mysql-broker-partition-cd06b8e754932192bace",
+              "instance_count": 0,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "cf-mysql-broker"
+        },
+        {
+          "guid": "broker-registrar-7f2bf6507a48c430558a",
+          "installation_name": "broker-registrar",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "fdc09d486a6754e1",
+            "password": "6bd9245812316373"
+          },
+          "partitions": [
+            {
+              "job_reference": "broker-registrar-7f2bf6507a48c430558a",
+              "installation_name": "broker-registrar",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            }
+          ],
+          "identifier": "broker-registrar"
+        },
+        {
+          "guid": "broker-deregistrar-3a4cbead03aef0d59c6c",
+          "installation_name": "broker-deregistrar",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "8568a3c17c7a8aac",
+            "password": "0d20a905bd9b893b"
+          },
+          "partitions": [
+            {
+              "job_reference": "broker-deregistrar-3a4cbead03aef0d59c6c",
+              "installation_name": "broker-deregistrar",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            }
+          ],
+          "identifier": "broker-deregistrar"
+        },
+        {
+          "guid": "acceptance-tests-4e651d633b098a015e52",
+          "installation_name": "acceptance-tests",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "7f36b1be98be2c6b",
+            "password": "aee428cba9ec1e24"
+          },
+          "partitions": [
+            {
+              "job_reference": "acceptance-tests-4e651d633b098a015e52",
+              "installation_name": "acceptance-tests",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            }
+          ],
+          "identifier": "acceptance-tests"
+        },
+        {
+          "guid": "compilation-0af5201b74e4a555a1f9",
+          "installation_name": "compilation",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "1a461c560c221d40",
+            "password": "603a8e5ab58e2f0a"
+          },
+          "partitions": [
+            {
+              "job_reference": "compilation-0af5201b74e4a555a1f9",
+              "installation_name": "compilation-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            }
+          ],
+          "identifier": "compilation"
+        }
+      ],
+      "properties": [
+        {
+          "value": "disable",
+          "options": [
+            {
+              "identifier": "disable"
+            },
+            {
+              "properties": [
+                {
+                  "identifier": "bucket_name"
+                },
+                {
+                  "identifier": "bucket_path"
+                },
+                {
+                  "identifier": "access_key_id"
+                },
+                {
+                  "identifier": "secret_access_key"
+                },
+                {
+                  "identifier": "cron_schedule"
+                }
+              ],
+              "identifier": "enable"
+            }
+          ],
+          "identifier": "backups"
+        }
+      ],
+      "identifier": "p-mysql"
+    },
+    {
+      "guid": "p-rabbitmq-f7f065eb23032fad61bf",
+      "installation_name": "p-rabbitmq-f7f065eb23032fad61bf",
+      "product_version": "1.5.9",
+      "singleton_availability_zone_reference": "cd06b8e754932192bace",
+      "network_reference": "01313413ae48ad2d9607",
+      "availability_zone_references": [
+        "01e1050ec7806d9d1fc1",
+        "cd06b8e754932192bace"
+      ],
+      "disabled_post_deploy_errand_names": [
+        "broker-registrar"
+      ],
+      "disabled_pre_delete_errand_names": [
+        "broker-deregistrar"
+      ],
+      "applied_data_migrations": [
+        "201603161628_update_rsa_certificates.js"
+      ],
+      "prepared": true,
+      "stemcell": {
+        "infrastructure": "vsphere",
+        "hypervisor": "esxi",
+        "os": "ubuntu-trusty",
+        "version": "3146.11",
+        "file": "bosh-stemcell-3146.11-vsphere-esxi-ubuntu-trusty-go_agent.tgz",
+        "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent"
+      },
+      "jobs": [
+        {
+          "guid": "rabbitmq-server-4e98849610a2deb34e2c",
+          "installation_name": "rabbitmq-server",
+          "properties": [
+            {
+              "value": {
+                "identity": "rabbitmq",
+                "password": "rabbitmq"
+              },
+              "identifier": "server_admin_credentials"
+            },
+            {
+              "value": {
+                "identity": "broker",
+                "salt": "8ed6f7cf1cf06d2e",
+                "password": "009d8a1fd974f7bf"
+              },
+              "identifier": "service_broker_rabbitmq_admin_credentials"
+            },
+            {
+              "value": [
+                "rabbitmq_amqp1_0",
+                "rabbitmq_management",
+                "rabbitmq_management_visualiser"
+              ],
+              "identifier": "plugins"
+            },
+            {
+              "identifier": "rsa_certificate"
+            },
+            {
+              "identifier": "ssl_cacert"
+            },
+            {
+              "identifier": "cookie"
+            },
+            {
+              "identifier": "config"
+            },
+            {
+              "value": [
+                "enable_tls1_0"
+              ],
+              "identifier": "security_options"
+            }
+          ],
+          "instance": {
+            "value": 1,
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "ee22c571c18f3b71",
+            "password": "c694e93e8cb8a3c3"
+          },
+          "partitions": [
+            {
+              "job_reference": "rabbitmq-server-4e98849610a2deb34e2c",
+              "installation_name": "rabbitmq-server-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            },
+            {
+              "job_reference": "rabbitmq-server-4e98849610a2deb34e2c",
+              "installation_name": "rabbitmq-server-partition-cd06b8e754932192bace",
+              "instance_count": 0,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "rabbitmq-server"
+        },
+        {
+          "guid": "rabbitmq-haproxy-b0c304423741c34e4796",
+          "installation_name": "rabbitmq-haproxy",
+          "properties": [
+            {
+              "value": "15672, 5672, 5671, 1883, 8883, 61613, 61614, 15674",
+              "identifier": "ports"
+            },
+            {
+              "value": {
+                "identity": "admin",
+                "salt": "d2dd8699aab03147",
+                "password": "0ab062950ac40b59"
+              },
+              "identifier": "stats_dashboard"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "4c4578b0489003a4",
+            "password": "159803b488dfb3f1"
+          },
+          "partitions": [
+            {
+              "job_reference": "rabbitmq-haproxy-b0c304423741c34e4796",
+              "installation_name": "rabbitmq-haproxy-partition-01e1050ec7806d9d1fc1",
+              "instance_count": 1,
+              "availability_zone_reference": "01e1050ec7806d9d1fc1"
+            },
+            {
+              "job_reference": "rabbitmq-haproxy-b0c304423741c34e4796",
+              "installation_name": "rabbitmq-haproxy-partition-cd06b8e754932192bace",
+              "instance_count": 0,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "rabbitmq-haproxy"
+        },
+        {
+          "guid": "rabbitmq-broker-ada6c1026ddba7163278",
+          "installation_name": "rabbitmq-broker",
+          "properties": [
+            {
+              "value": {
+                "identity": "admin",
+                "password": "f8d6a874fdf5b7b0ff8f"
+              },
+              "identifier": "broker_http_auth_credentials"
+            },
+            {
+              "identifier": "dns_host"
+            },
+            {
+              "value": true,
+              "identifier": "operator_set_policy_enabled"
+            },
+            {
+              "value": "{\"ha-mode\": \"exactly\", \"ha-params\": 2, \"ha-sync-mode\": \"automatic\"}\n",
+              "identifier": "policy_definition"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "8b01c9edc655dde2",
+            "password": "ff6f75435ad48d74"
+          },
+          "partitions": [
+            {
+              "job_reference": "rabbitmq-broker-ada6c1026ddba7163278",
+              "installation_name": "rabbitmq-broker-partition-cd06b8e754932192bace",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "rabbitmq-broker"
+        },
+        {
+          "guid": "compilation-d3d3bef4ab5e215aad1c",
+          "installation_name": "compilation",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "e8819560b5004f40",
+            "password": "a52f9a1c11819e21"
+          },
+          "partitions": [
+            {
+              "job_reference": "compilation-d3d3bef4ab5e215aad1c",
+              "installation_name": "compilation-partition-cd06b8e754932192bace",
+              "instance_count": 2,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "compilation"
+        },
+        {
+          "guid": "broker-registrar-234be653b893e69f476b",
+          "installation_name": "broker-registrar",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "646f896959654b8d",
+            "password": "43155afa438f6e4d"
+          },
+          "partitions": [
+            {
+              "job_reference": "broker-registrar-234be653b893e69f476b",
+              "installation_name": "broker-registrar",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "broker-registrar"
+        },
+        {
+          "guid": "broker-deregistrar-d4116bdf7364efe51caa",
+          "installation_name": "broker-deregistrar",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "7e2ff3076717a6b5",
+            "password": "c2a493259fcd0be6"
+          },
+          "partitions": [
+            {
+              "job_reference": "broker-deregistrar-d4116bdf7364efe51caa",
+              "installation_name": "broker-deregistrar",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "broker-deregistrar"
+        }
+      ],
+      "properties": [
+        {
+          "identifier": "syslog_address"
+        },
+        {
+          "identifier": "syslog_port"
+        }
+      ],
+      "identifier": "p-rabbitmq"
+    },
+    {
+      "guid": "p-spring-cloud-services-6c8463bf55d3afdbe22c",
+      "installation_name": "p-spring-cloud-services-6c8463bf55d3afdbe22c",
+      "product_version": "1.0.9",
+      "singleton_availability_zone_reference": "cd06b8e754932192bace",
+      "network_reference": "01313413ae48ad2d9607",
+      "availability_zone_references": [
+        "cd06b8e754932192bace"
+      ],
+      "disabled_post_deploy_errand_names": [
+        "deploy-service-broker",
+        "register-service-broker"
+      ],
+      "disabled_pre_delete_errand_names": [
+        "destroy-service-broker"
+      ],
+      "prepared": true,
+      "stemcell": {
+        "infrastructure": "vsphere",
+        "hypervisor": "esxi",
+        "os": "ubuntu-trusty",
+        "version": "3232.2",
+        "file": "bosh-stemcell-3232.2-vsphere-esxi-ubuntu-trusty-go_agent.tgz",
+        "name": "bosh-vsphere-esxi-ubuntu-trusty-go_agent"
+      },
+      "jobs": [
+        {
+          "guid": "deploy-service-broker-5fa24c66d52bdd02a982",
+          "installation_name": "deploy-service-broker",
+          "properties": [
+            {
+              "identifier": "product_name"
+            },
+            {
+              "identifier": "app_name"
+            },
+            {
+              "identifier": "app_uri"
+            },
+            {
+              "identifier": "broker_org"
+            },
+            {
+              "identifier": "broker_space"
+            },
+            {
+              "identifier": "instances_org"
+            },
+            {
+              "identifier": "instances_space"
+            },
+            {
+              "identifier": "memory"
+            },
+            {
+              "identifier": "persistence_store_type"
+            },
+            {
+              "value": {
+                "identity": "f1bdd5b4d262a773983b",
+                "password": "d8358c95165dbbacbdc9"
+              },
+              "identifier": "broker_credentials"
+            },
+            {
+              "value": {
+                "secret": "a0408da1613dfc80884b"
+              },
+              "identifier": "broker_dashboard_secret"
+            },
+            {
+              "identifier": "worker_client_id"
+            },
+            {
+              "value": {
+                "secret": "cc271f8f27dc790a701e"
+              },
+              "identifier": "worker_client_secret"
+            },
+            {
+              "value": {
+                "identity": "p-spring-cloud-services",
+                "password": "f694019cff341d372bec"
+              },
+              "identifier": "instances_credentials"
+            },
+            {
+              "value": {
+                "identity": "admin",
+                "password": "ca35aebd3d1c48fc4730"
+              },
+              "identifier": "worker_credentials"
+            },
+            {
+              "value": 100,
+              "identifier": "broker_max_instances"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "e36f107c924fd4f9",
+            "password": "f70230a57da6fc2c"
+          },
+          "partitions": [
+            {
+              "job_reference": "deploy-service-broker-5fa24c66d52bdd02a982",
+              "installation_name": "deploy-service-broker",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "deploy-service-broker"
+        },
+        {
+          "guid": "register-service-broker-c8b793fd5c9e9671f27e",
+          "installation_name": "register-service-broker",
+          "properties": [
+            {
+              "identifier": "product_name"
+            },
+            {
+              "identifier": "app_name"
+            },
+            {
+              "identifier": "app_uri"
+            },
+            {
+              "identifier": "broker_org"
+            },
+            {
+              "identifier": "broker_space"
+            },
+            {
+              "identifier": "plan_names"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "ca2ebbb8bdbe01b9",
+            "password": "495ae2c812b527bb"
+          },
+          "partitions": [
+            {
+              "job_reference": "register-service-broker-c8b793fd5c9e9671f27e",
+              "installation_name": "register-service-broker",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "register-service-broker"
+        },
+        {
+          "guid": "destroy-service-broker-5ba31d2333171df193fa",
+          "installation_name": "destroy-service-broker",
+          "properties": [
+            {
+              "identifier": "product_name"
+            },
+            {
+              "identifier": "app_name"
+            },
+            {
+              "identifier": "app_uri"
+            },
+            {
+              "identifier": "broker_org"
+            },
+            {
+              "identifier": "broker_space"
+            },
+            {
+              "identifier": "instances_org"
+            },
+            {
+              "identifier": "instances_space"
+            },
+            {
+              "identifier": "plan_names"
+            },
+            {
+              "identifier": "worker_client_id"
+            },
+            {
+              "value": {
+                "secret": "a36a604a147deb70459b"
+              },
+              "identifier": "worker_client_secret"
+            }
+          ],
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "8907e800f094329d",
+            "password": "e2d27ca9cfbb8c20"
+          },
+          "partitions": [
+            {
+              "job_reference": "destroy-service-broker-5ba31d2333171df193fa",
+              "installation_name": "destroy-service-broker",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "destroy-service-broker"
+        },
+        {
+          "guid": "compilation-7e2696b84512b61c85d1",
+          "installation_name": "compilation",
+          "instance": {
+            "identifier": "instances"
+          },
+          "vm_credentials": {
+            "identity": "vcap",
+            "salt": "890e3c8605f39a63",
+            "password": "27581ff9eea9f734"
+          },
+          "partitions": [
+            {
+              "job_reference": "compilation-7e2696b84512b61c85d1",
+              "installation_name": "compilation-partition-cd06b8e754932192bace",
+              "instance_count": 1,
+              "availability_zone_reference": "cd06b8e754932192bace"
+            }
+          ],
+          "identifier": "compilation"
+        }
+      ],
+      "properties": [
+        {
+          "value": {
+            "secret": "c8a4ccd1f4604022e741"
+          },
+          "identifier": "encryption_key"
+        }
+      ],
+      "identifier": "p-spring-cloud-services"
+    }
+  ]
+}
