@@ -12,6 +12,8 @@ login_opsman() {
 
 scp_files() {
 
+	ssh-keygen -R $OPS_MANAGER_HOST
+
 	echo "COPY DEPLOYMENT MANIFEST"
 	ssh-keygen -R $OPS_MANAGER_HOST
 

@@ -22,7 +22,7 @@ if [[ $OPTION -eq 1 ]]; then
   echo
   read -p "Enter the Backup Directory: " WORK_DIR
   read -p "Enter Y/N for complete backup: " COMPLETE_BACKUP
-  ./backup.sh $OPS_MANAGER_HOST $SSH_USER $OPS_MGR_SSH_PASSWORD $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD $WORK_DIR $COMPLETE_BACKUP
+  $PWD/backup.sh $OPS_MANAGER_HOST $SSH_USER $OPS_MGR_SSH_PASSWORD $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD $WORK_DIR $COMPLETE_BACKUP
 
 elif [[ $OPTION -eq 2 ]]; then
   echo "Import users it is..."
@@ -34,7 +34,7 @@ elif [[ $OPTION -eq 2 ]]; then
   read -p "Enter the UAA Admin Username: " UAA_ADMIN_USER
   read -s -p "UAA Admin Client Credentials: " UAA_ADMIN_PWD
   echo
-  ./import-users.sh $SYSTEM_DOMAIN $APPS_MGR_ADMIN_USER $APPS_MGR_ADMIN_PWD $UAA_ADMIN_USER $UAA_ADMIN_PWD
+  $PWD/import-users.sh $SYSTEM_DOMAIN $APPS_MGR_ADMIN_USER $APPS_MGR_ADMIN_PWD $UAA_ADMIN_USER $UAA_ADMIN_PWD
 
 elif [[ $OPTION -eq 3 ]]; then
   echo "Create Admin User it is..."
@@ -44,7 +44,7 @@ elif [[ $OPTION -eq 3 ]]; then
   read -s -p "UAA Admin Client Credentials: " UAA_ADMIN_PWD
   echo
   read -p "Enter the Username to promote as Admin: " USER_TO_PROMOTE
-  ./assign-admin-privileges.sh $SYSTEM_DOMAIN $UAA_ADMIN_USER $UAA_ADMIN_PWD $USER_TO_PROMOTE
+  $PWD/assign-admin-privileges.sh $SYSTEM_DOMAIN $UAA_ADMIN_USER $UAA_ADMIN_PWD $USER_TO_PROMOTE
 
 elif [[ $OPTION -eq 4 ]]; then
   echo "Add Orgs and Spaces it is.."
@@ -54,7 +54,7 @@ elif [[ $OPTION -eq 4 ]]; then
   read -s -p "Enter the Apps Manager Admin Password: " UAA_ADMIN_PWD
   echo
   read -p "Enter the Environment name dev/int/test/prod: " ENVIRONMENT
-  ./add-org-space.sh $SYSTEM_DOMAIN $UAA_ADMIN_USER $UAA_ADMIN_PWD $ENVIRONMENT
+  $PWD/add-org-space.sh $SYSTEM_DOMAIN $UAA_ADMIN_USER $UAA_ADMIN_PWD $ENVIRONMENT
 
 elif [[ $OPTION -eq 5 ]]; then
   echo "Remove unused products from Ops Manager"
@@ -63,7 +63,7 @@ elif [[ $OPTION -eq 5 ]]; then
   read -p "Enter the OPS Manager Admin Username: " OPS_MGR_ADMIN_USERNAME
   read -s -p "Enter the OPS Manager Admin Password: " OPS_MGR_ADMIN_PASSWORD
   echo
-  ./delete-unused-products.sh $OPS_MANAGER_HOST $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD
+  $PWD/delete-unused-products.sh $OPS_MANAGER_HOST $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD
 
 elif [[ $OPTION -eq 6 ]]; then
   echo "Download and upload products to Ops Manager"
@@ -77,7 +77,7 @@ elif [[ $OPTION -eq 6 ]]; then
   read -p "Enter the OPS Manager Admin Username: " OPS_MGR_ADMIN_USERNAME
   read -s -p "Enter the OPS Manager Admin Password: " OPS_MGR_ADMIN_PASSWORD
   echo
-  ./download-upload.sh $API_TOKEN $FILE_NAME $PRODUCT_ID $RELEASE_ID $PRODUCT_FILE_ID $OPS_MANAGER_HOST $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD
+  $PWD/download-upload.sh $API_TOKEN $FILE_NAME $PRODUCT_ID $RELEASE_ID $PRODUCT_FILE_ID $OPS_MANAGER_HOST $OPS_MGR_ADMIN_USERNAME $OPS_MGR_ADMIN_PASSWORD
 
 else
   echo "You've selected an upsupported operation"
