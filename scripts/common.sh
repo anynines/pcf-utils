@@ -1,12 +1,24 @@
 #!/bin/bash --login
 
-copy_deployment_files() {
+login_opsman() {
+
+	echo "LOGIN TO OPSMAN"
+
+	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation
+
+	uaac token owner get opsman $OPS_MGR_ADMIN_USERNAME -s "" -p $OPS_MGR_ADMIN_PASSWORD
+
+}
+
+scp_files() {
 
 	echo "COPY DEPLOYMENT MANIFEST"
+	ssh-keygen -R $OPS_MANAGER_HOST
+
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn scp $SSH_USER@$OPS_MANAGER_HOST:/var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
+		spawn scp $SSH_USER@$OPS_MANAGER_HOST:$1 $2
 
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
@@ -34,7 +46,10 @@ export_installation_settings() {
 
 	echo "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
 
-	curl "$CONNECTION_URL" -X GET -u $OPS_MGR_ADMIN_USERNAME:$OPS_MGR_ADMIN_PASSWORD --insecure -k -o $WORK_DIR/installation.yml
+	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+
+	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
+
 }
 
 fetch_bosh_connection_parameters() {
@@ -52,7 +67,7 @@ bosh_login() {
 	echo "BOSH LOGIN"
 	rm -rf ~/.bosh_config
 
-	bosh target $BOSH_DIRECTOR_IP << EOF
+	bosh --ca-cert $WORK_DIR/root_ca_certificate target $BOSH_DIRECTOR_IP << EOF
 	$DIRECTOR_USERNAME
 	$DIRECTOR_PASSWORD
 EOF

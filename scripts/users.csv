@@ -1,1 +1,1 @@
-LDAP EXTERNAL ID#EMAIL ADDRESS#USERNAME#ORGNAME#OrgManager|OrgAuditor#SPACENAME#SpaceManager|SpaceDeveloper|SpaceAuditor
+uid=rjain,ou=People,dc=homelab,dc=io#rjain@pivotal.io#rjain@pivotal.io#Pivotal#OrgManager|OrgAuditor#development#SpaceManager|SpaceDeveloper|SpaceAuditor

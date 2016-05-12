@@ -134,6 +134,8 @@ export_nfs_server() {
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export NFS_IP=`echo $output | cut -d '|' -f 3`
 
+	ssh-keygen -R $NFS_IP
+
 	/usr/bin/expect -c "
 		set timeout -1
 
@@ -213,7 +215,9 @@ zip_all_together() {
 
 execute() {
 	validate_software
-	copy_deployment_files
+	scp_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
+	scp_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
+	login_opsman
 	export_installation_settings
 	fetch_bosh_connection_parameters
 	bosh_login
