@@ -52,6 +52,10 @@ export_installation_settings() {
 
 	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
 
+	BOSH_MANIFEST_URL=https://$OPS_MANAGER_HOST/api/v0/staged/director/manifest
+
+	curl "$BOSH_MANIFEST_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $DEPLOYMENT_DIR/bosh.yml
+
 }
 
 fetch_bosh_connection_parameters() {
@@ -72,7 +76,7 @@ bosh_login() {
 	echo director IP is $BOSH_DIRECTOR_IP
 
 	/usr/bin/expect -c "
-		set timeout 1
+		set timeout -1
 
 		spawn bosh --ca-cert $WORK_DIR/root_ca_certificate target $BOSH_DIRECTOR_IP
 
