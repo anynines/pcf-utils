@@ -73,7 +73,7 @@ set_bosh_deployment() {
 
 export_bosh_vms() {
     echo "EXPORT BOSH VMS"
-	OUTPUT=`bosh vms | grep "cloud_controller-*" | cut -d '|' -f 2 | tr -d ' '`
+	OUTPUT=`bosh vms | grep "cloud_controller-partition-*" | cut -d '|' -f 2 | cut -d '(' -f 1 | tr -d ' '`
 	echo $OUTPUT > $WORK_DIR/bosh-vms.txt
 }
 
@@ -88,26 +88,6 @@ stop_cloud_controller() {
 
 		bosh -n stop $JOB $INDEX --force
 	done
-}
-
-export_cc_db() {
-	echo "EXPORT CCDB"
-
-	export_db cf ccdb admin 2544 "ccdb" $DATABASE_DIR/ccdb.sql
-
-}
-
-export_uaadb() {
-	echo "EXPORT UAA-DB"
-
-	export_db cf uaadb root 2544 "uaa" $DATABASE_DIR/uaadb.sql
-
-}
-
-export_consoledb() {
-	echo "EXPORT CONSOLE-DB"
-
-	export_db cf consoledb root 2544 "console" $DATABASE_DIR/console.sql
 }
 
 export_db() {
@@ -183,7 +163,7 @@ export_mysqldb() {
 	export PASSWORD=`echo $output | cut -d '|' -f 2`
 	export IP=`echo $output | cut -d '|' -f 3`
 
-	DB_FILE=$DATABASE_DIR/user_databases.sql
+	DB_FILE=$DATABASE_DIR/mysql.sql
 
 	echo '[mysqldump]
 user='$USERNAME'
@@ -227,14 +207,12 @@ execute() {
 	set_bosh_deployment
 	export_bosh_vms
 	stop_cloud_controller
-	export_cc_db
-	export_uaadb
-	export_consoledb
 	export_nfs_server
 	export_mysqldb
 	start_cloud_controller
 	export_installation
 	zip_all_together
+	logout_all
 }
 
 if [[ ! -f "./environment.sh" ]]; then

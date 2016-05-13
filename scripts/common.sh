@@ -69,10 +69,30 @@ bosh_login() {
 	echo "BOSH LOGIN"
 	rm -rf ~/.bosh_config
 
-	bosh --ca-cert $WORK_DIR/root_ca_certificate target $BOSH_DIRECTOR_IP << EOF
-	$DIRECTOR_USERNAME
-	$DIRECTOR_PASSWORD
-EOF
+	echo director IP is $BOSH_DIRECTOR_IP
 
-	bosh login $DIRECTOR_USERNAME $DIRECTOR_PASSWORD
+	/usr/bin/expect -c "
+		set timeout 1
+
+		spawn bosh --ca-cert $WORK_DIR/root_ca_certificate target $BOSH_DIRECTOR_IP
+
+		expect {
+			-re ".*Email:*" {
+				send $DIRECTOR_USERNAME\r ;
+				exp_continue
+			}
+
+			"*?assword:*" {
+				send $DIRECTOR_PASSWORD\r
+				interact
+			}
+		}
+
+		exit
+	"
+}
+
+logout_all() {
+	bosh logout
+	uaac token delete $OPS_MGR_ADMIN_USERNAME
 }
