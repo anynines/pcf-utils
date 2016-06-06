@@ -111,7 +111,7 @@ bosh_login_wo_certs() {
 		spawn bosh target $BOSH_DIRECTOR_IP
 
 		expect {
-			-re ".*Email:*" {
+			-re ".*username:*" {
 				send $DIRECTOR_USERNAME\r ;
 				exp_continue
 			}
