@@ -108,18 +108,14 @@ export_db() {
 export_nfs_server() {
 	echo "EXPORT NFS-SERVER"
 
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml cf nfs_server vcap`
-
-	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
-	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
-	export NFS_IP=`echo $output | cut -d '|' -f 3`
+	NFS_IP=`bosh vms $CF_DEPLOYMENT_NAME | grep nfs | cut -d '|' -f 6 | tr -d ' '`
 
 	ssh-keygen -R $NFS_IP
 
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn scp -rp $NFS_SERVER_USER@$NFS_IP:/var/vcap/store/shared $NFS_DIR
+		spawn scp -i $BOSH_PRIVATE_KEY_PATH -rp $vcap@$NFS_IP:/var/vcap/store/shared $NFS_DIR
 
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
@@ -159,9 +155,9 @@ start_cloud_controller() {
 export_mysqldb() {
 	output=`sh appassembler/bin/app $WORK_DIR/installation.yml cf mysql root`
 
-	export USERNAME=`echo $output | cut -d '|' -f 1`
-	export PASSWORD=`echo $output | cut -d '|' -f 2`
-	export IP=`echo $output | cut -d '|' -f 3`
+	export USERNAME='root'
+	export PASSWORD=`cat $CF_DEPLOYMENT_FILE_NAME | grep "user=root --password=" | tr -s ' ' | cut -d '=' -f 3 | cut -d ' ' -f 1`
+	export IP=`bosh vms $CF_DEPLOYMENT_NAME | grep mysql-partition* | cut -d '|' -f 6 | tr -d ' '`
 
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
@@ -211,11 +207,12 @@ execute() {
 
 if [[ ! -f "./environment.sh" ]]; then
 
-	if [ $# -lt 4 ]; then
-		echo "Usage: ./backup_script.sh <BOSH DIRECTOR IP> <BOSH DIRECTOR USER> <BOSH DIRECTOR PASSWORD> <OUTPUT DIR> <COMPLETE BACKUP>"
+	if [ $# -lt 5 ]; then
+		echo "Usage: ./backup_script.sh <BOSH DIRECTOR IP> <BOSH DIRECTOR USER> <BOSH DIRECTOR PASSWORD> <BOSH PRIVATE KEY PATH> <OUTPUT DIR> <COMPLETE BACKUP>"
 		printf "\t %s \t\t\t %s \n" "BOSH DIRECTOR IP:" "Bosh Director IP"
 		printf "\t %s \t\t\t %s \n" "BOSH DIRECTOR USER:" "BOSH Director Username"
 		printf "\t %s \t\t %s \n" "BOSH DIRECTOR PASSWORD:" "BOSH Director Password"
+    printf "\t %s \t\t %s \n" "BOSH PRIVATE KEY PATH:" "BOSH Private Key Location"
 		printf "\t %s \t\t\t\t %s \n" "OUTPUT DIR:" "Backup Directory"
 		printf "\t %s \t\t\t %s \n" "COMPLETE BACKUP:" "Specify 'Y' for complete backup"
 		exit 1
@@ -225,8 +222,9 @@ if [[ ! -f "./environment.sh" ]]; then
   export BOSH_DIRECTOR_IP=$1
 	export DIRECTOR_USERNAME=$2
   export DIRECTOR_PASSWORD=$3
+  export BOSH_PRIVATE_KEY_PATH=$4
 	export BACKUP_DIR_NAME=Backup_$DATE
-	export WORK_DIR=$4/$BACKUP_DIR_NAME
+	export WORK_DIR=$5/$BACKUP_DIR_NAME
 	export NFS_DIR=$WORK_DIR/nfs_share
 	export DEPLOYMENT_DIR=$WORK_DIR/deployments
 	export DATABASE_DIR=$WORK_DIR/database
