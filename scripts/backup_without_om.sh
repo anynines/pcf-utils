@@ -150,13 +150,15 @@ export_mysqldb() {
 
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
-	echo '[mysqldump]'
+	echo "[mysqldump]
 user=$USERNAME
-password=$PASSWORD > ~/.my.cnf
+password=$PASSWORD" > ~/.my.cnf
 
 	echo "EXPORT MySQL DB"
 
 	mysqldump -u $USERNAME -h $IP --all-databases > $DB_FILE
+
+  rm ~/.my.cnf
 
 }
 
