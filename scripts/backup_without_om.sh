@@ -120,20 +120,10 @@ export_nfs_server() {
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
 				send yes\r ;
-				exp_continue
-			}
-
-			"*?assword:*" {
-				send $NFS_SERVER_PASSWORD\r
-			}
-		}
-		expect {
-			"*?assword:*" {
-				send $NFS_SERVER_PASSWORD\r
 				interact
 			}
 		}
-
+		
 		exit
 	"
 }
