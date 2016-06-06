@@ -2,6 +2,9 @@
 
 login_opsman() {
 
+	echo "remove the old uaa authentication tokens"
+	rm ~/.uaac.yml
+
 	echo "LOGIN TO OPSMAN"
 
 	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation
@@ -79,6 +82,33 @@ bosh_login() {
 		set timeout -1
 
 		spawn bosh --ca-cert $WORK_DIR/root_ca_certificate target $BOSH_DIRECTOR_IP
+
+		expect {
+			-re ".*Email:*" {
+				send $DIRECTOR_USERNAME\r ;
+				exp_continue
+			}
+
+			"*?assword:*" {
+				send $DIRECTOR_PASSWORD\r
+				interact
+			}
+		}
+
+		exit
+	"
+}
+
+bosh_login_wo_certs() {
+	echo "BOSH LOGIN"
+	rm -rf ~/.bosh_config
+
+	echo director IP is $BOSH_DIRECTOR_IP
+
+	/usr/bin/expect -c "
+		set timeout -1
+
+		spawn bosh target $BOSH_DIRECTOR_IP
 
 		expect {
 			-re ".*Email:*" {
