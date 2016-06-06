@@ -145,14 +145,14 @@ start_cloud_controller() {
 export_mysqldb() {
 
 	export USERNAME='root'
-	export PASSWORD=`cat $CF_DEPLOYMENT_FILE_NAME | grep "user=root --password=" | tr -s ' ' | cut -d '=' -f 3 | cut -d ' ' -f 1`
+	export PASSWORD=`cat $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME | grep "user=root --password=" | tr -s ' ' | cut -d '=' -f 3 | cut -d ' ' -f 1`
 	export IP=`bosh vms $CF_DEPLOYMENT_NAME | grep mysql-partition* | cut -d '|' -f 6 | tr -d ' '`
 
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
-	echo '[mysqldump]
-user='$USERNAME'
-password='$PASSWORD > ~/.my.cnf
+	echo '[mysqldump]'
+user=$USERNAME
+password=$PASSWORD > ~/.my.cnf
 
 	echo "EXPORT MySQL DB"
 
