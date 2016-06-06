@@ -115,7 +115,7 @@ export_nfs_server() {
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn scp -i $BOSH_PRIVATE_KEY_PATH -rp $vcap@$NFS_IP:/var/vcap/store/shared $NFS_DIR
+		spawn scp -i $BOSH_PRIVATE_KEY_PATH -rp vcap@$NFS_IP:/var/vcap/store/shared $NFS_DIR
 
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
@@ -123,7 +123,7 @@ export_nfs_server() {
 				interact
 			}
 		}
-		
+
 		exit
 	"
 }
@@ -143,7 +143,6 @@ start_cloud_controller() {
 }
 
 export_mysqldb() {
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml cf mysql root`
 
 	export USERNAME='root'
 	export PASSWORD=`cat $CF_DEPLOYMENT_FILE_NAME | grep "user=root --password=" | tr -s ' ' | cut -d '=' -f 3 | cut -d ' ' -f 1`
