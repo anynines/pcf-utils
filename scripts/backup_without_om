@@ -1,6 +1,6 @@
 #!/bin/bash --login
 
-. common.sh
+. common
 
 validate_software() {
 	echo "VALIDATE MANDATORY TOOLS"

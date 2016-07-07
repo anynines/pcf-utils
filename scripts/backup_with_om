@@ -1,6 +1,6 @@
 #!/bin/bash --login
 
-. common.sh
+. common
 
 validate_software() {
 	echo "VALIDATE MANDATORY TOOLS"
@@ -197,6 +197,9 @@ execute() {
 	validate_software
 	scp_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
 	scp_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
+
+	export CA_CERT_LOCATION=$WORK_DIR/root_ca_certificate
+
 	login_opsman
 	export_installation_settings
 	fetch_bosh_connection_parameters

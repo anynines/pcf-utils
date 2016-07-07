@@ -12,15 +12,6 @@ export MY_RUBY_HOME=/usr/local/rvm/rubies/ruby-2.1.2
 export rvm_path=/usr/local/rvm
 export rvm_prefix=/usr/local
 
-
-	DIRECTORIP=10.15.76.101
-	DIRECTORUSER=director
-	DIRECTORPASS=e72c324eea1a7887ebbe
-
-	NFSIP=10.15.76.109
-	NFSUSER=vcap
-	NFSPASS=77941371dd331b88
-
 #Assumes you are in scripts directory under the HOME directory of the user
 
 	DIR=`pwd`
@@ -171,7 +162,7 @@ then
 fi
 
 	tar -cvf ../nfsshare-$DATE.tar shared
-	
+
 #if [ -f ../nfsshare-$DATE.tar.gz ]
 #then
 #	rm ../nfsshare-$DATE.tar.gz

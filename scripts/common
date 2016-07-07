@@ -81,7 +81,7 @@ bosh_login() {
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn bosh --ca-cert $WORK_DIR/root_ca_certificate target $BOSH_DIRECTOR_IP
+		spawn bosh --ca-cert $CA_CERT_LOCATION target $BOSH_DIRECTOR_IP
 
 		expect {
 			-re ".*Email:*" {

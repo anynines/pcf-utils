@@ -1,0 +1,133 @@
+#! /bin/bash --login
+
+. common
+
+start_order=(
+              nats
+              consul_server
+              etcd_server
+              diego_database
+              nfs_server
+              router
+              mysql_proxy
+              mysql
+              ccdb
+              uaadb
+              consoledb
+              cloud_controller
+              ha_proxy
+              health_manager
+              clock_global
+              cloud_controller_worker
+              collector
+              uaa
+              diego_brain
+              diego_cell
+              doppler
+              loggregator_trafficcontroller
+           )
+
+
+stop_order=(
+              loggregator_trafficcontroller
+              doppler
+              diego_cell
+              diego_brain
+              uaa
+              collector
+              cloud_controller_worker
+              clock_global
+              health_manager
+              ha_proxy
+              cloud_controller
+              consoledb
+              uaadb
+              ccdb
+              mysql
+              mysql_proxy
+              router
+              nfs_server
+              diego_database
+              etcd_server
+              consul_server
+              nats
+           )
+
+start_cf_jobs() {
+  echo "Starting cf jobs"
+  BOSH_VMS=`bosh vms $CF_DEPLOYMENT_NAME | grep partition | cut -d '|' -f5 | tr -d ' '`
+
+  for i in ${start_order[@]}; do
+    export JOB_PREFIX="$i-partition-"
+    for j in ${BOSH_VMS[@]}; do
+      if [[ $j == "$JOB_PREFIX"* ]]; then
+        JOB_NAME=$j
+        echo "starting job $JOB_NAME"
+        START_JOB=`bosh -n start $JOB_NAME`
+        echo $START_JOB
+      fi
+    done
+  done
+}
+
+stop_cf_jobs() {
+  echo "Stopping cf jobs"
+  BOSH_VMS=`bosh vms $CF_DEPLOYMENT_NAME | grep partition | cut -d '|' -f5 | tr -d ' '`
+
+  for i in ${stop_order[@]}; do
+    export JOB_PREFIX="$i-partition-"
+    for j in ${BOSH_VMS[@]}; do
+      if [[ $j == "$JOB_PREFIX"* ]]; then
+        JOB_NAME=$j
+        echo "stopping job $JOB_NAME"
+        STOP_JOB=`bosh -n stop $JOB_NAME --hard`
+        echo $STOP_JOB
+      fi
+    done
+  done
+}
+
+execute() {
+  bosh_login
+  export CF_DEPLOYMENT_NAME=`bosh deployments | cut -d '|' -f2 | tr -d ' ' | grep cf-`
+
+  bosh download manifest $CF_DEPLOYMENT_NAME $CF_DEPLOYMENT_NAME.yml
+
+  bosh deployment $CF_DEPLOYMENT_NAME.yml
+
+  if [[ $OPERATION = "start" ]]; then
+    start_cf_jobs
+  elif [[ $OPERATION = "stop" ]]; then
+    stop_cf_jobs
+  fi
+}
+
+help() {
+  echo "Usage: ./start_stop_cf.sh <BOSH DIRECTOR IP> <BOSH DIRECTOR USERNAME> <BOSH DIRECTOR PASSWORD> <ROOT CA LOCATION> <OPERATION>"
+  printf "\t %s \t\t\t %s \n" "BOSH DIRECTOR IP:" "BOSH Director IP"
+  printf "\t %s \t\t %s \n" "BOSH DIRECTOR USERNAME:" "BOSH Director Username"
+  printf "\t %s \t\t %s \n" "BOSH DIRECTOR PASSWORD:" "BOSH Director Password"
+  printf "\t %s \t\t %s \n" "ROOT CA LOCATION:" "BOSH Director Password"
+  printf "\t %s \t\t\t\t %s \n" "OPERATION:" "start/stop"
+  exit 1
+}
+
+if [[ ! -f "./environment.sh" ]]; then
+  if [ $# -lt 5 ]; then
+    help
+  fi
+else
+	source "./environment.sh"
+fi
+
+export BOSH_DIRECTOR_IP=$1
+export DIRECTOR_USERNAME=$2
+export DIRECTOR_PASSWORD=$3
+export CA_CERT_LOCATION=$4
+export OPERATION=$5
+
+if [[ $OPERATION = "start" || $OPERATION = "stop" ]]; then
+  execute
+else
+  help
+fi
