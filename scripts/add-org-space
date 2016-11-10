@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 4 ]; then
-  echo "Usage: ./add-org-spaces.sh <System Domain> <Apps Manager Admin Username> <Apps Manager Admin Password> <Environment>"
+  echo "Usage: ./add-org-spaces <System Domain> <Apps Manager Admin Username> <Apps Manager Admin Password> <Environment>"
   exit 1
 fi
 

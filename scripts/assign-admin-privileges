@@ -6,7 +6,7 @@
 # 4. User to promote as admin
 
 if [ $# -lt 4 ]; then
-  echo "Usage: ./assign-admin-privileges.sh <System Domain> <admin username> <admin-secret> <user-to-promote>"
+  echo "Usage: ./assign-admin-privileges <System Domain> <admin username> <admin-secret> <user-to-promote>"
   exit 1
 fi
 

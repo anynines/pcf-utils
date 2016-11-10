@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export SYSTEM_DOMAIN=
+export APPS_MGR_ADMIN_USER=
+export APPS_MGR_ADMIN_PWD=
+export UAA_ADMIN_USER=
+export UAA_ADMIN_PWD=

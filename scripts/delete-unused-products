@@ -12,7 +12,7 @@ execute() {
 }
 
 if [ $# -lt 3 ]; then
-	echo "Usage: ./delete-unused-products.sh <OPS MGR HOST or IP> <OPS MGR ADMIN USER> <OPS MGR ADMIN PASSWORD>"
+	echo "Usage: ./delete-unused-products <OPS MGR HOST or IP> <OPS MGR ADMIN USER> <OPS MGR ADMIN PASSWORD>"
 	printf "\t %s \t\t\t %s \n" "OPS MGR HOST or IP:" "OPS Manager Host or IP"
 	printf "\t %s \t\t\t %s \n" "OPS MGR ADMIN USER:" "OPS Manager Admin Username"
 	printf "\t %s \t\t %s \n" "OPS MGR ADMIN PASSWORD:" "OPS Manager Admin Password"

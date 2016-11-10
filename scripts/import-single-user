@@ -1,0 +1,45 @@
+#!/bin/bash
+
+echo "Pre-requisities"
+echo "Install the following cli's"
+echo "cf cli (download from apps manager)"
+echo "uaa cli (gem install cf-uaac)"
+echo
+
+source environment
+
+if [[ ! -f "./environment.sh" ]]; then
+  if [ $# -lt 3 ]; then
+    echo "Usage: ./import-single-user <External User ID> <User Email> <Username>"
+    exit 1
+  fi
+
+  export USER_UID=$1
+  export USER_EMAIL=$2
+  export USERNAME=$3
+fi
+
+export API_ENDPOINT=api.$SYSTEM_DOMAIN
+export UAA_ENDPOINT=uaa.$SYSTEM_DOMAIN
+
+export LOG_FILE=/tmp/import-users.log
+echo "Log location is: $LOG_FILE"
+
+cf api --skip-ssl-validation $API_ENDPOINT >> $LOG_FILE 2>&1
+cf login -u $APPS_MGR_ADMIN_USER -p $APPS_MGR_ADMIN_PWD -o system -s system
+
+uaac target --skip-ssl-validation $UAA_ENDPOINT >> $LOG_FILE 2>&1
+uaac token client get $UAA_ADMIN_USER -s $UAA_ADMIN_PWD >> $LOG_FILE 2>&1
+
+echo "External LDAP ID is         : $USER_UID"
+echo "Email is                    : $USER_EMAIL"
+echo "UserName is                 : $USERNAME"
+
+RESPONSE=`uaac curl -H "Content-Type: application/json" -k  /Users -X POST -d '{"userName":"'"$USERNAME"'","emails":[{"value":"'"$USER_EMAIL"'"}],"origin":"ldap","externalId":"'"$USER_UID"'"}'`
+ID=`echo $RESPONSE | grep "id" | head -3 | tail -1 | cut -d ":" -f2 | cut -d " " -f2 | cut -d "," -f1`
+echo $ID
+
+IMPORT_USER_TO_CC=`cf curl /v2/users -d '{"guid":"'"$ID"'"}' -X POST`
+
+uaac token delete
+cf logout

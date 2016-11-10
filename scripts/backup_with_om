@@ -221,7 +221,7 @@ execute() {
 if [[ ! -f "./environment.sh" ]]; then
 
 	if [ $# -lt 6 ]; then
-		echo "Usage: ./backup_script.sh <OPS MGR HOST or IP> <SSH USER> <SSH PASSWORD> <OPS MGR ADMIN USER> <OPS MGR ADMIN PASSWORD> <OUTPUT DIR> <COMPLETE BACKUP>"
+		echo "Usage: ./backup_with_om <OPS MGR HOST or IP> <SSH USER> <SSH PASSWORD> <OPS MGR ADMIN USER> <OPS MGR ADMIN PASSWORD> <OUTPUT DIR> <COMPLETE BACKUP>"
 		printf "\t %s \t\t\t %s \n" "OPS MGR HOST or IP:" "OPS Manager Host or IP"
 		printf "\t %s \t\t\t\t %s \n" "SSH USER:" "OPS Manager SSH Username"
 		printf "\t %s \t\t\t\t %s \n" "SSH PASSWORD:" "OPS Manager SSH Password"

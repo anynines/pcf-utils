@@ -199,7 +199,7 @@ execute() {
 if [[ ! -f "./environment.sh" ]]; then
 
 	if [ $# -lt 5 ]; then
-		echo "Usage: ./backup_script.sh <BOSH DIRECTOR IP> <BOSH DIRECTOR USER> <BOSH DIRECTOR PASSWORD> <BOSH PRIVATE KEY PATH> <OUTPUT DIR> <COMPLETE BACKUP>"
+		echo "Usage: ./backup_without_om <BOSH DIRECTOR IP> <BOSH DIRECTOR USER> <BOSH DIRECTOR PASSWORD> <BOSH PRIVATE KEY PATH> <OUTPUT DIR> <COMPLETE BACKUP>"
 		printf "\t %s \t\t\t %s \n" "BOSH DIRECTOR IP:" "Bosh Director IP"
 		printf "\t %s \t\t\t %s \n" "BOSH DIRECTOR USER:" "BOSH Director Username"
 		printf "\t %s \t\t %s \n" "BOSH DIRECTOR PASSWORD:" "BOSH Director Password"

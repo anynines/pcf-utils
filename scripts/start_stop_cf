@@ -103,7 +103,7 @@ execute() {
 }
 
 help() {
-  echo "Usage: ./start_stop_cf.sh <BOSH DIRECTOR IP> <BOSH DIRECTOR USERNAME> <BOSH DIRECTOR PASSWORD> <ROOT CA LOCATION> <OPERATION>"
+  echo "Usage: ./start_stop_cf <BOSH DIRECTOR IP> <BOSH DIRECTOR USERNAME> <BOSH DIRECTOR PASSWORD> <ROOT CA LOCATION> <OPERATION>"
   printf "\t %s \t\t\t %s \n" "BOSH DIRECTOR IP:" "BOSH Director IP"
   printf "\t %s \t\t %s \n" "BOSH DIRECTOR USERNAME:" "BOSH Director Username"
   printf "\t %s \t\t %s \n" "BOSH DIRECTOR PASSWORD:" "BOSH Director Password"
