@@ -3,7 +3,7 @@
 require 'json'
 
 USAGE="
-USAGE: #{File.basename($0)} PRODUCT JOB USER
+USAGE: #{File.basename($0)} PRODUCT JOB USER [PROXY_JOB]
 
 "
 
@@ -15,6 +15,7 @@ file_name = ARGV[0]
 product_name = ARGV[1]
 job_name = ARGV[2]
 user_name = ARGV[3]
+proxy_name = ARGV[4]
 
 @installation_settings = JSON.parse(File.read(file_name))
 
@@ -66,5 +67,5 @@ if user_name == "vcap"
 else
   cred = find_credentials(product_name,job_name,user_name)
 end
-ips = find_ips(product_name,job_name)
+ips = find_ips(product_name, proxy_name || job_name)
 puts "#{cred["identity"]}|#{cred["password"]}|#{ips.join(",")}"

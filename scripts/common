@@ -64,7 +64,7 @@ export_installation_settings() {
 fetch_bosh_connection_parameters() {
 	echo "GATHER BOSH DIRECTOR CONNECTION PARAMETERS"
 
-	output=`sh lib/installationparser/app $WORK_DIR/installation.yml p-bosh director director`
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-bosh director director`
 
 	export DIRECTOR_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -78,10 +78,18 @@ bosh_login() {
 
 	echo director IP is $BOSH_DIRECTOR_IP
 
+	if [ "${BOSH_OLD_CLI:-false}" == "true" ]; then
+		PRE_TARGET_PARAM=""
+		POST_TARGET_PARAM="--ca-cert $CA_CERT_LOCATION"
+	else
+		PRE_TARGET_PARAM="--ca-cert $CA_CERT_LOCATION"
+		POST_TARGET_PARAM=""
+	fi
+
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn bosh --ca-cert $CA_CERT_LOCATION target $BOSH_DIRECTOR_IP
+		spawn bosh $PRE_TARGET_PARAM target $POST_TARGET_PARAM $BOSH_DIRECTOR_IP
 
 		expect {
 			-re ".*Email:*" {

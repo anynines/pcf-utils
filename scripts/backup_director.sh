@@ -3,11 +3,13 @@
 get_vcap_credentials_for_p_bosh(){
   echo "GATHER BOSH DIRECTOR VCAP CONNECTION PARAMETERS"
 
-  output=`sh lib/installationparser/app $WORK_DIR/installation.yml p-bosh director vcap`
+  output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-bosh director vcap`
 
   export DIRECTOR_VCAP_USERNAME=`echo $output | cut -d '|' -f 1`
   export DIRECTOR_VCAP_PASSWORD=`echo $output | cut -d '|' -f 2`
   export BOSH_DIRECTOR_VCAP_IP=`echo $output | cut -d '|' -f 3`
+
+  ssh-keygen -R $BOSH_DIRECTOR_VCAP_IP
 }
 
 ssh_vcap_pg_dump(){

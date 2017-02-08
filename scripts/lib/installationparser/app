@@ -1,5 +1,0 @@
-#!/bin/bash
-
-MYPATH=$(dirname $0)
-
-ruby $MYPATH/app.rb $1 $2 $3 $4

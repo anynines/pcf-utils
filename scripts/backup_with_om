@@ -36,9 +36,9 @@ validate_software() {
 		exit 1
 	fi
 
-	INSTALLED_JAVA=`which java`
-	if [ -z "$INSTALLED_JAVA" ]; then
-		echo "Java JRE is missing"
+	INSTALLED_RUBY=`which ruby`
+	if [ -z "$INSTALLED_RUBY" ]; then
+		echo "Ruby is missing"
 		exit 1
 	fi
 
@@ -110,7 +110,7 @@ stop_cloud_controller() {
 }
 
 export_db() {
-	output=`sh lib/installationparser/app $WORK_DIR/installation.yml $1 $2 $3`
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PGPASSWORD=`echo $output | cut -d '|' -f 2`
@@ -127,7 +127,7 @@ export_db() {
 export_nfs_server() {
 	echo "EXPORT NFS-SERVER"
 
-	output=`sh lib/installationparser/app $WORK_DIR/installation.yml cf nfs_server vcap`
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf nfs_server vcap`
 
 	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -176,22 +176,24 @@ start_cloud_controller() {
 }
 
 export_mysqldb() {
-	output=`sh lib/installationparser/app $WORK_DIR/installation.yml cf mysql root`
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf mysql root mysql_proxy`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PASSWORD=`echo $output | cut -d '|' -f 2`
-	export IP=`echo $output | cut -d '|' -f 3`
+	export IPS=`echo $output | cut -d '|' -f 3 | tr ',' ' '`
 
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
-	echo '[mysqldump]
-user='$USERNAME'
-password='$PASSWORD > ~/.my.cnf
+	for IP in $IPS; do
+		echo "EXPORT MySQL DB from $IP"
 
-	echo "EXPORT MySQL DB"
-
-	mysqldump -u $USERNAME -h $IP --all-databases > $DB_FILE
-
+		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > $DB_FILE
+		if [ $? -eq 0 ]; then
+			break
+		else
+			echo "ERROR: An error occurred dumping the databases from server $IP"
+		fi
+	done
 }
 
 export_installation() {

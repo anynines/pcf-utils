@@ -36,9 +36,9 @@ validate_software() {
 #		exit 1
 #	fi
 
-	INSTALLED_JAVA=`which java`
-	if [ -z "$INSTALLED_JAVA" ]; then
-		echo "Java JRE is missing"
+	INSTALLED_RUBY=`which ruby`
+	if [ -z "$INSTALLED_RUBY" ]; then
+		echo "Ruby is missing"
 		exit 1
 	fi
 
@@ -110,7 +110,7 @@ stop_cloud_controller() {
 }
 
 export_db() {
-	output=`sh lib/installationparser/app $WORK_DIR/installation.yml $1 $2 $3`
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PGPASSWORD=`echo $output | cut -d '|' -f 2`

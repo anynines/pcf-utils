@@ -12,3 +12,4 @@ export NFS_DIR=$WORK_DIR/nfs_share
 export DEPLOYMENT_DIR=$WORK_DIR/deployments
 export DATABASE_DIR=$WORK_DIR/database
 export COMPLETE_BACKUP="N"
+export BOSH_OLD_CLI="false"
