@@ -110,7 +110,7 @@ stop_cloud_controller() {
 }
 
 export_db() {
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml $1 $2 $3`
+	output=`sh lib/installationparser/app $WORK_DIR/installation.yml $1 $2 $3`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PGPASSWORD=`echo $output | cut -d '|' -f 2`
@@ -127,7 +127,7 @@ export_db() {
 export_nfs_server() {
 	echo "EXPORT NFS-SERVER"
 
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml cf nfs_server vcap`
+	output=`sh lib/installationparser/app $WORK_DIR/installation.yml cf nfs_server vcap`
 
 	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -176,7 +176,7 @@ start_cloud_controller() {
 }
 
 export_mysqldb() {
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml cf mysql root`
+	output=`sh lib/installationparser/app $WORK_DIR/installation.yml cf mysql root`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -199,8 +199,8 @@ export_installation() {
 		CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
 
 		echo "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
-
-		curl "$CONNECTION_URL" -X GET -u $OPS_MGR_ADMIN_USERNAME:$OPS_MGR_ADMIN_PASSWORD --insecure -k -o $WORK_DIR/installation.zip
+		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
 	fi
 }
 
@@ -238,7 +238,7 @@ execute() {
 	logout_all
 }
 
-if [[ ! -f "./environment.sh" ]]; then
+if [[ ! -f "config/environment.sh" ]]; then
 
 	if [ $# -lt 6 ]; then
 		echo "Usage: ./backup_with_om <OPS MGR HOST or IP> <SSH USER> <SSH PASSWORD> <OPS MGR ADMIN USER> <OPS MGR ADMIN PASSWORD> <OUTPUT DIR> <COMPLETE BACKUP>"
@@ -267,7 +267,7 @@ if [[ ! -f "./environment.sh" ]]; then
 	export COMPLETE_BACKUP=$7
 
 else
-	source "./environment.sh"
+	source "config/environment.sh"
 fi
 
 mkdir -p $WORK_DIR

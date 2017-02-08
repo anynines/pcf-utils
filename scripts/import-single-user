@@ -6,9 +6,9 @@ echo "cf cli (download from apps manager)"
 echo "uaa cli (gem install cf-uaac)"
 echo
 
-source environment
+source "config/environment"
 
-if [[ ! -f "./environment.sh" ]]; then
+if [[ ! -f "config/environment.sh" ]]; then
   if [ $# -lt 3 ]; then
     echo "Usage: ./import-single-user <External User ID> <User Email> <Username>"
     exit 1

@@ -10,7 +10,11 @@ Repository to hold utilities specific to Pivotal CF functionality, like
 6. Download and upload products to Ops Manager
 7. Start/Stop all CF jobs
 
-## AUTOMATE BACKUPS
-Copy the file `environment.sh` from examples to scripts directory and chmod to `755`
+# Automated Backups
+Copy the file `environment.sh` from examples to `config` directory.
+Open it and fill in your environment details.
+To create a backup, execute `backup_with_om`.
 
-Substitute the variable names there with your environment details, and execute `./backup_with_om`
+# Import users
+Copy the file `environment` from examples to `config` directory.
+Open it and fill in your environment details before executing `import-single-user`

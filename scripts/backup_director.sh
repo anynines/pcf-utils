@@ -3,7 +3,7 @@
 get_vcap_credentials_for_p_bosh(){
   echo "GATHER BOSH DIRECTOR VCAP CONNECTION PARAMETERS"
 
-  output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-bosh director vcap`
+  output=`sh lib/installationparser/app $WORK_DIR/installation.yml p-bosh director vcap`
 
   export DIRECTOR_VCAP_USERNAME=`echo $output | cut -d '|' -f 1`
   export DIRECTOR_VCAP_PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -44,7 +44,7 @@ rsync_vcap_store(){
  /usr/bin/expect -c "
      set timeout -1
 
-     spawn rsync -v -a --exclude '/var/vcap/store/lost+found' --exclude 'lost+found' $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP:/var/vcap/store $WORK_DIR/opsmanager_director
+     spawn rsync -v -a --exclude=lost+found $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP:/var/vcap/store $WORK_DIR/opsmanager_director
     expect {
        -re ".*Are.*.*yes.*no.*" {
 	  send yes\r;

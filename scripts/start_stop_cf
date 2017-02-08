@@ -112,12 +112,12 @@ help() {
   exit 1
 }
 
-if [[ ! -f "./environment.sh" ]]; then
+if [[ ! -f "config/environment.sh" ]]; then
   if [ $# -lt 5 ]; then
     help
   fi
 else
-	source "./environment.sh"
+	source "config/environment.sh"
 fi
 
 export BOSH_DIRECTOR_IP=$1

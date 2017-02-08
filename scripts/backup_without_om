@@ -110,7 +110,7 @@ stop_cloud_controller() {
 }
 
 export_db() {
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml $1 $2 $3`
+	output=`sh lib/installationparser/app $WORK_DIR/installation.yml $1 $2 $3`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PGPASSWORD=`echo $output | cut -d '|' -f 2`
@@ -187,7 +187,8 @@ export_installation() {
 
 		echo "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
 
-		curl "$CONNECTION_URL" -X GET -u $OPS_MGR_ADMIN_USERNAME:$OPS_MGR_ADMIN_PASSWORD --insecure -k -o $WORK_DIR/installation.zip
+		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
 	fi
 }
 
@@ -219,7 +220,7 @@ execute() {
 	bosh logout
 }
 
-if [[ ! -f "./environment.sh" ]]; then
+if [[ ! -f "config/environment.sh" ]]; then
 
 	if [ $# -lt 5 ]; then
 		echo "Usage: ./backup_without_om <BOSH DIRECTOR IP> <BOSH DIRECTOR USER> <BOSH DIRECTOR PASSWORD> <BOSH PRIVATE KEY PATH> <OUTPUT DIR> <COMPLETE BACKUP>"
@@ -246,7 +247,7 @@ if [[ ! -f "./environment.sh" ]]; then
 	export COMPLETE_BACKUP='N' #$5
 
 else
-	source "./environment.sh"
+	source "config/environment.sh"
 fi
 
 mkdir -p $WORK_DIR
