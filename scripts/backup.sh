@@ -1,6 +1,7 @@
 #!/bin/bash --login
 
 . common.sh
+. backup_pg_and_rsync.sh
 
 validate_software() {
 	echo "VALIDATE MANDATORY TOOLS"
@@ -121,7 +122,7 @@ export_db() {
 	export DB=$5
 	export DB_FILE=$6
 
-	pg_dump -h $IP -U $USERNAME -p $4 $5 > $6
+	pg_dump -h $IP -U $USERNAME -p $4 -c $5 > $6
 
 }
 
@@ -133,8 +134,6 @@ export_nfs_server() {
 	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export NFS_IP=`echo $output | cut -d '|' -f 3`
-
-	ssh-keygen -R $NFS_IP
 
 	/usr/bin/expect -c "
 		set timeout -1
@@ -213,6 +212,15 @@ zip_all_together() {
 	cmd=`rm -rf $WORK_DIR`
 }
 
+export_p_bosh() {
+	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
+		#export_installation_settings_vcap
+		get_vcap_credentials_for_p_bosh
+		ssh_vcap_pg_dump
+		rsync_vcap_store
+	fi
+}
+
 execute() {
 	validate_software
 	copy_deployment_files
@@ -224,14 +232,13 @@ execute() {
 	bosh_status
 	set_bosh_deployment
 	export_bosh_vms
-	stop_cloud_controller
 	export_cc_db
 	export_uaadb
 	export_consoledb
 	export_nfs_server
 	export_mysqldb
-	start_cloud_controller
 	export_installation
+	export_p_bosh
 	zip_all_together
 }
 

@@ -79,7 +79,7 @@ function db_dump()
 	echo "pgdb= $pgdb"
 
 
-	pg_dump -h $pghost -U $pguser -p $pgport $pgdb > $CURBACKUPDIR/$1_$DATE.sql
+	pg_dump -h $pghost -U $pguser -p $pgport -c $pgdb > $CURBACKUPDIR/$1_$DATE.sql
 
 	unset PGPASSWORD
 }
