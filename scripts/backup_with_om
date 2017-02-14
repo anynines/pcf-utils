@@ -3,82 +3,73 @@
 . common
 . backup_director.sh
 
+out() {
+	echo "$(date) $SCRIPTNAME[$$]: ${1+$@}" 1>&2
+}
+
+require_binary() {
+	local bin="$1"
+	if [ -z "$bin" ]; then
+		out "Warning: 'require' not used properly. Please specify an argument."
+		return 0
+	fi
+
+	local filepath=$(which "$bin" 2>/dev/null)
+	if [ -z "$filepath" ]; then
+		out "$1 not installed"
+		return 1
+	fi
+}
+
 validate_software() {
-	echo "VALIDATE MANDATORY TOOLS"
-
-	INSTALLED_BOSH=`which bosh`
-	if [ -z "$INSTALLED_BOSH" ]; then
-		echo "BOSH CLI not installed"
-		exit 1
-	fi
-
-	INSTALLED_UAAC=`which uaac`
-	if [ -z "$INSTALLED_UAAC" ]; then
-		echo "UAAC CLI not installed"
-		exit 1
-	fi
-
-	INSTALLED_EXPECT=`which expect`
-	if [ -z "$INSTALLED_EXPECT" ]; then
-		echo "'expect' not installed"
-		exit 1
-	fi
-
-	INSTALLED_CURL=`which curl`
-	if [ -z "$INSTALLED_CURL" ]; then
-		echo "cURL not installed"
-		exit 1
-	fi
-
-	INSTALLED_PG_DUMP=`which pg_dump`
-	if [ -z "$INSTALLED_PG_DUMP" ]; then
-		echo "pg_dump utility not installed"
-		exit 1
-	fi
-
-	INSTALLED_RUBY=`which ruby`
-	if [ -z "$INSTALLED_RUBY" ]; then
-		echo "Ruby is missing"
-		exit 1
-	fi
-
-	INSTALLED_MYSQL=`which mysqldump`
-	if [ -z "$INSTALLED_MYSQL" ]; then
-		echo "mysqldump utility is missing"
+	out "Validate Mandatory Tools"
+	local ret=0
+	require_binary bosh || ret=1
+	require_binary curl || ret=1
+	require_binary expect || ret=1
+	require_binary mysqldump || ret=1
+	require_binary pg_dump || ret=1
+	require_binary rsync || ret=1
+	require_binary ruby || ret=1
+	require_binary uaac || ret=1
+	if [ $ret -eq 0 ]; then
+		out "Validations DONE"
+	else
+		out "ERROR: Validations FAILED"
 		exit 1
 	fi
 }
 
 verify_deployment_backedUp() {
-	echo "VERIFY CF DEPLOYMENT MANIFEST"
+	out "VERIFY CF DEPLOYMENT MANIFEST"
 	export CF_DEPLOYMENT_NAME=`bosh deployments | grep "cf-" | cut -d '|' -f 2 | tr -s ' ' | grep "cf-" | tr -d ' ' | head -1`
 	export CF_DEPLOYMENT_FILE_NAME=$CF_DEPLOYMENT_NAME.yml
 
-	echo "FILES LOOKING FOR $CF_DEPLOYMENT_NAME $CF_DEPLOYMENT_FILE_NAME"
+	out "FILES LOOKING FOR $CF_DEPLOYMENT_NAME $CF_DEPLOYMENT_FILE_NAME"
 
 	if [ -f $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME ]; then
-		echo "file exists"
+		out "file exists"
 	else
-		echo "file does not exist"
+		out "file does not exist"
 		bosh download manifest $CF_DEPLOYMENT_NAME $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME
 	fi
 }
 
 export_Encryption_key() {
-	echo "EXPORT DB ENCRYPTION KEY"
+	out "EXPORT DB ENCRYPTION KEY"
 	grep -E 'db_encryption_key' $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME | cut -d ':' -f 2 | sort -u > $WORK_DIR/cc_db_encryption_key.txt
 }
 
 bosh_status() {
-	echo "EXECUTE BOSH STATUS"
+	out "EXECUTE BOSH STATUS"
 	bosh status > $WORK_DIR/bosh_status.txt
 	export BOSH_UUID=`grep UUID $WORK_DIR/bosh_status.txt | cut -d 'D' -f 2 | tr -d ' ' | sort -u`
 
 	export UUID_EXISTS=`grep -Fxq $BOSH_UUID $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME`
 	if [[ -z $UUID_EXISTS ]]; then
-		echo "UUID Matches"
+		out "UUID Matches"
 	else
-		echo "UUID Mismatch"
+		out "UUID Mismatch"
 		exit 1
 	fi
 
@@ -86,18 +77,18 @@ bosh_status() {
 }
 
 set_bosh_deployment() {
-    echo "SET THE BOSH DEPLOYMENT"
+  out "SET THE BOSH DEPLOYMENT"
 	bosh deployment $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME
 }
 
 export_bosh_vms() {
-    echo "EXPORT BOSH VMS"
+  out "EXPORT BOSH VMS"
 	OUTPUT=`bosh vms | grep "cloud_controller-partition-*" | cut -d '|' -f 2 | cut -d '(' -f 1 | tr -d ' '`
 	echo $OUTPUT > $WORK_DIR/bosh-vms.txt
 }
 
 stop_cloud_controller() {
-	echo "STOPPING CLOUD CONTROLLER"
+	out "STOPPING CLOUD CONTROLLER"
 	OUTPUT=`cat $WORK_DIR/bosh-vms.txt`
 
 	for word in $OUTPUT
@@ -125,7 +116,7 @@ export_db() {
 }
 
 export_nfs_server() {
-	echo "EXPORT NFS-SERVER"
+	out "EXPORT NFS-SERVER"
 
 	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf nfs_server vcap`
 
@@ -162,7 +153,7 @@ export_nfs_server() {
 }
 
 start_cloud_controller() {
-	echo "STARTING CLOUD CONTROLLER"
+	out "STARTING CLOUD CONTROLLER"
 	OUTPUT=`cat $WORK_DIR/bosh-vms.txt`
 
 	for word in $OUTPUT
@@ -185,13 +176,13 @@ export_mysqldb() {
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
 	for IP in $IPS; do
-		echo "EXPORT MySQL DB from $IP"
+		out "EXPORT MySQL DB from $IP"
 
 		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > $DB_FILE
 		if [ $? -eq 0 ]; then
 			break
 		else
-			echo "ERROR: An error occurred dumping the databases from server $IP"
+			out "ERROR: An error occurred dumping the databases from server $IP"
 		fi
 	done
 }
@@ -200,7 +191,7 @@ export_installation() {
 	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
 		CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
 
-		echo "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
+		out "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
 		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
 	fi
@@ -210,12 +201,38 @@ zip_all_together() {
 	cd $WORK_DIR
 	cd ..
 	cmd=`tar -zcvf $BACKUP_DIR_NAME.tar.gz $BACKUP_DIR_NAME`
-	echo "Compressed the backup into $BACKUP_DIR_NAME.tar.gz"
+	out "Compressed the backup into $BACKUP_DIR_NAME.tar.gz"
 	cmd=`rm -rf $WORK_DIR`
 }
 
+makedir() {
+	mkdir -p "$1"
+	local ret=$?
+	if [ $ret -ne 0 ]; then
+		out "ERROR: Can't create directory '$1'"
+	fi
+	return $ret
+}
+
+prepare() {
+	out "Preparing Backup"
+	local ret=0
+	makedir $WORK_DIR || ret=1
+	makedir $NFS_DIR || ret=1
+	makedir $DEPLOYMENT_DIR || ret=1
+	makedir $DATABASE_DIR || ret=1
+	if [ $ret -eq 0 ]; then
+		out "Preparations DONE"
+	else
+		out "ERROR: Preparations FAILED"
+		exit 1
+	fi
+}
+
 execute() {
+	prepare
 	validate_software
+
 	scp_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
 	scp_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
 
@@ -272,11 +289,6 @@ else
 	source "config/environment.sh"
 fi
 
-mkdir -p $WORK_DIR
-mkdir -p $NFS_DIR
-mkdir -p $DEPLOYMENT_DIR
-mkdir -p $DATABASE_DIR
-
 execute
 
-echo "$DATE - BACKUP SUCCESSFUL"
+out "BACKUP SUCCESSFUL"
