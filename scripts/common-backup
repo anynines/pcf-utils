@@ -76,7 +76,7 @@ export_director() {
 			for IP in $BOSH_DIRECTOR_VCAP_IPS; do
 				out "Testing Director: $IP"
 				nc -w1 -z $IP 25555
-				[ $? -eq 0 ] && out "Director is active" && break
+				[ $? -eq 0 ] && export BOSH_DIRECTOR_VCAP_IP=$IP && out "Director is active" && break
 			done
 		fi
 
