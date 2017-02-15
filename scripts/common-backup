@@ -1,0 +1,86 @@
+#!/bin/bash --login
+
+fetch_director_ssh_credentials(){
+	out "GATHER BOSH DIRECTOR VCAP CONNECTION PARAMETERS"
+
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-bosh director vcap`
+
+	export DIRECTOR_VCAP_USERNAME=`echo $output | cut -d '|' -f 1`
+	export DIRECTOR_VCAP_PASSWORD=`echo $output | cut -d '|' -f 2`
+	export BOSH_DIRECTOR_VCAP_IP=`echo $output | cut -d '|' -f 3`
+}
+
+export_director_db(){
+	ssh-keygen -R $BOSH_DIRECTOR_VCAP_IP
+
+	out "SSH INTO P-BOSH AS VCAP AND PG_DUMP"
+	# UNSET PGPASSWORD DOES NOT WORK
+	SCRIPT="\"PGPASSWORD=${DIRECTOR_VCAP_PASSWORD} /var/vcap/packages/postgres/bin/pg_dump -U postgres -c bosh > /var/vcap/store/postgres/pg_log/postgresql.sql; \""
+
+	/usr/bin/expect -c "set timeout -1
+		spawn ssh $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP $SCRIPT
+		expect {
+			-re ".*Are.*.*yes.*no.*" {
+				send yes\r;
+				exp_continue
+			}
+
+			"*?assword:*" {
+				send $DIRECTOR_VCAP_PASSWORD\r
+			}
+		}
+		expect {
+			"*?assword:*" {
+				send $DIRECTOR_VCAP_PASSWORD\r
+				interact
+			}
+		}
+	exit
+	"
+}
+
+export_director_store(){
+	mkdir -p $WORK_DIR/opsmanager_director
+	echo "RSYNC VCAP STORE"
+	/usr/bin/expect -c "set timeout -1
+		spawn rsync -v -a --exclude=lost+found $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP:/var/vcap/store $WORK_DIR/opsmanager_director
+		expect {
+			-re ".*Are.*.*yes.*no.*" {
+				send yes\r;
+				exp_continue
+			}
+			"*?assword:*" {
+				send $DIRECTOR_VCAP_PASSWORD\r
+			}
+		}
+		expect {
+			"*?assword:*" {
+				send $DIRECTOR_VCAP_PASSWORD\r
+				interact
+			}
+		}
+	exit"
+}
+
+export_director() {
+	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
+
+		fetch_director_ssh_credentials
+
+		# detect if multiple directors are present
+		grep -q "," <<< $BOSH_DIRECTOR_VCAP_IP
+		if [ $? -eq 0 ]; then
+			out "Detected multiple directors: $BOSH_DIRECTOR_VCAP_IP"
+			local BOSH_DIRECTOR_VCAP_IPS=$(echo "$BOSH_DIRECTOR_VCAP_IP" | tr ',' ' ')
+			# choose the first one available
+			for IP in $BOSH_DIRECTOR_VCAP_IPS; do
+				out "Testing Director: $IP"
+				nc -w1 -z $IP 25555
+				[ $? -eq 0 ] && out "Director is active" && break
+			done
+		fi
+
+		export_director_db
+		export_director_store
+	fi
+}

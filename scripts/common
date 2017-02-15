@@ -1,25 +1,25 @@
 #!/bin/bash --login
 
+out() {
+	echo "$(date) $SCRIPTNAME[$$]: ${1+$@}" 1>&2
+}
+
 login_opsman() {
 
-	echo "remove the old uaa authentication tokens"
+	out "Remove the old uaa authentication tokens"
 	rm ~/.uaac.yml
 
-	echo "LOGIN TO OPSMAN"
+	out "LOGIN TO OPSMAN"
 
 	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation
 
 	uaac token owner get opsman $OPS_MGR_ADMIN_USERNAME -s "" -p $OPS_MGR_ADMIN_PASSWORD
-
 }
 
 scp_files() {
-
 	ssh-keygen -R $OPS_MANAGER_HOST
 
-	echo "COPY DEPLOYMENT MANIFEST"
-	ssh-keygen -R $OPS_MANAGER_HOST
-
+	out "COPY DEPLOYMENT MANIFEST"
 	/usr/bin/expect -c "
 		set timeout -1
 
@@ -49,7 +49,7 @@ scp_files() {
 export_installation_settings() {
 	CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_settings
 
-	echo "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
+	out "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
 
 	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 
@@ -58,25 +58,21 @@ export_installation_settings() {
 	BOSH_MANIFEST_URL=https://$OPS_MANAGER_HOST/api/v0/staged/director/manifest
 
 	curl "$BOSH_MANIFEST_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $DEPLOYMENT_DIR/bosh.yml
-
 }
 
 fetch_bosh_connection_parameters() {
-	echo "GATHER BOSH DIRECTOR CONNECTION PARAMETERS"
+	out "GATHER BOSH DIRECTOR CONNECTION PARAMETERS"
 
 	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-bosh director director`
 
 	export DIRECTOR_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export BOSH_DIRECTOR_IP=`echo $output | cut -d '|' -f 3`
-
 }
 
-bosh_login() {
-	echo "BOSH LOGIN"
-	rm -rf ~/.bosh_config
-
-	echo director IP is $BOSH_DIRECTOR_IP
+bosh_target() {
+	local director_ip=$1
+	out "DIRECTOR IP: $director_ip"
 
 	if [ "${BOSH_OLD_CLI:-false}" == "true" ]; then
 		PRE_TARGET_PARAM=""
@@ -89,7 +85,7 @@ bosh_login() {
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn bosh $PRE_TARGET_PARAM target $POST_TARGET_PARAM $BOSH_DIRECTOR_IP
+		spawn bosh $PRE_TARGET_PARAM target $POST_TARGET_PARAM $director_ip
 
 		expect {
 			-re ".*Email:*" {
@@ -105,13 +101,32 @@ bosh_login() {
 
 		exit
 	"
+	return $?
+}
+
+bosh_login() {
+	out "BOSH LOGIN"
+	rm -rf ~/.bosh_config
+
+	# detect if multiple directors are present
+	grep -q "," <<< $BOSH_DIRECTOR_IP
+	if [ $? -eq 0 ]; then
+		out "Detected multiple directors: $BOSH_DIRECTOR_IP"
+		local BOSH_DIRECTOR_IPS=$(echo "$BOSH_DIRECTOR_IP" | tr ',' ' ')
+		# target the first one available
+		for IP in $BOSH_DIRECTOR_IPS; do
+			bosh_target $IP && break
+		done
+	else
+		bosh_target $BOSH_DIRECTOR_IP
+	fi
 }
 
 bosh_login_wo_certs() {
-	echo "BOSH LOGIN"
+	out "BOSH LOGIN"
 	rm -rf ~/.bosh_config
 
-	echo director IP is $BOSH_DIRECTOR_IP
+	out "DIRECTOR IP: $BOSH_DIRECTOR_IP"
 
 	/usr/bin/expect -c "
 		set timeout -1

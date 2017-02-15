@@ -1,11 +1,7 @@
 #!/bin/bash --login
 
 . common
-. backup_director.sh
-
-out() {
-	echo "$(date) $SCRIPTNAME[$$]: ${1+$@}" 1>&2
-}
+. common-backup
 
 require_binary() {
 	local bin="$1"
@@ -286,7 +282,7 @@ execute() {
 	export_mysqldb
 	# start_cloud_controller
 	export_installation
-	export_p_bosh
+	export_director
 
 	zip_all_together
 	logout_all
