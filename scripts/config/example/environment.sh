@@ -10,6 +10,8 @@ export OPS_MGR_ADMIN_PASSWORD=""
 export BACKUP_DIR_NAME=Backup_$DATE
 export WORK_DIR=""/$BACKUP_DIR_NAME
 export NFS_DIR=$WORK_DIR/nfs_share
+export NFS_EXCLUDES="cc-resources
+cc-droplets/buildpack_cache"
 export DEPLOYMENT_DIR=$WORK_DIR/deployments
 export DATABASE_DIR=$WORK_DIR/database
 

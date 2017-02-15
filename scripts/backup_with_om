@@ -148,13 +148,16 @@ export_nfs_server() {
 	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export NFS_IP=`echo $output | cut -d '|' -f 3`
+	while read pattern; do
+		export NFS_EXCLUDE="${NFS_EXCLUDE} --exclude=$pattern"
+	done < <(echo "$NFS_EXCLUDES")
 
 	ssh-keygen -R $NFS_IP
 
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn scp -rp $NFS_SERVER_USER@$NFS_IP:/var/vcap/store/shared $NFS_DIR
+		spawn rsync -av $NFS_EXCLUDE $NFS_SERVER_USER@$NFS_IP:/var/vcap/store/shared $NFS_DIR
 
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
