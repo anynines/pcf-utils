@@ -7,10 +7,31 @@ mysqldump
 pg_dump
 rsync
 ruby
+scp
 uaac"
 
-out() {
+# Write out text in an unified manner to stderr (because we don't want to be
+# part of the output if we parse or use the output in a variable).
+function out() {
 	echo "$(date) $SCRIPTNAME[$$]: ${1+$@}" 1>&2
+}
+
+# Call this on error and it will exit with the given exit code and the message.
+# Usage: die [exitcode] message
+function die() {
+	# is return code explicitly given?
+	echo "$1" | grep -E -q "^[[:digit:]]+$"
+	if [ $? -ne 0 ]; then
+		# if not, use generic "1"
+		retcode=1
+	else
+		# if so, use it and shift arguments by one
+		retcode=${1:-1}
+		shift
+	fi
+	# echo message in unified format and exit
+	out "${1+$@} (Exit Code: $retcode)"
+	exit $retcode
 }
 
 require_binary() {
@@ -38,11 +59,23 @@ validate_software() {
 	if [ $ret -eq 0 ]; then
 		out "Validations DONE"
 	else
-		out "ERROR: Validations FAILED"
-		exit 1
+		die "ERROR: Validations FAILED"
 	fi
 }
 
+prepare_backup() {
+	out "Preparing Backup"
+	local ret=0
+	mkdir -p "$WORK_DIR" || ret=1
+	mkdir -p "$NFS_DIR" || ret=1
+	mkdir -p "$DEPLOYMENT_DIR" || ret=1
+	mkdir -p "$DATABASE_DIR" || ret=1
+	if [ $ret -eq 0 ]; then
+		out "Preparations DONE"
+	else
+		die "ERROR: Preparations FAILED"
+	fi
+}
 
 login_opsman() {
 
@@ -54,6 +87,42 @@ login_opsman() {
 	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation
 
 	uaac token owner get opsman $OPS_MGR_ADMIN_USERNAME -s "" -p $OPS_MGR_ADMIN_PASSWORD
+}
+
+fetch_mysql_credentials() {
+	echo "GATHER MYSQL CREDENTIALS FROM INSTALLATION EXPORT"
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-mysql mysql root 2>/dev/null`
+	export MYSQL_USER=`echo $output | cut -d '|' -f 1`
+	export MYSQL_PASS=`echo $output | cut -d '|' -f 2`
+	export MYSQL_HOSTS=`echo $output | cut -d '|' -f 3`
+	export MYSQL_HOSTS=`echo -n $MYSQL_HOSTS | sed 's/,/ /g'`
+	if [ -z "$MYSQL_USER" -a -z "$MYSQL_PASS" -a -z "$MYSQL_HOSTS" ]; then
+		echo "Either MYSQL_USER, MYSQL_PASS or MYSQL_HOSTS is empty"
+		exit 2
+	fi
+}
+
+fetch_rabbitmq_credentials() {
+	echo "GATHER RABBITMQ CREDENTIALS FROM INSTALLATION EXPORT"
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-rabbitmq rabbitmq-server admin 2>/dev/null`
+	export RABBITMQ_USER=`echo $output | cut -d '|' -f 1`
+	export RABBITMQ_PASS=`echo $output | cut -d '|' -f 2`
+	if [ -z "$RABBITMQ_USER" -a -z "$RABBITMQ_PASS" ]; then
+		echo "Either RABBITMQ_USER, RABBITMQ_PASS is empty"
+		exit 1
+	fi
+}
+
+fetch_redis_credentials() {
+	echo "GATHER REDIS CREDENTIALS FROM INSTALLATION EXPORT"
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-redis cf-redis-broker vcap 2>/dev/null`
+	export REDIS_USER=`echo $output | cut -d '|' -f 1`
+	export REDIS_PASS=`echo $output | cut -d '|' -f 2`
+	export REDIS_HOST=`echo $output | cut -d '|' -f 3`
+	if [ -z "$REDIS_USER" -a -z "$REDIS_PASS" -a -z "$REDIS_HOSTS" ]; then
+		echo "Either REDIS_USER, REDIS_PASS or REDIS_HOSTS is empty"
+		exit 2
+	fi
 }
 
 fetch_director_ssh_credentials(){
@@ -85,8 +154,7 @@ bosh_status() {
 	if [[ -z $UUID_EXISTS ]]; then
 		out "UUID Matches"
 	else
-		out "UUID Mismatch"
-		exit 1
+		die "UUID Mismatch"
 	fi
 
 	rm -rf $WORK_DIR/bosh_status.txt
@@ -224,22 +292,7 @@ verify_deployment_backedUp() {
 zip_all_together() {
 	cd $WORK_DIR
 	cd ..
-	cmd=`tar -zcvf $BACKUP_DIR_NAME.tar.gz $BACKUP_DIR_NAME`
+	tar -zcvf $BACKUP_DIR_NAME.tar.gz $BACKUP_DIR_NAME
 	out "Compressed the backup into $BACKUP_DIR_NAME.tar.gz"
-	cmd=`rm -rf $WORK_DIR`
-}
-
-prepare() {
-	out "Preparing Backup"
-	local ret=0
-	mkdir -p "$WORK_DIR" || ret=1
-	mkdir -p "$NFS_DIR" || ret=1
-	mkdir -p "$DEPLOYMENT_DIR" || ret=1
-	mkdir -p "$DATABASE_DIR" || ret=1
-	if [ $ret -eq 0 ]; then
-		out "Preparations DONE"
-	else
-		out "ERROR: Preparations FAILED"
-		exit 1
-	fi
+	rm -rf $WORK_DIR
 }

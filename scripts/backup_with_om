@@ -1,7 +1,7 @@
 #!/bin/bash --login
 
-. common
-. common-backup
+source common || die "ERROR: 'common' not found"
+source common-backup || die "ERROR: 'common-backup' not found"
 
 if [[ ! -f "config/environment.sh" ]]; then
 	if [ $# -lt 6 ]; then
@@ -33,12 +33,11 @@ else
 fi
 
 execute() {
-	prepare
 	validate_software
+	prepare_backup
 
 	export_opsman_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
 	export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
-
 	export CA_CERT_LOCATION=$WORK_DIR/root_ca_certificate
 
 	login_opsman

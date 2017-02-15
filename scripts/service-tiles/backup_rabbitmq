@@ -2,107 +2,65 @@
 
 IDENTIFIER=RABBITMQ-TILE
 
-if [ -f ./common -a ./environment.sh ]; then
-  source ./common
-  source ./environment.sh
-else
-  echo "./common file or ./environment.sh missing; Can't continue"
-  exit 2
-fi
+source ../common || die "ERROR: 'common' not found"
+source ../common-backup || die "ERROR: 'common-backup' not found"
+source ../config/environment.sh || die "ERROR: configuration file 'environment.sh' not found"
 
 # Change the Name of the Output tar archive to include tile name
 set_tile_identifier() {
-  export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME
+	export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME
 }
 
 validate_additional_configuration_variables() {
-  echo "VALIDATE MANDATORY CONFIG"
-  if [ -z "$SYS_DOMAIN" ]; then
-    echo "SYS_DOMAIN MISSING: Please set SYS_DOMAIN environment variable to match your system"
-    exit 1
-  fi
-}
-
-validate_software() {
-  echo "VALIDATE MANDATORY TOOLS"
-
-  INSTALLED_UAAC=`which uaac`
-  if [ -z "$INSTALLED_UAAC" ]; then
-    echo "UAAC is missing"
-    exit 1
-  fi
-
-  INSTALLED_CURL=`which curl`
-  if [ -z "$INSTALLED_CURL" ]; then
-    echo "curl utility is missing"
-    exit 1
-  fi
+	echo "VALIDATE MANDATORY CONFIG"
+	if [ -z "$RABBITMQ_URL" ]; then
+		die "RABBITMQ_URL MISSING: Please set RABBITMQ_URL environment variable to match your system"
+	fi
 }
 
 # This step depends on the pcf-utils tools to get access to the credentials from
 # OpsManager export installation
-fetch_rabbitmq_credentials() {
-  echo "GATHER RABBITMQ CREDENTIALS FROM INSTALLATION EXPORT"
-  output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-rabbitmq rabbitmq-server admin 2>/dev/null`
-  export RABBITMQ_USER=`echo $output | cut -d '|' -f 1`
-  export RABBITMQ_PASS=`echo $output | cut -d '|' -f 2`
-  if [ -z "$RABBITMQ_USER" -a -z "$RABBITMQ_PASS" ]; then
-    echo "Either RABBITMQ_USER, RABBITMQ_PASS is empty"
-    exit 1
-  fi
-}
 
 validate_connection() {
-  for host in $RABBITMQ_URL; do
-    nc -w1 -z $host 443
-    if [ $? -ne 0 ]; then
-      echo "CONNECTION ERROR ON HOST: $host PORT: 443"
-      exit 2
-    fi
-  done
+	for host in $RABBITMQ_URL; do
+		nc -w1 -z $host 443
+		if [ $? -ne 0 ]; then
+			die 2 "CONNECTION ERROR ON HOST: $host PORT: 443"
+		fi
+	done
 }
 
 prepare_backup() {
-  mkdir -p $WORK_DIR
-  mkdir -p $DEPLOYMENT_DIR
+	out "Preparing Backup"
+	local ret=0
+	mkdir -p "$WORK_DIR" || ret=1
+	mkdir -p "$DEPLOYMENT_DIR" || ret=1
+	if [ $ret -eq 0 ]; then
+		out "Preparations DONE"
+	else
+		die "ERROR: Preparations FAILED"
+	fi
 }
 
-cleanup_backup() {
-  rm -r $WORK_DIR
-}
-
-logout_all() {
-  uaac token delete $OPS_MGR_ADMIN_USERNAME
-}
-
-perform_rabbitmqdump() {
-  for host in $RABBITMQ_URL; do
-    curl -X GET -u $RABBITMQ_USER:$RABBITMQ_PASS https://$RABBITMQ_URL/api/definitions -k -o $WORK_DIR/rabbitmq.json
-    if [ $? -ne 0 ]; then
-      echo "CURL ON HOST: $host PORT: 443 FAILED"
-      exit 2
-    fi
-    validate_dump $WORK_DIR/rabbitmq.json
-  done
+export_rabbitmqdump() {
+	for host in $RABBITMQ_URL; do
+		curl -X GET -u $RABBITMQ_USER:$RABBITMQ_PASS https://$RABBITMQ_URL/api/definitions -k -o $WORK_DIR/rabbitmq.json
+		if [ $? -ne 0 ]; then
+			die 2 "CURL ON HOST: $host PORT: 443 FAILED"
+		fi
+		validate_dump $WORK_DIR/rabbitmq.json
+	done
 }
 
 validate_dump() {
-  DUMPFILE=$1
-  if [ -f $DUMPFILE ]; then
-    if [ -n "`grep rabbit_version $DUMPFILE`" ]; then
-      echo "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
-    else
-      echo "BACKUP FOR $(basename $DUMPFILE) FAILED"
-      exit 2
-    fi
-  fi
-}
-
-zip_all_together() {
-  cd $WORK_DIR
-  cd ..
-  tar -zcvf $BACKUP_DIR_NAME.tar.gz $WORK_DIR
-  echo "Compressed the backup into $BACKUP_DIR_NAME.tar.gz"
+	DUMPFILE=$1
+	if [ -f $DUMPFILE ]; then
+		if [ -n "`grep rabbit_version $DUMPFILE`" ]; then
+			out "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
+		else
+			die 2 "BACKUP FOR $(basename $DUMPFILE) FAILED"
+		fi
+	fi
 }
 
 validate_software
@@ -113,7 +71,7 @@ prepare_backup
 export_installation_settings
 fetch_rabbitmq_credentials
 validate_connection
-perform_rabbitmqdump
+export_rabbitmqdump
 zip_all_together
 logout_all
 cleanup_backup
