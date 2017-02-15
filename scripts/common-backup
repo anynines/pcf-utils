@@ -1,13 +1,170 @@
 #!/bin/bash --login
 
-fetch_director_ssh_credentials(){
-	out "GATHER BOSH DIRECTOR VCAP CONNECTION PARAMETERS"
+export_opsman_files() {
+	ssh-keygen -R $OPS_MANAGER_HOST
 
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml p-bosh director vcap`
+	out "COPY DEPLOYMENT MANIFEST"
+	/usr/bin/expect -c "
+		set timeout -1
 
-	export DIRECTOR_VCAP_USERNAME=`echo $output | cut -d '|' -f 1`
-	export DIRECTOR_VCAP_PASSWORD=`echo $output | cut -d '|' -f 2`
-	export BOSH_DIRECTOR_VCAP_IP=`echo $output | cut -d '|' -f 3`
+		spawn scp $SSH_USER@$OPS_MANAGER_HOST:$1 $2
+
+		expect {
+			-re ".*Are.*.*yes.*no.*" {
+				send yes\r ;
+				exp_continue
+			}
+
+			"*?assword:*" {
+				send $OPS_MGR_SSH_PASSWORD\r
+			}
+		}
+		expect {
+			"*?assword:*" {
+				send $OPS_MGR_SSH_PASSWORD\r
+				interact
+			}
+		}
+
+		exit
+	"
+}
+
+export_installation() {
+	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
+		CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
+
+		out "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
+		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
+	fi
+}
+
+export_installation_settings() {
+	CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_settings
+
+	out "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
+
+	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+
+	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
+
+	BOSH_MANIFEST_URL=https://$OPS_MANAGER_HOST/api/v0/staged/director/manifest
+
+	curl "$BOSH_MANIFEST_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $DEPLOYMENT_DIR/bosh.yml
+}
+
+export_encryption_key() {
+	out "EXPORT DB ENCRYPTION KEY"
+	grep -E 'db_encryption_key' $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME | cut -d ':' -f 2 | sort -u > $WORK_DIR/cc_db_encryption_key.txt
+}
+
+export_bosh_vms() {
+	out "EXPORT BOSH VMS"
+	OUTPUT=`bosh vms | grep "cloud_controller[-/]" | awk '{print $2}'`
+	echo $OUTPUT > $WORK_DIR/bosh-vms.txt
+}
+
+export_cc_db() {
+	out "EXPORT CCDB"
+	export_db cf ccdb admin 2544 "ccdb" $DATABASE_DIR/ccdb.sql
+}
+
+export_uaadb() {
+	out "EXPORT UAA-DB"
+	export_db cf uaadb root 2544 "uaa" $DATABASE_DIR/uaadb.sql
+}
+
+export_consoledb() {
+	out "EXPORT CONSOLE-DB"
+	export_db cf consoledb root 2544 "console" $DATABASE_DIR/console.sql
+}
+
+export_db() {
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
+
+	local USERNAME=`echo $output | cut -d '|' -f 1`
+	local PGPASSWORD=`echo $output | cut -d '|' -f 2`
+	local IPS=`echo $output | cut -d '|' -f 3`
+	local PORT=$4
+	local DB=$5
+	local DB_FILE=$6
+
+	if [ -n "$IPS" ]; then
+		for IP in $IPS; do
+			out "Export PostgreSQL $DB from $IP"
+
+			pg_dump -h $IP -U $USERNAME -p $PORT -c $DB > $DB_FILE
+			if [ $? -eq 0 ]; then
+				break
+			else
+				out "ERROR: An error occurred dumping the databases from server $IP"
+			fi
+		done
+	else
+		out "Info: no VM instances found for $DB"
+	fi
+}
+
+export_mysqldb() {
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf mysql root mysql_proxy`
+
+	export USERNAME=`echo $output | cut -d '|' -f 1`
+	export PASSWORD=`echo $output | cut -d '|' -f 2`
+	export IPS=`echo $output | cut -d '|' -f 3 | tr ',' ' '`
+
+	DB_FILE=$DATABASE_DIR/mysql.sql
+
+	for IP in $IPS; do
+		out "EXPORT MySQL DB from $IP"
+
+		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > $DB_FILE
+		if [ $? -eq 0 ]; then
+			break
+		else
+			out "ERROR: An error occurred dumping the databases from server $IP"
+		fi
+	done
+}
+
+export_nfs_server() {
+	out "EXPORT NFS-SERVER"
+
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf nfs_server vcap`
+
+	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
+	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
+	export NFS_IP=`echo $output | cut -d '|' -f 3`
+	while read pattern; do
+		export NFS_EXCLUDE="${NFS_EXCLUDE} --exclude=$pattern"
+	done < <(echo "$NFS_EXCLUDES")
+
+	ssh-keygen -R $NFS_IP
+
+	/usr/bin/expect -c "
+		set timeout -1
+
+		spawn rsync -av $NFS_EXCLUDE $NFS_SERVER_USER@$NFS_IP:/var/vcap/store/shared $NFS_DIR
+
+		expect {
+			-re ".*Are.*.*yes.*no.*" {
+				send yes\r ;
+				exp_continue
+			}
+
+			"*?assword:*" {
+				send $NFS_SERVER_PASSWORD\r
+			}
+		}
+		expect {
+			"*?assword:*" {
+				send $NFS_SERVER_PASSWORD\r
+				interact
+			}
+		}
+
+		exit
+	"
 }
 
 export_director_db(){
