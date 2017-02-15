@@ -32,7 +32,9 @@ def job(jobs,job_name)
 end
 
 def credentials(properties, user_name)
-  properties.detect {|property| property["value"]["identity"] == user_name}["value"]
+  property = properties.detect {|property| property["value"]["identity"] == user_name}
+  return if !property
+  property["value"]
 end
 
 def find_vm_credentials(product_name,job_name)
@@ -41,8 +43,12 @@ def find_vm_credentials(product_name,job_name)
 end
 
 def find_credentials(product_name,job_name,user_name)
-  jobs = product(@installation_settings["products"],product_name)["jobs"]
-  properties = job(jobs,job_name)["properties"]
+  the_product = product(@installation_settings["products"],product_name)
+  return if !the_product
+  jobs = the_product["jobs"]
+  the_job = job(jobs,job_name)
+  return if !the_job
+  properties = the_job["properties"]
   credentials(properties,user_name)
 end
 
@@ -57,7 +63,9 @@ end
 
 def find_ips(product_name,job_name)
   the_product = product(@installation_settings["products"],product_name)
+  return if !the_product
   the_job = job(the_product["jobs"],job_name)
+  return if !the_job
   ips(@installation_settings["ip_assignments"]["assignments"][the_product["guid"]][the_job["guid"]])
 end
 
@@ -68,4 +76,6 @@ else
   cred = find_credentials(product_name,job_name,user_name)
 end
 ips = find_ips(product_name, proxy_name || job_name)
+abort("No credentials found for: #{product_name} #{job_name} #{user_name}") if !cred
+abort("No IPs found for proxy: #{proxy_name}") if !ips
 puts "#{cred["identity"]}|#{cred["password"]}|#{ips.join(",")}"
