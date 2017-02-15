@@ -38,8 +38,12 @@ def credentials(properties, user_name)
 end
 
 def find_vm_credentials(product_name,job_name)
-  jobs = product(@installation_settings["products"],product_name)["jobs"]
-  job(jobs,job_name)["vm_credentials"]
+  the_product = product(@installation_settings["products"],product_name)
+  return if !the_product
+  jobs = the_product["jobs"]
+  the_job = job(jobs,job_name)
+  return if !the_job
+  the_job["vm_credentials"]
 end
 
 def find_credentials(product_name,job_name,user_name)

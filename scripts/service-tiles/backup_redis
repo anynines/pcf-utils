@@ -1,0 +1,175 @@
+#!/bin/bash
+
+IDENTIFIER=REDIS-TILE
+
+if [ -f ./common -a ./environment.sh ]; then
+  source ./common
+  source ./environment.sh
+else
+  echo "./common file or ./environment.sh missing; Can't continue"
+  exit 2
+fi
+
+# Change the Name of the Output tar archive to include tile name
+set_tile_identifier() {
+  export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME
+}
+
+validate_software() {
+  echo "VALIDATE MANDATORY TOOLS"
+
+  INSTALLED_UAAC=`which uaac`
+  if [ -z "$INSTALLED_UAAC" ]; then
+    echo "UAAC is missing"
+    exit 1
+  fi
+
+  INSTALLED_EXPECT=`which expect`
+  if [ -z "$INSTALLED_EXPECT" ]; then
+    echo "expect utility is missing"
+    exit 1
+  fi
+
+  INSTALLED_SCP=`which scp`
+  if [ -z "$INSTALLED_SCP" ]; then
+    echo "scp utility is missing"
+    exit 1
+  fi
+}
+
+fetch_redis_credentials() {
+  echo "GATHER REDIS CREDENTIALS FROM INSTALLATION EXPORT"
+  output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-redis cf-redis-broker vcap 2>/dev/null`
+  export REDIS_USER=`echo $output | cut -d '|' -f 1`
+  export REDIS_PASS=`echo $output | cut -d '|' -f 2`
+  export REDIS_HOST=`echo $output | cut -d '|' -f 3`
+  if [ -z "$REDIS_USER" -a -z "$REDIS_PASS" -a -z "$REDIS_HOSTS" ]; then
+    echo "Either REDIS_USER, REDIS_PASS or REDIS_HOSTS is empty"
+    exit 2
+  fi
+}
+
+fetch_redis_dedicated_credentials() {
+  echo "GATHER REDIS DEDICATED CREDENTIALS FROM INSTALLATION EXPORT"
+  output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-redis dedicated-node vcap 2>/dev/null`
+  export REDIS_DEDICATED_USER=`echo $output | cut -d '|' -f 1`
+  export REDIS_DEDICATED_PASS=`echo $output | cut -d '|' -f 2`
+  export REDIS_DEDICATED_HOSTS=`echo $output | cut -d '|' -f 3`
+  export REDIS_DEDICATED_HOSTS=`echo -n $REDIS_DEDICATED_HOSTS | sed 's/,/ /g'`
+  if [ -z "$REDIS_DEDICATED_USER" -a -z "$REDIS_DEDICATED_PASS" -a -z "$REDIS_DEDICATED_HOSTS" ]; then
+    echo "Either REDIS_DEDICATED_USER, REDIS_DEDICATED_PASS or REDIS_DEDICATED_HOSTS is empty"
+    exit 2
+  fi
+}
+
+validate_connection() {
+  nc -w1 -z $1 22
+  if [ $? -ne 0 ]; then
+    echo "CONNECTION ERROR ON HOST: $1 PORT: 22"
+    exit 2
+  fi
+}
+
+prepare_backup() {
+  mkdir -p $WORK_DIR
+  mkdir -p $DEPLOYMENT_DIR
+  mkdir -p $WORK_DIR/redis_dedicated
+  mkdir -p $WORK_DIR/redis_shared
+}
+
+cleanup_backup() {
+  rm -r $WORK_DIR
+}
+
+logout_all() {
+        uaac token delete $OPS_MGR_ADMIN_USERNAME
+}
+
+perform_redis_shared_dump() {
+  validate_connection $REDIS_HOST
+  echo "RSYNC VCAP STORE"
+  /usr/bin/expect -c "
+     set timeout -1
+
+     spawn rsync -a --exclude '/var/vcap/store/lost+found' --exclude 'lost+found' $REDIS_USER@$REDIS_HOST:/var/vcap/store/cf-redis-broker/ $WORK_DIR/redis_shared
+    expect {
+       -re ".*Are.*.*yes.*no.*" {
+    send yes\r;
+          exp_continue
+  }
+
+        "*?assword:*" {
+          send $REDIS_PASS\r
+        }
+     }
+     expect {
+      "*?assword:*" {
+        send $REDIS_PASS\r
+        interact
+      }
+   }
+  exit"
+  validate_redisdump $WORK_DIR/redis_shared/statefile.json
+}
+
+perform_redis_dedicacted_dump() {
+  for redis_instance in $REDIS_DEDICATED_HOSTS; do
+    validate_connection $redis_instance
+    redis_instance_folder=`echo $redis_instance | tr "." "_"`
+    echo "RSYNC VCAP STORE"
+    /usr/bin/expect -c "
+       set timeout -1
+
+       spawn rsync -a --exclude '/var/vcap/store/lost+found' --exclude 'lost+found' $REDIS_DEDICATED_USER@$redis_instance:/var/vcap/store/redis/ $WORK_DIR/redis_dedicated/$redis_instance_folder
+      expect {
+         -re ".*Are.*.*yes.*no.*" {
+            send yes\r;
+            exp_continue
+          }
+
+          "*?assword:*" {
+            send $REDIS_DEDICATED_PASS\r
+          }
+       }
+       expect {
+        "*?assword:*" {
+          send $REDIS_DEDICATED_PASS\r
+          interact
+        }
+     }
+    exit"
+    validate_redisdump $WORK_DIR/redis_dedicated/$redis_instance_folder/redis.conf
+  done
+}
+
+validate_redisdump() {
+  DUMPFILE=$1
+  if [ -f $DUMPFILE ]; then
+    if [ -n "`egrep '(available_instances|rename)' $DUMPFILE`" ]; then
+      echo "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
+    else
+      echo "BACKUP FOR $(basename $DUMPFILE) FAILED"
+      exit 2
+    fi
+  fi
+}
+
+zip_all_together() {
+  cd $WORK_DIR
+  cd ..
+  tar -zcvf $BACKUP_DIR_NAME.tar.gz $WORK_DIR
+  echo "Compressed the backup into $BACKUP_DIR_NAME.tar.gz"
+}
+
+validate_software
+login_opsman
+prepare_backup
+set_tile_identifier
+export_installation_settings
+fetch_redis_credentials
+fetch_redis_dedicated_credentials
+perform_redis_dedicacted_dump
+perform_redis_shared_dump
+zip_all_together
+logout_all
+cleanup_backup

@@ -1,0 +1,119 @@
+#!/bin/bash
+
+IDENTIFIER=MYSQL-TILE
+
+
+if [ -f ./common -a ./environment.sh ]; then
+  source ./common
+  source ./environment.sh
+else
+  echo "./common file or ./environment.sh missing; Can't continue"
+  exit 2
+fi
+
+# Change the Name of the Output tar archive to include tile name
+set_tile_identifier() {
+  export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME
+}
+
+validate_software() {
+  echo "VALIDATE MANDATORY TOOLS"
+
+  INSTALLED_UAAC=`which uaac`
+  if [ -z "$INSTALLED_UAAC" ]; then
+    echo "UAAC is missing"
+    exit 1
+  fi
+
+  INSTALLED_MYSQL=`which mysqldump`
+  if [ -z "$INSTALLED_MYSQL" ]; then
+    echo "mysqldump utility is missing"
+    exit 1
+  fi
+}
+
+# This step depends on the pcf-utils tools to get access to the credentials from
+# OpsManager export installation
+fetch_mysql_credentials() {
+  echo "GATHER MYSQL CREDENTIALS FROM INSTALLATION EXPORT"
+  output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-mysql mysql root 2>/dev/null`
+  export MYSQL_USER=`echo $output | cut -d '|' -f 1`
+  export MYSQL_PASS=`echo $output | cut -d '|' -f 2`
+  export MYSQL_HOSTS=`echo $output | cut -d '|' -f 3`
+  export MYSQL_HOSTS=`echo -n $MYSQL_HOSTS | sed 's/,/ /g'`
+  if [ -z "$MYSQL_USER" -a -z "$MYSQL_PASS" -a -z "$MYSQL_HOSTS" ]; then
+    echo "Either MYSQL_USER, MYSQL_PASS or MYSQL_HOSTS is empty"
+    exit 2
+  fi
+}
+
+validate_connection() {
+  for host in $MYSQL_HOSTS; do
+    nc -w1 -z $host 3306
+    if [ $? -ne 0 ]; then
+      echo "CONNECTION ERROR ON HOST: $host PORT: 3306"
+      exit 2
+    fi
+  done
+}
+
+prepare_backup() {
+  mkdir -p $WORK_DIR
+  mkdir -p $DEPLOYMENT_DIR
+  mkdir -p $DATABASE_DIR
+
+}
+
+cleanup_backup() {
+  rm -r $WORK_DIR
+}
+
+logout_all() {
+        uaac token delete $OPS_MGR_ADMIN_USERNAME
+}
+
+# Loop through the hosts so that in case one is failing, the other one is used.
+perform_mysqldump() {
+  for host in $MYSQL_HOSTS; do
+    mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host --all-databases > $DATABASE_DIR/all_databases.sql
+    mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host mysql_broker > $DATABASE_DIR/mysql_broker.sql
+    if [ $? -eq 0 ]; then
+      break
+    else
+      continue
+    fi
+  done
+  validate_mysqldump $DATABASE_DIR/all_databases.sql
+  validate_mysqldump $DATABASE_DIR/mysql_broker.sql
+}
+
+validate_mysqldump() {
+  DUMPFILE=$1
+  if [ -f $DUMPFILE ]; then
+    if [ -n "`tail -n 40 $DUMPFILE | grep 'Dump completed on'`" ]; then
+      echo "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
+    else
+      echo "BACKUP FOR $(basename $DUMPFILE) FAILED"
+      exit 2
+    fi
+  fi
+}
+
+zip_all_together() {
+  cd $WORK_DIR
+  cd ..
+  tar -zcvf $BACKUP_DIR_NAME.tar.gz $WORK_DIR
+  echo "Compressed the backup into $BACKUP_DIR_NAME.tar.gz"
+}
+
+validate_software
+set_tile_identifier
+login_opsman
+prepare_backup
+export_installation_settings
+fetch_mysql_credentials
+validate_connection
+perform_mysqldump
+zip_all_together
+logout_all
+cleanup_backup
