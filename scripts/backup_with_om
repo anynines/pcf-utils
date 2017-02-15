@@ -77,13 +77,13 @@ bosh_status() {
 }
 
 set_bosh_deployment() {
-  out "SET THE BOSH DEPLOYMENT"
+	out "SET THE BOSH DEPLOYMENT"
 	bosh deployment $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME
 }
 
 export_bosh_vms() {
-  out "EXPORT BOSH VMS"
-	OUTPUT=`bosh vms | grep "cloud_controller-partition-*" | cut -d '|' -f 2 | cut -d '(' -f 1 | tr -d ' '`
+	out "EXPORT BOSH VMS"
+	OUTPUT=`bosh vms | grep "cloud_controller[-/]" | awk '{print $2}'`
 	echo $OUTPUT > $WORK_DIR/bosh-vms.txt
 }
 
@@ -91,8 +91,7 @@ stop_cloud_controller() {
 	out "STOPPING CLOUD CONTROLLER"
 	OUTPUT=`cat $WORK_DIR/bosh-vms.txt`
 
-	for word in $OUTPUT
-	do
+	for word in $OUTPUT; do
 		JOB=`echo $word | cut -d '/' -f 1`
 		INDEX=`echo $word | cut -d '/' -f 2`
 
@@ -100,19 +99,45 @@ stop_cloud_controller() {
 	done
 }
 
+export_cc_db() {
+	out "EXPORT CCDB"
+	export_db cf ccdb admin 2544 "ccdb" $DATABASE_DIR/ccdb.sql
+}
+
+export_uaadb() {
+	out "EXPORT UAA-DB"
+	export_db cf uaadb root 2544 "uaa" $DATABASE_DIR/uaadb.sql
+}
+
+export_consoledb() {
+	out "EXPORT CONSOLE-DB"
+	export_db cf consoledb root 2544 "console" $DATABASE_DIR/console.sql
+}
+
 export_db() {
 	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
 
-	export USERNAME=`echo $output | cut -d '|' -f 1`
-	export PGPASSWORD=`echo $output | cut -d '|' -f 2`
-	export IP=`echo $output | cut -d '|' -f 3`
+	local USERNAME=`echo $output | cut -d '|' -f 1`
+	local PGPASSWORD=`echo $output | cut -d '|' -f 2`
+	local IPS=`echo $output | cut -d '|' -f 3`
+	local PORT=$4
+	local DB=$5
+	local DB_FILE=$6
 
-	export PORT=$4
-	export DB=$5
-	export DB_FILE=$6
+	if [ -n "$IPS" ]; then
+		for IP in $IPS; do
+			out "Export PostgreSQL $DB from $IP"
 
-	pg_dump -h $IP -U $USERNAME -p $4 -c $5 > $6
-
+			pg_dump -h $IP -U $USERNAME -p $PORT -c $DB > $DB_FILE
+			if [ $? -eq 0 ]; then
+				break
+			else
+				out "ERROR: An error occurred dumping the databases from server $IP"
+			fi
+		done
+	else
+		out "Info: no VM instances found for $DB"
+	fi
 }
 
 export_nfs_server() {
@@ -163,7 +188,6 @@ start_cloud_controller() {
 
 		bosh -n start $JOB $INDEX --force
 	done
-
 }
 
 export_mysqldb() {
@@ -247,12 +271,20 @@ execute() {
 	bosh_status
 	set_bosh_deployment
 	export_bosh_vms
+
+	# Backported from v1.6 version in case databases were not migrated.
+	# Only new PCF 1.7 installs are using MySQL only.
+	export_cc_db
+	export_uaadb
+	export_consoledb
+
 	# stop_cloud_controller
 	export_nfs_server
 	export_mysqldb
 	# start_cloud_controller
 	export_installation
 	export_p_bosh
+
 	zip_all_together
 	logout_all
 }
