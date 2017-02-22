@@ -2,9 +2,9 @@
 
 IDENTIFIER=MYSQL-TILE
 
-source ../common || die "ERROR: 'common' not found"
-source ../common-backup || die "ERROR: 'common-backup' not found"
-source ../config/environment.sh || die "ERROR: configuration file 'environment.sh' not found"
+source ../common || die "$IDENTIFIER: ERROR: 'common' not found"
+source ../common-backup || die "$IDENTIFIER: ERROR: 'common-backup' not found"
+source ../config/environment.sh || die "$IDENTIFIER: ERROR: configuration file 'environment.sh' not found"
 
 # Change the Name of the Output tar archive to include tile name
 set_tile_identifier() {
@@ -12,24 +12,26 @@ set_tile_identifier() {
 }
 
 validate_connection() {
+	out "$IDENTIFIER: Validating connection"
 	for host in $MYSQL_HOSTS; do
 		nc -w1 -z $host 3306
 		if [ $? -ne 0 ]; then
-			die "CONNECTION ERROR ON HOST: $host PORT: 3306"
+			die "$IDENTIFIER: ERROR: Connection to host: $host port: 3306 FAILED"
 		fi
 	done
+	out "$IDENTIFIER: Connection test SUCCESSFUL"
 }
 
 prepare_backup() {
-	out "Preparing Backup"
+	out "$IDENTIFIER: Preparing Backup"
 	local ret=0
 	mkdir -p "$WORK_DIR" || ret=1
 	mkdir -p "$DEPLOYMENT_DIR" || ret=1
 	mkdir -p "$DATABASE_DIR" || ret=1
 	if [ $ret -eq 0 ]; then
-		out "Preparations DONE"
+		out "$IDENTIFIER: Preparations DONE"
 	else
-		die "ERROR: Preparations FAILED"
+		die "$IDENTIFIER: ERROR: Preparations FAILED"
 	fi
 }
 
@@ -39,6 +41,7 @@ cleanup_backup() {
 
 # Loop through the hosts so that in case one is failing, the other one is used.
 export_mysqldb() {
+	out "$IDENTIFIER: Dumping databases"
 	for host in $MYSQL_HOSTS; do
 		mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host --all-databases > $DATABASE_DIR/all_databases.sql
 		mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host mysql_broker > $DATABASE_DIR/mysql_broker.sql
@@ -50,15 +53,17 @@ export_mysqldb() {
 	done
 	validate_mysqldump $DATABASE_DIR/all_databases.sql
 	validate_mysqldump $DATABASE_DIR/mysql_broker.sql
+	out "$IDENTIFIER: Dump SUCCESSFUL"
 }
 
 validate_mysqldump() {
 	DUMPFILE=$1
+	out "$IDENTIFIER: Validating dump '$(basename $DUMPFILE)'"
 	if [ -f $DUMPFILE ]; then
 		if [ -n "`tail -n 40 $DUMPFILE | grep 'Dump completed on'`" ]; then
-			out "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
+			out "$IDENTIFIER: Validation of '$(basename $DUMPFILE)' SUCCESSFUL"
 		else
-			die "BACKUP FOR $(basename $DUMPFILE) FAILED"
+			die "$IDENTIFIER: Validation of '$(basename $DUMPFILE)' FAILED"
 		fi
 	fi
 }
@@ -72,3 +77,5 @@ validate_connection
 export_mysqldb
 zip_all_together
 logout_all
+
+out "$IDENTIFIER: Backup DONE"

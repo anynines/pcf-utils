@@ -70,8 +70,8 @@ execute() {
 execute
 ret=$?
 if [ $ret -eq 0 ]; then
-	out "BACKUP SUCCESSFUL"
+	out "Backup SUCCESSFUL"
 else
-	out "ERROR: THERE WERE ERRORS DURING THE BACKUP"
+	out "ERROR: There were errors during the backup."
 fi
 exit $ret

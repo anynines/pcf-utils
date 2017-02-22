@@ -2,54 +2,41 @@
 
 IDENTIFIER=REDIS-TILE
 
-source ../common || die "ERROR: 'common' not found"
-source ../common-backup || die "ERROR: 'common-backup' not found"
-source ../config/environment.sh || die "ERROR: configuration file 'environment.sh' not found"
+source ../common || die "$IDENTIFIER: ERROR: 'common' not found"
+source ../common-backup || die "$IDENTIFIER: ERROR: 'common-backup' not found"
+source ../config/environment.sh || die "$IDENTIFIER: ERROR: configuration file 'environment.sh' not found"
 
 # Change the Name of the Output tar archive to include tile name
 set_tile_identifier() {
 	export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME
 }
 
-
-fetch_redis_dedicated_credentials() {
-	echo "GATHER REDIS DEDICATED CREDENTIALS FROM INSTALLATION EXPORT"
-	output=`sh appassembler/bin/app $WORK_DIR/installation.yml p-redis dedicated-node vcap 2>/dev/null`
-	export REDIS_DEDICATED_USER=`echo $output | cut -d '|' -f 1`
-	export REDIS_DEDICATED_PASS=`echo $output | cut -d '|' -f 2`
-	export REDIS_DEDICATED_HOSTS=`echo $output | cut -d '|' -f 3`
-	export REDIS_DEDICATED_HOSTS=`echo -n $REDIS_DEDICATED_HOSTS | sed 's/,/ /g'`
-	if [ -z "$REDIS_DEDICATED_USER" -a -z "$REDIS_DEDICATED_PASS" -a -z "$REDIS_DEDICATED_HOSTS" ]; then
-		echo "Either REDIS_DEDICATED_USER, REDIS_DEDICATED_PASS or REDIS_DEDICATED_HOSTS is empty"
-		exit 2
-	fi
-}
-
 validate_connection() {
+	out "$IDENTIFIER: Validating connection"
 	nc -w1 -z $1 22
 	if [ $? -ne 0 ]; then
-		echo "CONNECTION ERROR ON HOST: $1 PORT: 22"
-		exit 2
+		die "$IDENTIFIER: ERROR: Connection to host: $host port: 22"
 	fi
+	out "$IDENTIFIER: Connection test SUCCESSFUL"
 }
 
 prepare_backup() {
-	out "Preparing Backup"
+	out "$IDENTIFIER: Preparing Backup"
 	local ret=0
 	mkdir -p "$WORK_DIR" || ret=1
 	mkdir -p "$DEPLOYMENT_DIR" || ret=1
 	mkdir -p "$WORK_DIR/redis_dedicated" || ret=1
 	mkdir -p "$WORK_DIR/redis_shared" || ret=1
 	if [ $ret -eq 0 ]; then
-		out "Preparations DONE"
+		out "$IDENTIFIER: Preparations DONE"
 	else
-		die "ERROR: Preparations FAILED"
+		die "$IDENTIFIER: ERROR: Preparations FAILED"
 	fi
 }
 
-perform_redis_shared_dump() {
+export_redis_shared_dump() {
 	validate_connection $REDIS_HOST
-	echo "RSYNC VCAP STORE"
+	out "$IDENTIFIER: Exporting data from shared VM"
 	/usr/bin/expect -c "
 		set timeout -1
 
@@ -71,10 +58,13 @@ perform_redis_shared_dump() {
 		}
 	exit"
 	validate_redisdump $WORK_DIR/redis_shared/statefile.json
+	out "$IDENTIFIER: Export SUCCESSFUL"
 }
 
-perform_redis_dedicacted_dump() {
+export_redis_dedicacted_dump() {
 	for redis_instance in $REDIS_DEDICATED_HOSTS; do
+		out "$IDENTIFIER: Exporting data from dedicated node '$redis_instance'"
+
 		validate_connection $redis_instance
 		redis_instance_folder=`echo $redis_instance | tr "." "_"`
 		echo "RSYNC VCAP STORE"
@@ -100,17 +90,25 @@ perform_redis_dedicacted_dump() {
 		exit
 		"
 		validate_redisdump $WORK_DIR/redis_dedicated/$redis_instance_folder/redis.conf
+		if [ $? -eq 0 ]; then
+			out "$IDENTIFIER: Export from '$redis_instance' SUCCESSFUL"
+		else
+			out "$IDENTIFIER: Export from '$redis_instance' FAILED"
+		done
 	done
+	out "$IDENTIFIER: Export DONE"
 }
 
 validate_redisdump() {
 	DUMPFILE=$1
+	out "$IDENTIFIER: Validating '$(basename $DUMPFILE)'"
 	if [ -f $DUMPFILE ]; then
 		if [ -n "`egrep '(available_instances|rename)' $DUMPFILE`" ]; then
-			echo "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
+			out "$IDENTIFIER: Validation for '$(basename $DUMPFILE)' SUCCESSFUL"
 		else
-			echo "BACKUP FOR $(basename $DUMPFILE) FAILED"
-			exit 2
+			# don't die here because we want to try backing up the remaining dedicated nodes
+			out "$IDENTIFIER: Validation for '$(basename $DUMPFILE)' FAILED"
+			return 2
 		fi
 	fi
 }
@@ -122,8 +120,10 @@ set_tile_identifier
 export_installation_settings
 fetch_redis_credentials
 fetch_redis_dedicated_credentials
-perform_redis_dedicacted_dump
-perform_redis_shared_dump
+export_redis_dedicacted_dump
+export_redis_shared_dump
 zip_all_together
 logout_all
 cleanup_backup
+
+out "$IDENTIFIER: Backup DONE"

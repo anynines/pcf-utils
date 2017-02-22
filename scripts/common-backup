@@ -3,7 +3,7 @@
 export_opsman_files() {
 	ssh-keygen -R $OPS_MANAGER_HOST
 
-	out "COPY DEPLOYMENT MANIFEST"
+	out "common-backup: Exporting deployment manifests"
 	/usr/bin/expect -c "
 		set timeout -1
 
@@ -34,7 +34,7 @@ export_installation() {
 	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
 		CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
 
-		out "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
+		out "common-backup: Exporting installation files from: $CONNECTION_URL"
 		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
 	fi
@@ -43,8 +43,7 @@ export_installation() {
 export_installation_settings() {
 	CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_settings
 
-	out "EXPORT INSTALLATION FILES FROM " $CONNECTION_URL
-
+	out "common-backup: Exporting installation.yml and BOSH manifest from: $CONNECTION_URL"
 	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 
 	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
@@ -55,33 +54,34 @@ export_installation_settings() {
 }
 
 export_encryption_key() {
-	out "EXPORT DB ENCRYPTION KEY"
+	out "common-backup: Exporting DB encryption key"
 	grep -E 'db_encryption_key' $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME | cut -d ':' -f 2 | sort -u > $WORK_DIR/cc_db_encryption_key.txt
 }
 
 export_bosh_vms() {
-	out "EXPORT BOSH VMS"
+	out "common-backup: Exporting BOSH VMs"
 	OUTPUT=`bosh vms | grep "cloud_controller[-/]" | awk '{print $2}'`
 	echo $OUTPUT > $WORK_DIR/bosh-vms.txt
 }
 
 export_cc_db() {
-	out "EXPORT CCDB"
+	out "common-backup: Exporting CCDB"
 	export_db cf ccdb admin 2544 "ccdb" $DATABASE_DIR/ccdb.sql
 }
 
 export_uaadb() {
-	out "EXPORT UAA-DB"
+	out "common-backup: Exporting UAA-DB"
 	export_db cf uaadb root 2544 "uaa" $DATABASE_DIR/uaadb.sql
 }
 
 export_consoledb() {
-	out "EXPORT CONSOLE-DB"
+	out "common-backup: Exporting CONSOLE-DB"
 	export_db cf consoledb root 2544 "console" $DATABASE_DIR/console.sql
 }
 
 export_db() {
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
+	out "common-backup: Exporting $@"
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials $1 $2 $3`
 
 	local USERNAME=`echo $output | cut -d '|' -f 1`
 	local PGPASSWORD=`echo $output | cut -d '|' -f 2`
@@ -92,22 +92,23 @@ export_db() {
 
 	if [ -n "$IPS" ]; then
 		for IP in $IPS; do
-			out "Export PostgreSQL $DB from $IP"
+			out "common-backup: Export PostgreSQL $DB from $IP"
 
 			pg_dump -h $IP -U $USERNAME -p $PORT -c $DB > $DB_FILE
 			if [ $? -eq 0 ]; then
 				break
 			else
-				out "ERROR: An error occurred dumping the databases from server $IP"
+				out "common-backup: ERROR: An error occurred dumping the databases from server $IP"
 			fi
 		done
 	else
-		out "Info: no VM instances found for $DB"
+		out "common-backup: WARNING: No VM instances found for $DB"
 	fi
 }
 
 export_mysqldb() {
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf mysql root mysql_proxy`
+	out "common-backup: Exporting internal MySQL"
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials cf mysql root mysql_proxy`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -116,21 +117,21 @@ export_mysqldb() {
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
 	for IP in $IPS; do
-		out "EXPORT MySQL DB from $IP"
+		out "common-backup: EXPORT MySQL DB from $IP"
 
 		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > $DB_FILE
 		if [ $? -eq 0 ]; then
 			break
 		else
-			out "ERROR: An error occurred dumping the databases from server $IP"
+			out "common-backup: ERROR: An error occurred dumping the databases from server $IP"
 		fi
 	done
 }
 
 export_nfs_server() {
-	out "EXPORT NFS-SERVER"
+	out "common-backup: Exporting file server"
 
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml cf nfs_server vcap`
+	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials cf nfs_server vcap`
 
 	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -170,7 +171,7 @@ export_nfs_server() {
 export_director_db(){
 	ssh-keygen -R $BOSH_DIRECTOR_VCAP_IP
 
-	out "SSH INTO P-BOSH AS VCAP AND PG_DUMP"
+	out "common-backup: SSHing into Director and dumping DB"
 	# UNSET PGPASSWORD DOES NOT WORK
 	SCRIPT="\"PGPASSWORD=${DIRECTOR_VCAP_PASSWORD} /var/vcap/packages/postgres/bin/pg_dump -U postgres -c bosh > /var/vcap/store/postgres/pg_log/postgresql.sql; \""
 
@@ -198,7 +199,7 @@ export_director_db(){
 
 export_director_store(){
 	mkdir -p $WORK_DIR/opsmanager_director
-	echo "RSYNC VCAP STORE"
+	echo "common-backup: Exporting Director storage"
 	/usr/bin/expect -c "set timeout -1
 		spawn rsync -v -a --exclude=lost+found $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP:/var/vcap/store $WORK_DIR/opsmanager_director
 		expect {
@@ -221,7 +222,7 @@ export_director_store(){
 
 export_director() {
 	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
-
+		out "common-backup: Exporting BOSH Director"
 		fetch_director_ssh_credentials
 
 		# detect if multiple directors are present

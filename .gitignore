@@ -4,3 +4,4 @@
 .settings
 .project
 /scripts/config/environment*
+installation.yml

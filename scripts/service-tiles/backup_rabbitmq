@@ -1,10 +1,11 @@
 #!/bin/bash
 
 IDENTIFIER=RABBITMQ-TILE
+MAX_RETRY=5
 
-source ../common || die "ERROR: 'common' not found"
-source ../common-backup || die "ERROR: 'common-backup' not found"
-source ../config/environment.sh || die "ERROR: configuration file 'environment.sh' not found"
+source ../common || die "$IDENTIFIER: ERROR: 'common' not found"
+source ../common-backup || die "$IDENTIFIER: ERROR: 'common-backup' not found"
+source ../config/environment.sh || die "$IDENTIFIER: ERROR: configuration file 'environment.sh' not found"
 
 # Change the Name of the Output tar archive to include tile name
 set_tile_identifier() {
@@ -12,53 +13,67 @@ set_tile_identifier() {
 }
 
 validate_additional_configuration_variables() {
-	echo "VALIDATE MANDATORY CONFIG"
-	if [ -z "$RABBITMQ_URL" ]; then
-		die "RABBITMQ_URL MISSING: Please set RABBITMQ_URL environment variable to match your system"
+	echo "$IDENTIFIER: Validating mandatory config"
+
+	if [ -z "$SYSTEM_DOMAIN" ]; then
+		export SYSTEM_DOMAIN="$(ruby lib/installationparser/app.rb $WORK_DIR/installation.yml properties cf cloud_controller system_domain)"
+
+		[ -z "$SYSTEM_DOMAIN" ] && die "$IDENTIFIER: ERROR: SYS_DOMAIN missing. Please set SYS_DOMAIN environment variable to match your system."
 	fi
+
+	export RABBITMQ_URL="pivotal-rabbitmq.${SYSTEM_DOMAIN}"
+	out "$IDENTIFIER: Validation of mandatory config DONE"
 }
 
 # This step depends on the pcf-utils tools to get access to the credentials from
 # OpsManager export installation
 
 validate_connection() {
-	for host in $RABBITMQ_URL; do
-		nc -w1 -z $host 443
-		if [ $? -ne 0 ]; then
-			die 2 "CONNECTION ERROR ON HOST: $host PORT: 443"
-		fi
-	done
+	out "$IDENTIFIER: Validating connection"
+	nc -w1 -z $RABBITMQ_URL 443
+	if [ $? -ne 0 ]; then
+		die 2 "$IDENTIFIER: ERROR: Connection to host: $host port: 443 FAILED"
+	fi
+	out "$IDENTIFIER: Connection test SUCCESSFUL"
 }
 
 prepare_backup() {
-	out "Preparing Backup"
+	out "$IDENTIFIER: Preparing backup"
 	local ret=0
 	mkdir -p "$WORK_DIR" || ret=1
 	mkdir -p "$DEPLOYMENT_DIR" || ret=1
 	if [ $ret -eq 0 ]; then
-		out "Preparations DONE"
+		out "$IDENTIFIER: Preparations DONE"
 	else
-		die "ERROR: Preparations FAILED"
+		die "$IDENTIFIER: ERROR: Preparations FAILED"
 	fi
 }
 
 export_rabbitmqdump() {
-	for host in $RABBITMQ_URL; do
+	out "$IDENTIFIER: Dumping definitions"
+	local retry_count=1
+	while retry_count < MAX_RETRY; do
 		curl -X GET -u $RABBITMQ_USER:$RABBITMQ_PASS https://$RABBITMQ_URL/api/definitions -k -o $WORK_DIR/rabbitmq.json
-		if [ $? -ne 0 ]; then
-			die 2 "CURL ON HOST: $host PORT: 443 FAILED"
+		if [ $? -eq 0 ]; then
+			validate_dump $WORK_DIR/rabbitmq.json
+			out "$IDENTIFIER: Dump SUCCESSFUL"
+			return 0
 		fi
-		validate_dump $WORK_DIR/rabbitmq.json
+		out "$IDENTIFIER: WARNING: Failed to get definitions. Retrying $((MAX_RETRY-retry_count)) more time(s)"
+		retry_count=$((retry_count+1))
+		sleep 5
 	done
+	die 2 "$IDENTIFIER: ERROR: cURL to host: $host port: 443 FAILED"
 }
 
 validate_dump() {
+	out "$IDENTIFIER: Validating definitions"
 	DUMPFILE=$1
 	if [ -f $DUMPFILE ]; then
 		if [ -n "`grep rabbit_version $DUMPFILE`" ]; then
-			out "BACKUP FOR $(basename $DUMPFILE) SUCCESSFULLY"
+			out "$IDENTIFIER: Validation of '$(basename $DUMPFILE)' SUCCESSFUL"
 		else
-			die 2 "BACKUP FOR $(basename $DUMPFILE) FAILED"
+			die 2 "$IDENTIFIER: Validation of '$(basename $DUMPFILE)' FAILED"
 		fi
 	fi
 }
@@ -75,3 +90,5 @@ export_rabbitmqdump
 zip_all_together
 logout_all
 cleanup_backup
+
+out "$IDENTIFIER: Backup DONE"
