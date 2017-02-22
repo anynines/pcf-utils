@@ -53,8 +53,8 @@ prepare_backup() {
 
 export_rabbitmqdump() {
 	out "$IDENTIFIER: Dumping definitions"
-	local retry_count=1
-	while retry_count < MAX_RETRY; do
+	local retry_count=0
+	while [ $retry_count -lt $MAX_RETRY ]; do
 		curl -X GET -u $RABBITMQ_USER:$RABBITMQ_PASS https://$RABBITMQ_URL/api/definitions -k -o $WORK_DIR/rabbitmq.json
 		if [ $? -eq 0 ]; then
 			validate_dump $WORK_DIR/rabbitmq.json
