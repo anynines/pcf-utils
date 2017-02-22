@@ -4,13 +4,13 @@ cd ..
 SCRIPT_BASE=$(pwd)
 IDENTIFIER=MYSQL-TILE
 
-source ../common || die "$IDENTIFIER: ERROR: 'common' not found"
-source ../common-backup || die "$IDENTIFIER: ERROR: 'common-backup' not found"
-source ../config/environment.sh || die "$IDENTIFIER: ERROR: configuration file 'environment.sh' not found"
+source common || die "$IDENTIFIER: ERROR: 'common' not found"
+source common-backup || die "$IDENTIFIER: ERROR: 'common-backup' not found"
+source config/environment.sh || die "$IDENTIFIER: ERROR: configuration file 'environment.sh' not found"
 
 # Change the Name of the Output tar archive to include tile name
 set_tile_identifier() {
-	export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME
+	eval "$(sed "s#^export BACKUP_DIR_NAME=.*#export BACKUP_DIR_NAME=$IDENTIFIER-$BACKUP_DIR_NAME#" config/environment.sh)"
 }
 
 validate_connection() {
