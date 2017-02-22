@@ -96,7 +96,7 @@ export_redis_dedicacted_dump() {
 			out "$IDENTIFIER: Export from '$redis_instance' SUCCESSFUL"
 		else
 			out "$IDENTIFIER: Export from '$redis_instance' FAILED"
-		done
+		fi
 	done
 	out "$IDENTIFIER: Export DONE"
 }
