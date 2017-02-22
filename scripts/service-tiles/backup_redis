@@ -126,6 +126,5 @@ export_redis_dedicacted_dump
 export_redis_shared_dump
 zip_all_together
 logout_all
-cleanup_backup
 
 out "$IDENTIFIER: Backup DONE"

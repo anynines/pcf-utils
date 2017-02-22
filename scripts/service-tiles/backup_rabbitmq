@@ -91,6 +91,5 @@ validate_connection
 export_rabbitmqdump
 zip_all_together
 logout_all
-cleanup_backup
 
 out "$IDENTIFIER: Backup DONE"

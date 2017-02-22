@@ -37,10 +37,6 @@ prepare_backup() {
 	fi
 }
 
-cleanup_backup() {
-	rm -r $WORK_DIR
-}
-
 # Loop through the hosts so that in case one is failing, the other one is used.
 export_mysqldb() {
 	out "$IDENTIFIER: Dumping databases"
