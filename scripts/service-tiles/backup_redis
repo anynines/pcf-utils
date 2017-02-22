@@ -117,8 +117,8 @@ validate_redisdump() {
 
 set_tile_identifier
 validate_software
-login_opsman
 prepare_backup
+login_opsman
 export_installation_settings
 fetch_redis_credentials
 fetch_redis_dedicated_credentials

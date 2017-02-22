@@ -82,10 +82,10 @@ validate_dump() {
 
 set_tile_identifier
 validate_software
-validate_additional_configuration_variables
-login_opsman
 prepare_backup
+login_opsman
 export_installation_settings
+validate_additional_configuration_variables
 fetch_rabbitmq_credentials
 validate_connection
 export_rabbitmqdump
