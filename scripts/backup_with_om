@@ -1,5 +1,8 @@
 #!/bin/bash --login
 
+cd $(dirname $0)
+SCRIPT_BASE=$(pwd)
+
 source common || die "ERROR: 'common' not found"
 source common-backup || die "ERROR: 'common-backup' not found"
 

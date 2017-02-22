@@ -91,7 +91,7 @@ login_opsman() {
 
 fetch_mysql_credentials() {
 	out "common: Fetching MySQL credentials"
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-mysql mysql root 2>/dev/null`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-mysql mysql root 2>/dev/null`
 	export MYSQL_USER=`echo $output | cut -d '|' -f 1`
 	export MYSQL_PASS=`echo $output | cut -d '|' -f 2`
 	export MYSQL_HOSTS=`echo $output | cut -d '|' -f 3`
@@ -103,7 +103,7 @@ fetch_mysql_credentials() {
 
 fetch_rabbitmq_credentials() {
 	out "common: Fetching RabbitMQ credentials"
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-rabbitmq rabbitmq-server admin 2>/dev/null`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-rabbitmq rabbitmq-server admin 2>/dev/null`
 	export RABBITMQ_USER=`echo $output | cut -d '|' -f 1`
 	export RABBITMQ_PASS=`echo $output | cut -d '|' -f 2`
 	if [ -z "$RABBITMQ_USER" -a -z "$RABBITMQ_PASS" ]; then
@@ -113,7 +113,7 @@ fetch_rabbitmq_credentials() {
 
 fetch_redis_credentials() {
 	out "common: Fetching Redis credentials"
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-redis cf-redis-broker vcap 2>/dev/null`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-redis cf-redis-broker vcap 2>/dev/null`
 	export REDIS_USER=`echo $output | cut -d '|' -f 1`
 	export REDIS_PASS=`echo $output | cut -d '|' -f 2`
 	export REDIS_HOST=`echo $output | cut -d '|' -f 3`
@@ -124,7 +124,7 @@ fetch_redis_credentials() {
 
 fetch_director_ssh_credentials(){
 	out "common: Fetching BOSH Director VM credentials"
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-bosh director vcap`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-bosh director vcap`
 	export DIRECTOR_VCAP_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_VCAP_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export BOSH_DIRECTOR_VCAP_IP=`echo $output | cut -d '|' -f 3`
@@ -135,7 +135,7 @@ fetch_director_ssh_credentials(){
 
 fetch_bosh_connection_parameters() {
 	out "common: Fetching BOSH Director credentials"
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-bosh director director`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-bosh director director`
 	export DIRECTOR_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export BOSH_DIRECTOR_IP=`echo $output | cut -d '|' -f 3`

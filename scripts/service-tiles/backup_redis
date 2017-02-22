@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+SCRIPT_BASE=$(pwd)
 IDENTIFIER=REDIS-TILE
 
 source ../common || die "$IDENTIFIER: ERROR: 'common' not found"

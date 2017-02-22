@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+SCRIPT_BASE=$(pwd)
 IDENTIFIER=RABBITMQ-TILE
 MAX_RETRY=5
 
@@ -16,7 +18,7 @@ validate_additional_configuration_variables() {
 	echo "$IDENTIFIER: Validating mandatory config"
 
 	if [ -z "$SYSTEM_DOMAIN" ]; then
-		export SYSTEM_DOMAIN="$(ruby lib/installationparser/app.rb $WORK_DIR/installation.yml properties cf cloud_controller system_domain)"
+		export SYSTEM_DOMAIN="$(ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml properties cf cloud_controller system_domain)"
 
 		[ -z "$SYSTEM_DOMAIN" ] && die "$IDENTIFIER: ERROR: SYS_DOMAIN missing. Please set SYS_DOMAIN environment variable to match your system."
 	fi

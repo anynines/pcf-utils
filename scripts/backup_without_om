@@ -1,5 +1,7 @@
 #!/bin/bash --login
 
+cd ..
+SCRIPT_BASE=$(pwd)
 . common
 . backup_director.sh
 
@@ -110,7 +112,7 @@ stop_cloud_controller() {
 }
 
 export_db() {
-	output=`ruby lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml $1 $2 $3`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PGPASSWORD=`echo $output | cut -d '|' -f 2`
