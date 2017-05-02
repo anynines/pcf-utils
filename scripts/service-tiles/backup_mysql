@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd $(dirname $0)
 cd ..
 SCRIPT_BASE=$(pwd)
 IDENTIFIER=MYSQL-TILE
@@ -54,6 +54,18 @@ export_mysqldb() {
 	out "$IDENTIFIER: Dump SUCCESSFUL"
 }
 
+export_service_dbs() {
+	while read servicedb; do
+		out "$IDENTIFIER: Dumping service database '$servicedb'"
+		for host in $MYSQL_HOSTS; do
+			mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host $servicedb > $DATABASE_DIR/$servicedb.sql
+			[ $? -eq 0 ] && break
+		done
+		validate_mysqldump $DATABASE_DIR/$servicedb.sql
+		out "$IDENTIFIER: Dump of '$servicedb' SUCCESSFUL"
+	done < <(mysql -u $MYSQL_USER -p$MYSQL_PASS -h $host -BN -e "show databases;" | grep "^cf_")
+}
+
 validate_mysqldump() {
 	DUMPFILE=$1
 	out "$IDENTIFIER: Validating dump '$(basename $DUMPFILE)'"
@@ -73,6 +85,7 @@ export_installation_settings
 fetch_mysql_credentials
 validate_connection
 export_mysqldb
+[ "${PMYSQL_DISTINCTIVE_SERVICEDBS:-false}" == "true" ] && export_service_dbs
 zip_all_together
 logout_all
 
