@@ -39,11 +39,12 @@ execute() {
 	validate_software
 	prepare_backup
 
+	login_opsman
+	export_root_ca
 	export_opsman_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
-	export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
+	#export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
 	export CA_CERT_LOCATION=$WORK_DIR/root_ca_certificate
 
-	login_opsman
 	export_installation_settings
 	fetch_bosh_connection_parameters
 	bosh_login
@@ -55,9 +56,9 @@ execute() {
 
 	# Backported from v1.6 version in case databases were not migrated.
 	# Only new PCF 1.7 installs are using MySQL only.
-	export_cc_db
-	export_uaadb
-	export_consoledb
+	# export_cc_db
+	# export_uaadb
+	# export_consoledb
 
 	# stop_cloud_controller
 	export_nfs_server

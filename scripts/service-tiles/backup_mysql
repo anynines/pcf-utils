@@ -15,7 +15,7 @@ set_tile_identifier() {
 
 validate_connection() {
 	out "$IDENTIFIER: Validating connection"
-	for host in $MYSQL_HOSTS; do
+	for host in $PMYSQL_HOSTS; do
 		nc -w1 -z $host 3306
 		if [ $? -ne 0 ]; then
 			die "$IDENTIFIER: ERROR: Connection to host: $host port: 3306 FAILED"
@@ -40,9 +40,9 @@ prepare_backup() {
 # Loop through the hosts so that in case one is failing, the other one is used.
 export_mysqldb() {
 	out "$IDENTIFIER: Dumping databases"
-	for host in $MYSQL_HOSTS; do
-		mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host --all-databases > $DATABASE_DIR/all_databases.sql
-		mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host mysql_broker > $DATABASE_DIR/mysql_broker.sql
+	for host in $PMYSQL_HOSTS; do
+		mysqldump -u $PMYSQL_USER -p$PMYSQL_PASS -h $host --all-databases > $DATABASE_DIR/all_databases.sql
+		mysqldump -u $PMYSQL_USER -p$PMYSQL_PASS -h $host mysql_broker > $DATABASE_DIR/mysql_broker.sql
 		if [ $? -eq 0 ]; then
 			break
 		else
@@ -57,13 +57,13 @@ export_mysqldb() {
 export_service_dbs() {
 	while read servicedb; do
 		out "$IDENTIFIER: Dumping service database '$servicedb'"
-		for host in $MYSQL_HOSTS; do
-			mysqldump -u $MYSQL_USER -p$MYSQL_PASS -h $host $servicedb > $DATABASE_DIR/$servicedb.sql
+		for host in $PMYSQL_HOSTS; do
+			mysqldump -u $PMYSQL_USER -p$PMYSQL_PASS -h $host $servicedb > $DATABASE_DIR/$servicedb.sql
 			[ $? -eq 0 ] && break
 		done
 		validate_mysqldump $DATABASE_DIR/$servicedb.sql
 		out "$IDENTIFIER: Dump of '$servicedb' SUCCESSFUL"
-	done < <(mysql -u $MYSQL_USER -p$MYSQL_PASS -h $host -BN -e "show databases;" | grep "^cf_")
+	done < <(mysql -u $PMYSQL_USER -p$PMYSQL_PASS -h $host -BN -e "show databases;" | grep "^cf_")
 }
 
 validate_mysqldump() {

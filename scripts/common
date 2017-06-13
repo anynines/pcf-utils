@@ -92,12 +92,11 @@ login_opsman() {
 fetch_mysql_credentials() {
 	out "common: Fetching MySQL credentials"
 	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-mysql mysql root 2>/dev/null`
-	export MYSQL_USER=`echo $output | cut -d '|' -f 1`
-	export MYSQL_PASS=`echo $output | cut -d '|' -f 2`
-	export MYSQL_HOSTS=`echo $output | cut -d '|' -f 3`
-	export MYSQL_HOSTS=`echo -n $MYSQL_HOSTS | sed 's/,/ /g'`
-	if [ -z "$MYSQL_USER" -a -z "$MYSQL_PASS" -a -z "$MYSQL_HOSTS" ]; then
-		die "common: ERROR: Either MYSQL_USER, MYSQL_PASS or MYSQL_HOSTS is empty"
+	export PMYSQL_USER=`echo $output | cut -d '|' -f 1`
+	export PMYSQL_PASS=`echo $output | cut -d '|' -f 2`
+	export PMYSQL_HOSTS=${PMYSQL_HOSTS:-`echo $output | cut -d '|' -f 3 | sed 's/,/ /g'`}
+	if [ -z "$PMYSQL_USER" -a -z "$PMYSQL_PASS" -a -z "$PMYSQL_HOSTS" ]; then
+		die "common: ERROR: Either PMYSQL_USER, PMYSQL_PASS or PMYSQL_HOSTS is empty"
 	fi
 }
 

@@ -30,12 +30,17 @@ export_opsman_files() {
 	"
 }
 
+export_root_ca() {
+	uaac curl https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate -o $WORK_DIR/root_ca_certificate
+}
+
 export_installation() {
 	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
 		CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
 
 		out "common-backup: Exporting installation files from: $CONNECTION_URL"
 		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+		# do not use uaac curl as it times out
 		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
 	fi
 }
@@ -112,7 +117,7 @@ export_mysqldb() {
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PASSWORD=`echo $output | cut -d '|' -f 2`
-	export IPS=`echo $output | cut -d '|' -f 3 | tr ',' ' '`
+	export IPS=${MYSQL_HOSTS:-`echo $output | cut -d '|' -f 3 | tr ',' ' '`}
 
 	DB_FILE=$DATABASE_DIR/mysql.sql
 
