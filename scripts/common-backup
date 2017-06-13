@@ -35,6 +35,7 @@ export_opsman_files() {
 
 export_root_ca() {
 	uaac_curl "https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate" root_ca_certificate || die $? "Unable to download root CA certificate"
+	output=`ruby ${SCRIPT_BASE:-.}/lib/json_parser.rb $WORK_DIR/installation.yml root_ca_certificate_pem`
 	#export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
 	export CA_CERT_LOCATION="$WORK_DIR/root_ca_certificate"
 }

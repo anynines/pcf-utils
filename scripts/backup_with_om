@@ -69,7 +69,8 @@ execute() {
 	export_installation
 	export_director
 
-	zip_all_together
+	# comment in if you must, but it requires about the double amount of disk space
+	#zip_all_together
 	logout_all
 }
 
