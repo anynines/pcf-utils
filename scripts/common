@@ -83,10 +83,18 @@ login_opsman() {
 	rm ~/.uaac.yml
 
 	out "common: Login to OpsManager"
-
 	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation
-
 	uaac token owner get opsman $OPS_MGR_ADMIN_USERNAME -s "" -p $OPS_MGR_ADMIN_PASSWORD
+	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+}
+
+uaac_curl() {
+	# do not use "uaac curl" directly as it times out
+	# UAA_ACCESS_TOKEN is used (login_opsman has to be called in advance)
+	local CONNECTION_URL=$1
+	local OUTPUT=${2#$WORK_DIR/}
+	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/$OUTPUT
+	return $?
 }
 
 fetch_mysql_credentials() {

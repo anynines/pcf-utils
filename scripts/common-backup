@@ -1,5 +1,8 @@
 #!/bin/bash --login
 
+# include common functions
+source common
+
 export_opsman_files() {
 	ssh-keygen -R $OPS_MANAGER_HOST
 
@@ -31,33 +34,33 @@ export_opsman_files() {
 }
 
 export_root_ca() {
-	uaac curl https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate -o $WORK_DIR/root_ca_certificate
+	uaac_curl "https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate" root_ca_certificate || die $? "Unable to download root CA certificate"
 	#export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
-	export CA_CERT_LOCATION=$WORK_DIR/root_ca_certificate
+	export CA_CERT_LOCATION="$WORK_DIR/root_ca_certificate"
 }
 
 export_installation() {
 	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
-		CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
+		local CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
 
 		out "common-backup: Exporting installation files from: $CONNECTION_URL"
-		export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
-		# do not use uaac curl as it times out
-		curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
+		# export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+		# curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
+		uaac_curl "$CONNECTION_URL" installation.zip || die $? "Unable to download installation.zip"
 	fi
 }
 
 export_installation_settings() {
-	CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_settings
-
 	out "common-backup: Exporting installation.yml and BOSH manifest from: $CONNECTION_URL"
-	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+	# local CONNECTION_URL="https://$OPS_MANAGER_HOST/api/installation_settings"
+	# export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
+	# curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
+	uaac_curl "https://$OPS_MANAGER_HOST/api/installation_settings" installation.yml || die $? "Unable to download installation settings"
 
-	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
-
-	BOSH_MANIFEST_URL=https://$OPS_MANAGER_HOST/api/v0/staged/director/manifest
-
-	curl "$BOSH_MANIFEST_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $DEPLOYMENT_DIR/bosh.yml
+	# BOSH_MANIFEST_URL="https://$OPS_MANAGER_HOST/api/v0/staged/director/manifest"
+	# curl "$BOSH_MANIFEST_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $DEPLOYMENT_DIR/bosh.yml
+	# failing here is not directly an error
+	uaac_curl "https://$OPS_MANAGER_HOST/api/v0/staged/director/manifest" "$DEPLOYMENT_DIR/bosh.yml" || out "Unable to download bosh director manifest ($?)"
 }
 
 export_encryption_key() {
