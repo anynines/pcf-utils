@@ -5,7 +5,7 @@ USAGE: #{File.basename($0)} /path/to/yaml.yml key_name_to_extract
 
 "
 
-if ARGV.length < 2 do
+if ARGV.length < 2
   puts USAGE
   abort "Not enough arguments."
 end
