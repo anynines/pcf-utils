@@ -18,3 +18,37 @@ To create a backup, execute `backup_with_om`.
 # Import users
 Copy the file `environment` from examples to `config` directory.
 Open it and fill in your environment details before executing `import-single-user`
+
+# Firewall considerations
+Destination: OpsManager
+Destination Port: 22 (SSH)
+Reason: download deployment manifests
+
+Destination: OpsManager
+Destination Port: 443 (https)
+Reason: login to OpsManager UAA and access OpsManager API to download installation.zip and other settings.
+
+Destination: Director
+Destination Port: 25555 (https/director port)
+Reason: target bosh director and download director database and other status
+
+Destination: Director
+Destination Port: 22 (ssh)
+Reason: download director store
+
+Destination: ERT networks
+Destination Port: 22 (ssh)
+Reason: execute backup tasks and download storage files on VMs holding data (nfs, redis data, mysql...)
+
+Destination: MySQL proxy or server
+Destination Port: 3306 (mysql)
+Reason: create database dumps
+
+Destination: RabbitMQ management API (https://pivotal-rabbitmq.PCF_SYSTEM_DOMAIN)
+Destination Port: 443 (https)
+Reason: download queue descriptions
+
+## deprecated
+Destination: CC DB, Console DB, UAA DB
+Destination Port: 2544
+Reason: create database dumps
