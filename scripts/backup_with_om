@@ -42,8 +42,6 @@ execute() {
 	login_opsman
 	export_root_ca
 	export_opsman_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
-	#export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
-	export CA_CERT_LOCATION=$WORK_DIR/root_ca_certificate
 
 	export_installation_settings
 	fetch_bosh_connection_parameters

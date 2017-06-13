@@ -32,6 +32,8 @@ export_opsman_files() {
 
 export_root_ca() {
 	uaac curl https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate -o $WORK_DIR/root_ca_certificate
+	#export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
+	export CA_CERT_LOCATION=$WORK_DIR/root_ca_certificate
 }
 
 export_installation() {
