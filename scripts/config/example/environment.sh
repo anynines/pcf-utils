@@ -17,3 +17,10 @@ export DATABASE_DIR=$WORK_DIR/database
 
 export COMPLETE_BACKUP="N"
 export BOSH_OLD_CLI="false"
+
+# override internal MySQL IPs (e.g. to use the proxies instead)
+#export MYSQL_HOSTS="10.0.0.100 10.0.0.101 10.0.0.102"
+
+export PMYSQL_DISTINCTIVE="true"
+# override P-MySQL IPs (e.g. to use the proxies instead)
+#export PMYSQL_HOSTS="10.0.1.100 10.0.2.101 10.0.3.102"
