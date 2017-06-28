@@ -34,15 +34,16 @@ export_opsman_files() {
 }
 
 export_root_ca() {
-	uaac_curl "https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate" root_ca_certificate || die $? "Unable to download root CA certificate"
-	local output=`ruby ${SCRIPT_BASE:-.}/lib/json_parser.rb $WORK_DIR/root_ca_certificate root_ca_certificate_pem`
-	echo "$output" > "$WORK_DIR/root_ca_certificate"	#export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
+	uaac_curl "https://$OPS_MANAGER_HOST/api/v0/security/root_ca_certificate" "$WORK_DIR/root_ca_certificate" || die $? "Unable to download root CA certificate"
+	local output=`ruby ${SCRIPT_BASE:-.}/lib/json_parser.rb "$WORK_DIR/root_ca_certificate" root_ca_certificate_pem`
+	echo "$output" > "$WORK_DIR/root_ca_certificate"
+	# Alternative: export_opsman_files /var/tempest/workspaces/default/root_ca_certificate $WORK_DIR
 	export CA_CERT_LOCATION="$WORK_DIR/root_ca_certificate"
 }
 
 export_installation() {
 	if [[ "Y" = "$COMPLETE_BACKUP" || "y" = "$COMPLETE_BACKUP" ]]; then
-		local CONNECTION_URL=https://$OPS_MANAGER_HOST/api/installation_asset_collection
+		local CONNECTION_URL="https://$OPS_MANAGER_HOST/api/installation_asset_collection"
 
 		out "common-backup: Exporting installation files from: $CONNECTION_URL"
 		# export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`

@@ -1,0 +1,26 @@
+# add all networks used by pcf to block traffic to by default
+export networks="172.28.16.0/24
+172.28.17.0/24
+172.28.18.0/24"
+
+# allow only required endpoints
+# router, gateway (or else you shut yourself out)
+# opsmanager:22
+# opsmanager:443
+# director:22
+# director:8443
+# director: 25555
+# myql-proxy: 3306
+# mysql-server: 3306
+# nfs-server: 22
+export open="172.28.6.1
+172.28.6.7
+172.28.6.8
+172.28.17.5 tcp 22
+172.28.17.5 tcp 443
+172.28.17.11 tcp 22
+172.28.17.11 tcp 8443
+172.28.17.11 tcp 25555
+172.28.16.16 tcp 3306
+172.28.16.17 tcp 3306
+172.28.16.15 tcp 22"

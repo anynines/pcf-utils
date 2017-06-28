@@ -1,0 +1,70 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+# use sudo if not run as root
+if [ $UID -ne 0 ]; then
+	sudo $0 $@
+	exit $?
+fi
+
+cd $(dirname $0)
+
+USAGE="
+USAGE:
+
+$0 stop
+$0 start [foundation (default: pcf1)]
+
+Example Start:
+	$0 start pcf2
+
+Configuration File:
+	- export 'network' variable: Contains all PCF networks (one in a row). They are blocked by default.
+		Format of a line is:
+			ip/netmask
+	- export 'open' variable: Contains a list of IPs, IP/protocol, IP/protocol/port combinations that are allowed.
+		Format of a line is:
+			ip [protocol [port]]
+"
+
+action=${1:-help}
+case $action in
+"start")
+	$0 stop
+
+	foundation=${2:-pcf1}
+	if [ ! -f "firewall.$foundation" ]; then
+		echo "Configuration $(pwd)/firewall.$foundation not found"
+		exit 1
+	fi
+	source "firewall.$foundation"
+
+	while read ip proto port; do
+		if [ -z "$proto" ]; then
+			iptables -A OUTPUT -d $ip -j ACCEPT
+		elif [ -z "$port" ]; then
+			iptables -A OUTPUT -p $proto -d $ip -j ACCEPT
+		else
+			iptables -A OUTPUT -p $proto -d $ip --dport $port -j ACCEPT
+		fi
+	done <<<"$open"
+
+	while read pcf_net; do
+		iptables -A OUTPUT -d $pcf_net -j LOG --log-prefix "pcf-utils-DENIED"
+		iptables -A OUTPUT -d $pcf_net -j DROP
+	done <<<"$networks"
+	;;
+"stop")
+	# quick and dirty
+	iptables -P OUTPUT ACCEPT
+	iptables -F OUTPUT
+	;;
+"status")
+	iptables -nvL
+	;;
+*)
+	echo "$USAGE"
+	exit 1
+	;;
+esac
