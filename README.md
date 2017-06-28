@@ -33,6 +33,10 @@ Destination Port: 25555 (https/director port)
 Reason: target bosh director and download director database and other status
 
 Destination: Director
+Destination Port: 8443 (https/uaa port)
+Reason: login to bosh director and download director database and other status
+
+Destination: Director
 Destination Port: 22 (ssh)
 Reason: download director store
 
