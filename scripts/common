@@ -78,13 +78,12 @@ prepare_backup() {
 }
 
 login_opsman() {
-
 	out "common: Remove the old uaa authentication tokens"
 	rm ~/.uaac.yml
 
 	out "common: Login to OpsManager"
-	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation
-	uaac token owner get opsman $OPS_MGR_ADMIN_USERNAME -s "" -p $OPS_MGR_ADMIN_PASSWORD
+	uaac target https://$OPS_MANAGER_HOST/uaa --skip-ssl-validation || die $? "Unable to target UAA"
+	uaac token owner get opsman $OPS_MGR_ADMIN_USERNAME -s "" -p $OPS_MGR_ADMIN_PASSWORD || die $? "Unable to login to UAA"
 	export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 }
 
@@ -93,13 +92,13 @@ uaac_curl() {
 	# UAA_ACCESS_TOKEN is used (login_opsman has to be called in advance)
 	local CONNECTION_URL=$1
 	local OUTPUT=${2#$WORK_DIR/}
-	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/$OUTPUT
+	curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o "$WORK_DIR/$OUTPUT"
 	return $?
 }
 
 fetch_mysql_credentials() {
 	out "common: Fetching MySQL credentials"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-mysql mysql root 2>/dev/null`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials p-mysql mysql root 2>/dev/null`
 	export PMYSQL_USER=`echo $output | cut -d '|' -f 1`
 	export PMYSQL_PASS=`echo $output | cut -d '|' -f 2`
 	export PMYSQL_HOSTS=${PMYSQL_HOSTS:-`echo $output | cut -d '|' -f 3 | sed 's/,/ /g'`}
@@ -110,7 +109,7 @@ fetch_mysql_credentials() {
 
 fetch_rabbitmq_credentials() {
 	out "common: Fetching RabbitMQ credentials"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-rabbitmq rabbitmq-server admin 2>/dev/null`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials p-rabbitmq rabbitmq-server admin 2>/dev/null`
 	export RABBITMQ_USER=`echo $output | cut -d '|' -f 1`
 	export RABBITMQ_PASS=`echo $output | cut -d '|' -f 2`
 	if [ -z "$RABBITMQ_USER" -a -z "$RABBITMQ_PASS" ]; then
@@ -120,7 +119,7 @@ fetch_rabbitmq_credentials() {
 
 fetch_redis_credentials() {
 	out "common: Fetching Redis credentials"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-redis cf-redis-broker vcap 2>/dev/null`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials p-redis cf-redis-broker vcap 2>/dev/null`
 	export REDIS_USER=`echo $output | cut -d '|' -f 1`
 	export REDIS_PASS=`echo $output | cut -d '|' -f 2`
 	export REDIS_HOST=`echo $output | cut -d '|' -f 3`
@@ -131,7 +130,7 @@ fetch_redis_credentials() {
 
 fetch_director_ssh_credentials(){
 	out "common: Fetching BOSH Director VM credentials"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-bosh director vcap`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials p-bosh director vcap`
 	export DIRECTOR_VCAP_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_VCAP_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export BOSH_DIRECTOR_VCAP_IP=`echo $output | cut -d '|' -f 3`
@@ -142,7 +141,7 @@ fetch_director_ssh_credentials(){
 
 fetch_bosh_connection_parameters() {
 	out "common: Fetching BOSH Director credentials"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials p-bosh director director`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials p-bosh director director`
 	export DIRECTOR_USERNAME=`echo $output | cut -d '|' -f 1`
 	export DIRECTOR_PASSWORD=`echo $output | cut -d '|' -f 2`
 	export BOSH_DIRECTOR_IP=`echo $output | cut -d '|' -f 3`
@@ -154,17 +153,17 @@ fetch_bosh_connection_parameters() {
 
 bosh_status() {
 	out "common: Fetching BOSH status"
-	bosh status > $WORK_DIR/bosh_status.txt
-	export BOSH_UUID=`grep UUID $WORK_DIR/bosh_status.txt | cut -d 'D' -f 2 | tr -d ' ' | sort -u`
+	bosh status > "$WORK_DIR/bosh_status.txt"
+	export BOSH_UUID=`grep UUID "$WORK_DIR/bosh_status.txt" | cut -d 'D' -f 2 | tr -d ' ' | sort -u`
 
-	export UUID_EXISTS=`grep -Fxq $BOSH_UUID $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME`
+	export UUID_EXISTS=`grep -Fxq $BOSH_UUID "$WORK_DIR/$CF_DEPLOYMENT_FILE_NAME"`
 	if [[ -z $UUID_EXISTS ]]; then
 		out "common: UUID Matches"
 	else
 		die "common: ERROR: UUID Mismatch"
 	fi
 
-	rm -rf $WORK_DIR/bosh_status.txt
+	rm -rf "$WORK_DIR/bosh_status.txt"
 }
 
 bosh_target() {
@@ -196,7 +195,8 @@ bosh_target() {
 			}
 		}
 
-		exit
+		catch wait result
+		exit [lindex $result 3]
 	"
 	if [ $? -eq 0 ]; then
 		out "common: Director targeted"
@@ -219,7 +219,7 @@ bosh_login() {
 			bosh_target $IP && break
 		done
 	else
-		bosh_target $BOSH_DIRECTOR_IP
+		bosh_target $BOSH_DIRECTOR_IP  || die $? "Unable to target director"
 	fi
 }
 
@@ -257,18 +257,18 @@ bosh_login_wo_certs() {
 
 set_bosh_deployment() {
 	out "common: Setting deployment"
-	bosh deployment $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME
+	bosh deployment "$WORK_DIR/$CF_DEPLOYMENT_FILE_NAME"  || die $? "Unable to set deployment to '$CF_DEPLOYMENT_FILE_NAME'"
 }
 
 logout_all() {
 	out "common: Performing logout"
 	bosh logout
-	uaac token delete $OPS_MGR_ADMIN_USERNAME
+	uaac token delete "$OPS_MGR_ADMIN_USERNAME"
 }
 
 stop_cloud_controller() {
 	out "common: Stopping all Cloud Controller"
-	OUTPUT=`cat $WORK_DIR/bosh-vms.txt`
+	OUTPUT=`cat "$WORK_DIR/bosh-vms.txt"`
 
 	for word in $OUTPUT; do
 		out "common: Stopping '$word'"
@@ -281,7 +281,7 @@ stop_cloud_controller() {
 
 start_cloud_controller() {
 	out "common: Starting all Cloud Controller"
-	OUTPUT=`cat $WORK_DIR/bosh-vms.txt`
+	OUTPUT=`cat "$WORK_DIR/bosh-vms.txt"`
 
 	for word in $OUTPUT
 	do
@@ -300,22 +300,22 @@ verify_deployment_backedUp() {
 
 	out "common: Looking for manifest '$CF_DEPLOYMENT_NAME', file name '$CF_DEPLOYMENT_FILE_NAME'"
 
-	if [ -f $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME ]; then
+	if [ -f "$WORK_DIR/$CF_DEPLOYMENT_FILE_NAME" ]; then
 		out "common: File exists"
 	else
 		out "common: File does not exist. Downloading."
-		bosh download manifest $CF_DEPLOYMENT_NAME $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME
+		bosh download manifest $CF_DEPLOYMENT_NAME "$WORK_DIR/$CF_DEPLOYMENT_FILE_NAME"
 	fi
 }
 
 zip_all_together() {
 	out "common: Compressing backup into '$BACKUP_DIR_NAME.tar.gz'"
-	cd $WORK_DIR
+	cd "$WORK_DIR"
 	cd ..
-	tar -zcvf $BACKUP_DIR_NAME.tar.gz $BACKUP_DIR_NAME
+	tar -zcvf "$BACKUP_DIR_NAME.tar.gz" "$BACKUP_DIR_NAME"
 	if [ $? -eq 0 ]; then
 		out "common: Compression SUCCESSFUL. Removing working directory."
-		rm -rf $WORK_DIR
+		rm -rf "$WORK_DIR"
 	else
 		out "common: Compression FAILED. Leaving working directory as-is."
 		return 1

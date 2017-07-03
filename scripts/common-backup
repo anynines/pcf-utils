@@ -6,6 +6,8 @@ source common
 export_opsman_files() {
 	ssh-keygen -R $OPS_MANAGER_HOST
 
+	# replace dollar sign in password with magic for expect
+	OPS_MGR_SSH_PASSWORD=$(sed -e 's#\$#\\\$#' <<<$OPS_MGR_SSH_PASSWORD)
 	out "common-backup: Exporting deployment manifests"
 	/usr/bin/expect -c "
 		set timeout -1
@@ -53,7 +55,7 @@ export_installation() {
 }
 
 export_installation_settings() {
-	out "common-backup: Exporting installation.yml and BOSH manifest from: $CONNECTION_URL"
+	out "common-backup: Exporting installation.yml and BOSH manifest from OpsManager"
 	# local CONNECTION_URL="https://$OPS_MANAGER_HOST/api/installation_settings"
 	# export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 	# curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.yml
@@ -67,33 +69,33 @@ export_installation_settings() {
 
 export_encryption_key() {
 	out "common-backup: Exporting DB encryption key"
-	grep -E 'db_encryption_key' $WORK_DIR/$CF_DEPLOYMENT_FILE_NAME | cut -d ':' -f 2 | sort -u > $WORK_DIR/cc_db_encryption_key.txt
+	grep -E 'db_encryption_key' "$WORK_DIR/$CF_DEPLOYMENT_FILE_NAME" | cut -d ':' -f 2 | sort -u > "$WORK_DIR/cc_db_encryption_key.txt"
 }
 
 export_bosh_vms() {
 	out "common-backup: Exporting BOSH VMs"
 	OUTPUT=`bosh vms | grep "cloud_controller[-/]" | awk '{print $2}'`
-	echo $OUTPUT > $WORK_DIR/bosh-vms.txt
+	echo $OUTPUT > "$WORK_DIR/bosh-vms.txt"
 }
 
 export_cc_db() {
 	out "common-backup: Exporting CCDB"
-	export_db cf ccdb admin 2544 "ccdb" $DATABASE_DIR/ccdb.sql
+	export_db cf ccdb admin 2544 "ccdb" "$DATABASE_DIR/ccdb.sql"
 }
 
 export_uaadb() {
 	out "common-backup: Exporting UAA-DB"
-	export_db cf uaadb root 2544 "uaa" $DATABASE_DIR/uaadb.sql
+	export_db cf uaadb root 2544 "uaa" "$DATABASE_DIR/uaadb.sql"
 }
 
 export_consoledb() {
 	out "common-backup: Exporting CONSOLE-DB"
-	export_db cf consoledb root 2544 "console" $DATABASE_DIR/console.sql
+	export_db cf consoledb root 2544 "console" "$DATABASE_DIR/console.sql"
 }
 
 export_db() {
 	out "common-backup: Exporting $@"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials $1 $2 $3`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials $1 $2 $3`
 
 	local USERNAME=`echo $output | cut -d '|' -f 1`
 	local PGPASSWORD=`echo $output | cut -d '|' -f 2`
@@ -106,7 +108,7 @@ export_db() {
 		for IP in $IPS; do
 			out "common-backup: Export PostgreSQL $DB from $IP"
 
-			pg_dump -h $IP -U $USERNAME -p $PORT -c $DB > $DB_FILE
+			pg_dump -h $IP -U $USERNAME -p $PORT -c $DB > "$DB_FILE"
 			if [ $? -eq 0 ]; then
 				break
 			else
@@ -120,18 +122,18 @@ export_db() {
 
 export_mysqldb() {
 	out "common-backup: Exporting internal MySQL"
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials cf mysql root mysql_proxy`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials cf mysql root mysql_proxy`
 
 	export USERNAME=`echo $output | cut -d '|' -f 1`
 	export PASSWORD=`echo $output | cut -d '|' -f 2`
 	export IPS=${MYSQL_HOSTS:-`echo $output | cut -d '|' -f 3 | tr ',' ' '`}
 
-	DB_FILE=$DATABASE_DIR/mysql.sql
+	DB_FILE="$DATABASE_DIR/mysql.sql"
 
 	for IP in $IPS; do
 		out "common-backup: Exporting MySQL DB from $IP"
 
-		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > $DB_FILE
+		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > "$DB_FILE"
 		if [ $? -eq 0 ]; then
 			break
 		else
@@ -143,7 +145,7 @@ export_mysqldb() {
 export_nfs_server() {
 	out "common-backup: Exporting file server"
 
-	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb $WORK_DIR/installation.yml credentials cf nfs_server vcap`
+	output=`ruby ${SCRIPT_BASE:-.}/lib/installationparser/app.rb "$WORK_DIR/installation.yml" credentials cf nfs_server vcap`
 
 	export NFS_SERVER_USER=`echo $output | cut -d '|' -f 1`
 	export NFS_SERVER_PASSWORD=`echo $output | cut -d '|' -f 2`
@@ -157,7 +159,7 @@ export_nfs_server() {
 	/usr/bin/expect -c "
 		set timeout -1
 
-		spawn rsync -av $NFS_EXCLUDE $NFS_SERVER_USER@$NFS_IP:/var/vcap/store/shared $NFS_DIR
+		spawn rsync -av $NFS_EXCLUDE $NFS_SERVER_USER@$NFS_IP:/var/vcap/store/shared "$NFS_DIR"
 
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
@@ -210,10 +212,10 @@ export_director_db(){
 }
 
 export_director_store(){
-	mkdir -p $WORK_DIR/opsmanager_director
+	mkdir -p "$WORK_DIR/opsmanager_director"
 	echo "common-backup: Exporting Director storage"
 	/usr/bin/expect -c "set timeout -1
-		spawn rsync -v -a --exclude=lost+found $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP:/var/vcap/store $WORK_DIR/opsmanager_director
+		spawn rsync -v -a --exclude=lost+found $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP:/var/vcap/store "$WORK_DIR/opsmanager_director"
 		expect {
 			-re ".*Are.*.*yes.*no.*" {
 				send yes\r;
