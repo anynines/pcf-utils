@@ -46,8 +46,9 @@ execute() {
 	login_opsman
 	export_root_ca
 	export_opsman_files /var/tempest/workspaces/default/deployments/*.yml $DEPLOYMENT_DIR
-
 	export_installation_settings
+	export_installation
+
 	fetch_bosh_connection_parameters
 	bosh_login
 	verify_deployment_backedUp
@@ -55,6 +56,7 @@ execute() {
 	bosh_status
 	set_bosh_deployment
 	export_bosh_vms
+	export_director
 
 	# Backported from v1.6 version in case databases were not migrated.
 	# Only new PCF 1.7 installs are using MySQL only.
@@ -66,8 +68,6 @@ execute() {
 	export_nfs_server
 	export_mysqldb
 	# start_cloud_controller
-	export_installation
-	export_director
 
 	# comment in if you must, but it requires about the double amount of disk space
 	#zip_all_together

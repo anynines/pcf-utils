@@ -50,7 +50,7 @@ export_installation() {
 		out "common-backup: Exporting installation files from: $CONNECTION_URL"
 		# export UAA_ACCESS_TOKEN=`cat ~/.uaac.yml | grep "access_token:" | cut -d':' -f2 | cut -d' ' -f2`
 		# curl "$CONNECTION_URL" -X GET -k -H "Authorization: Bearer $UAA_ACCESS_TOKEN" -o $WORK_DIR/installation.zip
-		uaac_curl "$CONNECTION_URL" installation.zip || die $? "Unable to download installation.zip"
+		uaac_curl "$CONNECTION_URL" "$WORK_DIR/installation.zip" || die $? "Unable to download installation.zip"
 	fi
 }
 
@@ -133,7 +133,7 @@ export_mysqldb() {
 	for IP in $IPS; do
 		out "common-backup: Exporting MySQL DB from $IP"
 
-		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --all-databases > "$DB_FILE"
+		mysqldump -u $USERNAME -p"$PASSWORD" -h $IP --single-transaction --routines --triggers --all-databases > "$DB_FILE"
 		if [ $? -eq 0 ]; then
 			break
 		else
@@ -183,32 +183,8 @@ export_nfs_server() {
 }
 
 export_director_db(){
-	ssh-keygen -R $BOSH_DIRECTOR_VCAP_IP
-
-	out "common-backup: SSHing into Director and dumping DB"
-	# UNSET PGPASSWORD DOES NOT WORK
-	SCRIPT="\"PGPASSWORD=${DIRECTOR_VCAP_PASSWORD} /var/vcap/packages/postgres/bin/pg_dump -U postgres -c bosh > /var/vcap/store/postgres/pg_log/postgresql.sql; \""
-
-	/usr/bin/expect -c "set timeout -1
-		spawn ssh $DIRECTOR_VCAP_USERNAME@$BOSH_DIRECTOR_VCAP_IP $SCRIPT
-		expect {
-			-re ".*Are.*.*yes.*no.*" {
-				send yes\r;
-				exp_continue
-			}
-
-			"*?assword:*" {
-				send $DIRECTOR_VCAP_PASSWORD\r
-			}
-		}
-		expect {
-			"*?assword:*" {
-				send $DIRECTOR_VCAP_PASSWORD\r
-				interact
-			}
-		}
-	exit
-	"
+	out "common-backup: dumping Director DB"
+	bosh backup "$WORK_DIR/opsmanager_director/db.tgz"
 }
 
 export_director_store(){

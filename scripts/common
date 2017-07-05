@@ -178,27 +178,27 @@ bosh_target() {
 		POST_TARGET_PARAM=""
 	fi
 
-	/usr/bin/expect -c "
+	output=$(/usr/bin/expect -c "
 		set timeout -1
 
 		spawn bosh $PRE_TARGET_PARAM target $POST_TARGET_PARAM $director_ip
 
 		expect {
-			-re ".*Email:*" {
+			-re \".*Email:*\" {
 				send $DIRECTOR_USERNAME\r ;
 				exp_continue
 			}
 
-			"*?assword:*" {
+			\"*?assword:*\" {
 				send $DIRECTOR_PASSWORD\r
 				interact
 			}
-		}
+		}" 2>&1)
+	grep -qs "^Failed to login" <<<"$output"
+	ret=$?
+	echo "$output"
 
-		catch wait result
-		exit [lindex $result 3]
-	"
-	if [ $? -eq 0 ]; then
+	if [ $ret -ne 0 ]; then
 		out "common: Director targeted"
 	else
 		die "common: ERROR: Could not target director '$director_ip'"
