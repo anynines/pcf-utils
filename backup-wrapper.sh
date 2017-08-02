@@ -19,7 +19,7 @@ if [ ! -f "$CONFIG" ]; then
 fi
 source "$CONFIG"
 BACKUP_RETENTION=${BACKUP_RETENTION:-4}
-MIN_BACKUP_SIZE=${BACKUP_RETENTION:-1}
+MIN_BACKUP_SIZE=${MIN_BACKUP_SIZE:-1}
 BACKUP_DIR="$(dirname $WORK_DIR)"
 SCRIPTNAME=$(basename $0)
 
@@ -58,7 +58,7 @@ function checksize() {
   # out $1
   [ -z "$1" -o ! -d "$1" ] && return 2
   local dirname=$1
-  local dirsize=$(du -s $dirname | awk '{print $1}')
+  local dirsize=$(du -bs $dirname | awk '{print $1}')
   # out "$dirname has size: $dirsize"
   if [ $dirsize -ge $MIN_BACKUP_SIZE ]; then
     return 0
