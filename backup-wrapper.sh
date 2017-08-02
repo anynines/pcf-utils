@@ -80,6 +80,7 @@ function lc() {
 
 # cleanup old/invalid backups
 function cleanup() {
+  out "Starting cleanup process"
   local retain_count=${1:-$BACKUP_RETENTION}
   local backups="$(ls -d1 $BACKUP_DIR/*)"
   backups=$(sort -n <<<"$backups")
@@ -155,11 +156,11 @@ function cleanup() {
     fi
   done <<<"$backups"
 
+  out "Clean up excessive backups"
   # if there was already a backup today, remove it from the list
-  todays_backup="Backup_$(date +%Y_%m_%d)"
   grep -q "$WORK_DIR" <<<"$backups"
   if [ $? -eq 0 ]; then
-    out "$WORK_DIR: skipping"
+    out "$WORK_DIR: skipping today's backup"
     backups=$(grep -v ${WORK_DIR:-Non-existant} <<<"$backups")
   fi
 
