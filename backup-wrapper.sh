@@ -10,8 +10,6 @@ set -o nounset
 # Configuration
 #
 # ==============================================================================
-BACKUP_RETENTION=4
-MIN_BACKUP_SIZE="1"
 CONFIG="$(dirname $MYPATH)/config/environment.sh"
 [ ! -f "$CONFIG" ] && CONFIG="$MYPATH/scripts/config/environment.sh"
 # load config
@@ -20,6 +18,8 @@ if [ ! -f "$CONFIG" ]; then
   exit 1
 fi
 source "$CONFIG"
+BACKUP_RETENTION=${BACKUP_RETENTION:-4}
+MIN_BACKUP_SIZE=${BACKUP_RETENTION:-1}
 BACKUP_DIR="$(dirname $WORK_DIR)"
 SCRIPTNAME=$(basename $0)
 

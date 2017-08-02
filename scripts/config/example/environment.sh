@@ -30,3 +30,6 @@ Redis"
 export PMYSQL_DISTINCTIVE="true"
 # override P-MySQL IPs (e.g. to use the proxies instead)
 #export PMYSQL_HOSTS="10.0.1.100 10.0.2.101 10.0.3.102"
+
+export BACKUP_RETENTION=4
+export MIN_BACKUP_SIZE="10G"
