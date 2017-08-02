@@ -7,16 +7,22 @@ export OPS_MGR_SSH_PASSWORD=""
 export OPS_MGR_ADMIN_USERNAME=""
 export OPS_MGR_ADMIN_PASSWORD=""
 
-export BACKUP_DIR_NAME=Backup_$DATE
-export WORK_DIR=""/$BACKUP_DIR_NAME
-export NFS_DIR=$WORK_DIR/nfs_share
+export BACKUP_DIR_NAME="Backup_$DATE"
+export WORK_DIR="/backups/$BACKUP_DIR_NAME"
+export NFS_DIR="$WORK_DIR/nfs_share"
 export NFS_EXCLUDES="cc-resources/*
 cc-droplets/buildpack_cache/*"
-export DEPLOYMENT_DIR=$WORK_DIR/deployments
-export DATABASE_DIR=$WORK_DIR/database
+export DEPLOYMENT_DIR="$WORK_DIR/deployments"
+export DATABASE_DIR="$WORK_DIR/database"
 
 export COMPLETE_BACKUP="N"
 export BOSH_OLD_CLI="false"
+
+# choose which tiles to backup, ERT includes also OpsManager
+export BACKUP_TILES="ERT
+MySQL
+RabbitMQ
+Redis"
 
 # override internal MySQL IPs (e.g. to use the proxies instead)
 #export MYSQL_HOSTS="10.0.0.100 10.0.0.101 10.0.0.102"

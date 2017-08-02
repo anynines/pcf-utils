@@ -81,7 +81,6 @@ function lc() {
 # cleanup old/invalid backups
 function cleanup() {
   local retain_count=${1:-$BACKUP_RETENTION}
-  echo $retain_count
   local backups="$(ls -d1 $BACKUP_DIR/*)"
   backups=$(sort -n <<<"$backups")
 
@@ -177,7 +176,22 @@ function cleanup() {
 
 function backup() {
   if [ "$(uname -s)" == "Linux" ]; then
-    bash scripts/backup_with_om
+    while read tile; do
+      tilename=$(tr 'A-Z' 'a-z' <<<"$tile")
+      out "Starting Backup for '$tile'"
+      case $tilename in
+        "ert")
+          bash "scripts/backup_with_om"
+          ;;
+        *)
+          if [ -f "scripts/service-tiles/backup_$tilename" ]; then
+            bash "scripts/service-tiles/backup_$tilename"
+          else
+            out "Unsupported tile: $tile"
+          fi
+          ;;
+      esac
+    done <<<"${BACKUP_TILES:-ERT}"
   else
     echo "SHOULD BE RUN ON 'Linux' IN PRODUCTION, NOT '$(uname -s)'"
     return 0
