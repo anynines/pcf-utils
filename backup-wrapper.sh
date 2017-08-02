@@ -12,7 +12,8 @@ set -o nounset
 # ==============================================================================
 BACKUP_RETENTION=4
 MIN_BACKUP_SIZE="1"
-CONFIG="$MYPATH/scripts/config/environment.sh"
+CONFIG="$(dirname $MYPATH)/config/environment.sh"
+[ ! -f "$CONFIG" ] && CONFIG="$MYPATH/scripts/config/environment.sh"
 # load config
 if [ ! -f "$CONFIG" ]; then
   echo "Config not found in: $CONFIG"
