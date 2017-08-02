@@ -138,7 +138,11 @@ function cleanup() {
     [ -z "$backupname" ] && continue
     s=$(basename "$backupname" | sed -e 's:_: :g')
     read prefix byear bmonth bday <<<"$s"
-    bdate=$(date -v${byear}y -v${bmonth}m -v${bday}d +%s)
+    if [ "$(uname -s)" == "Darwin" ]; then
+      bdate=$(date -v${byear}y -v${bmonth}m -v${bday}d +%s)
+    else
+      bdate=$(date -d "${byear}/${bmonth}/${bday}" +%s)
+    fi
     if [ $bdate -gt $(date +%s) ]; then
       if [ $(lc "$backups") -le $retain_count ]; then
         out "$backupname: would remove because date is in the future but would drop below retention count '$retain_count'"
